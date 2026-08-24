@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
+import '../../features/medications/models/adherence_log.dart';
 import '../theme/color_tokens.dart';
 import 'pill_chip.dart';
 
-enum AdherenceStatus {
-  taken,
-  missed,
-  pending,
-  skipped,
-}
+export '../../features/medications/models/adherence_log.dart' show AdherenceStatus;
 
-/// Semantic status badge with Refero pastel palette & pill capsule shape
+/// Semantic status badge with Craftwork Acid Green, Vermillion & Fog palette
 class StatusBadge extends StatelessWidget {
   final AdherenceStatus status;
 
@@ -24,18 +20,18 @@ class StatusBadge extends StatelessWidget {
       case AdherenceStatus.taken:
         return const PillChip(
           label: 'Taken',
-          backgroundColor: ColorTokens.mintSuccessBg,
-          textColor: ColorTokens.mintSuccess,
-          borderColor: ColorTokens.mintSuccessBorder,
-          icon: Icon(Icons.check_rounded, size: 14, color: ColorTokens.mintSuccess),
+          backgroundColor: ColorTokens.acidGreen,
+          textColor: ColorTokens.inkBlack,
+          borderColor: ColorTokens.acidGreen,
+          icon: Icon(Icons.check_rounded, size: 13, color: ColorTokens.inkBlack),
         );
       case AdherenceStatus.missed:
         return const PillChip(
           label: 'Missed',
-          backgroundColor: ColorTokens.emberBg,
-          textColor: ColorTokens.ember,
-          borderColor: ColorTokens.emberBorder,
-          icon: Icon(Icons.close_rounded, size: 14, color: ColorTokens.ember),
+          backgroundColor: ColorTokens.vermillionBg,
+          textColor: ColorTokens.vermillion,
+          borderColor: ColorTokens.vermillionBorder,
+          icon: Icon(Icons.close_rounded, size: 13, color: ColorTokens.vermillion),
         );
       case AdherenceStatus.pending:
         return const PillChip(
@@ -43,15 +39,15 @@ class StatusBadge extends StatelessWidget {
           backgroundColor: ColorTokens.warningAmberBg,
           textColor: ColorTokens.warningAmber,
           borderColor: ColorTokens.warningAmberBorder,
-          icon: Icon(Icons.schedule_rounded, size: 14, color: ColorTokens.warningAmber),
+          icon: Icon(Icons.schedule_rounded, size: 13, color: ColorTokens.warningAmber),
         );
       case AdherenceStatus.skipped:
         return const PillChip(
           label: 'Skipped',
-          backgroundColor: ColorTokens.coolWash,
-          textColor: ColorTokens.midGray,
+          backgroundColor: ColorTokens.fog,
+          textColor: ColorTokens.graphite,
           borderColor: ColorTokens.hairline,
-          icon: Icon(Icons.remove_rounded, size: 14, color: ColorTokens.midGray),
+          icon: Icon(Icons.remove_rounded, size: 13, color: ColorTokens.graphite),
         );
     }
   }

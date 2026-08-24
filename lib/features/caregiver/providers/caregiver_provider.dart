@@ -16,6 +16,8 @@ final myLinkedPatientsProvider = StreamProvider<List<CaregiverLink>>((ref) {
       .map((s) => s.docs.map(CaregiverLink.fromFirestore).toList());
 });
 
+final monitoredPatientsProvider = myLinkedPatientsProvider;
+
 // Links where current user is the patient (who has caregivers)
 final myCaregiversProvider = StreamProvider<List<CaregiverLink>>((ref) {
   final user = ref.watch(firebaseAuthStateProvider).valueOrNull;
@@ -46,13 +48,16 @@ class CaregiverNotifier extends AsyncNotifier<void> {
   @override
   Future<void> build() async {}
 
-  Future<void> inviteCaregiver(
-      {required String patientId, required String caregiverEmail}) async {
-    // In a real app: look up caregiver by email, create link doc
+  Future<void> inviteCaregiver({
+    required String patientId,
+    required String patientEmail,
+    required String caregiverEmail,
+  }) async {
     final firestore = ref.read(firestoreServiceProvider);
     await firestore.caregiverLinksCollection.add({
       'patientId': patientId,
-      'caregiverId': '', // to be filled when caregiver accepts
+      'patientEmail': patientEmail,
+      'caregiverId': '',
       'caregiverEmail': caregiverEmail,
       'status': 'pending',
       'createdAt': FieldValue.serverTimestamp(),

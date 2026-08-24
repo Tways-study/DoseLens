@@ -5,6 +5,7 @@ enum CaregiverLinkStatus { pending, active, revoked }
 class CaregiverLink {
   final String id;
   final String patientId;
+  final String patientEmail;
   final String caregiverId;
   final String caregiverEmail;
   final CaregiverLinkStatus status;
@@ -13,6 +14,7 @@ class CaregiverLink {
   const CaregiverLink({
     required this.id,
     required this.patientId,
+    required this.patientEmail,
     required this.caregiverId,
     required this.caregiverEmail,
     required this.status,
@@ -24,6 +26,7 @@ class CaregiverLink {
     return CaregiverLink(
       id: doc.id,
       patientId: data['patientId'] as String? ?? '',
+      patientEmail: data['patientEmail'] as String? ?? 'Patient',
       caregiverId: data['caregiverId'] as String? ?? '',
       caregiverEmail: data['caregiverEmail'] as String? ?? '',
       status: _statusFrom(data['status'] as String?),
@@ -33,6 +36,7 @@ class CaregiverLink {
 
   Map<String, dynamic> toFirestore() => {
         'patientId': patientId,
+        'patientEmail': patientEmail,
         'caregiverId': caregiverId,
         'caregiverEmail': caregiverEmail,
         'status': status.name,

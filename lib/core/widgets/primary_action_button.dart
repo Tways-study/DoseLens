@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import '../constants/app_constants.dart';
 import '../theme/color_tokens.dart';
 
-/// Primary Action Button (Filled Pill Button) strictly following the Refero Design Architecture
-/// Pill shape (980px radius), Electric Blue (#0071E3) fill, white text, 0 elevation.
+/// Craftwork Action Button: Acid Green (#CAFC00) with bold Ink Black text, or Obsidian (#0D0D0D) dark fill
 class PrimaryActionButton extends StatelessWidget {
   final String title;
   final VoidCallback? onPressed;
@@ -13,6 +12,8 @@ class PrimaryActionButton extends StatelessWidget {
   final Color? textColor;
   final double height;
   final bool isGhost;
+  final bool isObsidian;
+  final bool isPill;
 
   const PrimaryActionButton({
     super.key,
@@ -22,12 +23,16 @@ class PrimaryActionButton extends StatelessWidget {
     this.isLoading = false,
     this.backgroundColor,
     this.textColor,
-    this.height = 50,
+    this.height = 48,
     this.isGhost = false,
+    this.isObsidian = false,
+    this.isPill = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final radius = isPill ? AppConstants.radiusFull : AppConstants.radiusButton;
+
     if (isGhost) {
       return SizedBox(
         height: height,
@@ -35,32 +40,36 @@ class PrimaryActionButton extends StatelessWidget {
         child: OutlinedButton(
           style: OutlinedButton.styleFrom(
             side: const BorderSide(color: ColorTokens.hairline, width: 1.0),
+            backgroundColor: ColorTokens.snow,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppConstants.radiusPill),
+              borderRadius: BorderRadius.circular(radius),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: AppConstants.space24),
+            padding: const EdgeInsets.symmetric(horizontal: AppConstants.space20),
           ),
           onPressed: isLoading ? null : onPressed,
-          child: _buildContent(ColorTokens.primaryInk),
+          child: _buildContent(ColorTokens.inkBlack),
         ),
       );
     }
+
+    final bg = backgroundColor ?? (isObsidian ? ColorTokens.obsidian : ColorTokens.acidGreen);
+    final fg = textColor ?? (isObsidian ? Colors.white : ColorTokens.inkBlack);
 
     return SizedBox(
       height: height,
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor ?? ColorTokens.electricBlue,
-          foregroundColor: textColor ?? Colors.white,
+          backgroundColor: bg,
+          foregroundColor: fg,
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppConstants.radiusPill),
+            borderRadius: BorderRadius.circular(radius),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: AppConstants.space24),
+          padding: const EdgeInsets.symmetric(horizontal: AppConstants.space20),
         ),
         onPressed: isLoading ? null : onPressed,
-        child: _buildContent(textColor ?? Colors.white),
+        child: _buildContent(fg),
       ),
     );
   }
@@ -68,8 +77,8 @@ class PrimaryActionButton extends StatelessWidget {
   Widget _buildContent(Color contentColor) {
     if (isLoading) {
       return SizedBox(
-        width: 20,
-        height: 20,
+        width: 18,
+        height: 18,
         child: CircularProgressIndicator(
           strokeWidth: 2.2,
           valueColor: AlwaysStoppedAnimation<Color>(contentColor),
@@ -87,10 +96,10 @@ class PrimaryActionButton extends StatelessWidget {
         Text(
           title,
           style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontSize: 15,
+            fontWeight: FontWeight.w800,
             color: contentColor,
-            letterSpacing: -0.2,
+            letterSpacing: -0.1,
           ),
         ),
       ],

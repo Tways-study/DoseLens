@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'core/constants/app_constants.dart';
 import 'core/services/firebase_service.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/color_tokens.dart';
@@ -45,36 +46,33 @@ class _AuthGate extends ConsumerWidget {
     final authState = ref.watch(firebaseAuthStateProvider);
 
     return authState.when(
+      data: (user) {
+        if (user == null) return const LoginScreen();
+        return const MainAppShell();
+      },
       loading: () => const Scaffold(
-        backgroundColor: ColorTokens.canvas,
+        backgroundColor: ColorTokens.paper,
         body: Center(
-          child: CircularProgressIndicator(
-            color: ColorTokens.electricBlue,
-            strokeWidth: 2.5,
-          ),
+          child: CircularProgressIndicator(color: ColorTokens.inkBlack, strokeWidth: 2.5),
         ),
       ),
       error: (_, __) => const LoginScreen(),
-      data: (user) {
-        if (user == null) return const LoginScreen();
-        return const MainShell();
-      },
     );
   }
 }
 
-/// Refero-styled Bottom Navigation Shell with 3 tabs + Central Scanner Action
-class MainShell extends ConsumerStatefulWidget {
-  const MainShell({super.key});
+/// Main bottom navigation shell with Craftwork Paper & Acid Green aesthetic
+class MainAppShell extends StatefulWidget {
+  const MainAppShell({super.key});
 
   @override
-  ConsumerState<MainShell> createState() => _MainShellState();
+  State<MainAppShell> createState() => _MainAppShellState();
 }
 
-class _MainShellState extends ConsumerState<MainShell> {
+class _MainAppShellState extends State<MainAppShell> {
   int _currentIndex = 0;
 
-  static const _screens = [
+  final List<Widget> _screens = const [
     HomeScreen(),
     PassportScreen(),
     CaregiverDashboardScreen(),
@@ -83,80 +81,60 @@ class _MainShellState extends ConsumerState<MainShell> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorTokens.canvas,
+      backgroundColor: ColorTokens.paper,
       body: IndexedStack(
         index: _currentIndex,
         children: _screens,
       ),
-      floatingActionButton: Container(
-        height: 56,
-        width: 56,
-        margin: const EdgeInsets.only(top: 24),
-        child: FloatingActionButton(
-          heroTag: 'scanner_fab',
-          backgroundColor: ColorTokens.electricBlue,
-          elevation: 0,
-          shape: const CircleBorder(),
-          onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const ScannerScreen()),
-          ),
-          child: const Icon(Icons.document_scanner_rounded, color: Colors.white, size: 24),
+      floatingActionButton: FloatingActionButton(
+        elevation: 0,
+        highlightElevation: 0,
+        backgroundColor: ColorTokens.acidGreen,
+        foregroundColor: ColorTokens.inkBlack,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppConstants.radiusFull),
+          side: const BorderSide(color: ColorTokens.inkBlack, width: 1.0),
         ),
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const ScannerScreen()),
+        ),
+        child: const Icon(Icons.qr_code_scanner_rounded, size: 24),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: _BottomNav(
-        currentIndex: _currentIndex,
-        onTap: (i) => setState(() => _currentIndex = i),
-      ),
-    );
-  }
-}
-
-class _BottomNav extends StatelessWidget {
-  final int currentIndex;
-  final ValueChanged<int> onTap;
-
-  const _BottomNav({required this.currentIndex, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: ColorTokens.paper,
-        border: Border(top: BorderSide(color: ColorTokens.hairline, width: 0.5)),
-      ),
-      child: SafeArea(
-        top: false,
-        child: SizedBox(
-          height: 60,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _NavItem(
-                icon: Icons.home_outlined,
-                activeIcon: Icons.home_rounded,
-                label: 'Home',
-                isActive: currentIndex == 0,
-                onTap: () => onTap(0),
-              ),
-              // Gap for Floating Scanner Button
-              const SizedBox(width: 56),
-              _NavItem(
-                icon: Icons.description_outlined,
-                activeIcon: Icons.description_rounded,
-                label: 'Passport',
-                isActive: currentIndex == 1,
-                onTap: () => onTap(1),
-              ),
-              _NavItem(
-                icon: Icons.favorite_outline_rounded,
-                activeIcon: Icons.favorite_rounded,
-                label: 'Caregiver',
-                isActive: currentIndex == 2,
-                onTap: () => onTap(2),
-              ),
-            ],
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+          color: ColorTokens.snow,
+          border: Border(
+            top: BorderSide(color: ColorTokens.hairline, width: 1.0),
+          ),
+        ),
+        child: SafeArea(
+          child: SizedBox(
+            height: 60,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _NavBarItem(
+                  icon: Icons.calendar_today_rounded,
+                  label: 'Today',
+                  isSelected: _currentIndex == 0,
+                  onTap: () => setState(() => _currentIndex = 0),
+                ),
+                _NavBarItem(
+                  icon: Icons.health_and_safety_outlined,
+                  label: 'Passport',
+                  isSelected: _currentIndex == 1,
+                  onTap: () => setState(() => _currentIndex = 1),
+                ),
+                _NavBarItem(
+                  icon: Icons.people_outline_rounded,
+                  label: 'Caregiver',
+                  isSelected: _currentIndex == 2,
+                  onTap: () => setState(() => _currentIndex = 2),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -164,43 +142,41 @@ class _BottomNav extends StatelessWidget {
   }
 }
 
-class _NavItem extends StatelessWidget {
+class _NavBarItem extends StatelessWidget {
   final IconData icon;
-  final IconData activeIcon;
   final String label;
-  final bool isActive;
+  final bool isSelected;
   final VoidCallback onTap;
 
-  const _NavItem({
+  const _NavBarItem({
     required this.icon,
-    required this.activeIcon,
     required this.label,
-    required this.isActive,
+    required this.isSelected,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
+    return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(AppConstants.radiusButton),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              isActive ? activeIcon : icon,
-              color: isActive ? ColorTokens.electricBlue : ColorTokens.midGray,
-              size: 22,
+              icon,
+              size: 20,
+              color: isSelected ? ColorTokens.inkBlack : ColorTokens.graphite,
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 3),
             Text(
               label,
               style: TextStyle(
                 fontSize: 11,
-                fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-                color: isActive ? ColorTokens.electricBlue : ColorTokens.midGray,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                color: isSelected ? ColorTokens.inkBlack : ColorTokens.graphite,
                 letterSpacing: -0.1,
               ),
             ),

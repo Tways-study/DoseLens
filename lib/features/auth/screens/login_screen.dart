@@ -7,6 +7,7 @@ import '../../../core/utils/validators.dart';
 import '../../../core/widgets/primary_action_button.dart';
 import '../providers/auth_provider.dart';
 import 'register_screen.dart';
+import 'role_selection_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -18,230 +19,200 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailCtrl = TextEditingController();
-  final _passwordCtrl = TextEditingController();
-  bool _loading = false;
-  bool _obscure = true;
-  String? _error;
+  final _passCtrl = TextEditingController();
+  bool _obscurePass = true;
 
   @override
   void dispose() {
     _emailCtrl.dispose();
-    _passwordCtrl.dispose();
+    _passCtrl.dispose();
     super.dispose();
   }
 
-  Future<void> _signIn() async {
+  Future<void> _signInWithEmail() async {
     if (!_formKey.currentState!.validate()) return;
-    setState(() { _loading = true; _error = null; });
     try {
-      await ref.read(authServiceProvider).signInWithEmailPassword(
-        email: _emailCtrl.text.trim(),
-        password: _passwordCtrl.text,
-      );
+      await ref.read(authNotifierProvider.notifier).signInWithEmail(
+            _emailCtrl.text.trim(),
+            _passCtrl.text.trim(),
+          );
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const RoleSelectionScreen()),
+        );
+      }
     } catch (e) {
-      setState(() => _error = _friendlyError(e.toString()));
-    } finally {
-      if (mounted) setState(() => _loading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: ColorTokens.vermillion,
+          ),
+        );
+      }
     }
   }
 
-  Future<void> _signInAnonymously() async {
-    setState(() { _loading = true; _error = null; });
+  Future<void> _signInAsGuest() async {
     try {
-      await ref.read(authServiceProvider).signInAnonymously();
+      await ref.read(authNotifierProvider.notifier).signInAnonymously();
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const RoleSelectionScreen()),
+        );
+      }
     } catch (e) {
-      setState(() => _error = _friendlyError(e.toString()));
-    } finally {
-      if (mounted) setState(() => _loading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: ColorTokens.vermillion,
+          ),
+        );
+      }
     }
-  }
-
-  String _friendlyError(String raw) {
-    if (raw.contains('user-not-found') || raw.contains('wrong-password') || raw.contains('invalid-credential')) {
-      return 'Incorrect email or password. Please try again.';
-    }
-    if (raw.contains('network')) return 'Network error. Check your connection.';
-    return 'Sign-in failed. Please try again.';
   }
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authNotifierProvider);
+
     return Scaffold(
-      backgroundColor: ColorTokens.canvas,
+      backgroundColor: ColorTokens.paper,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: AppConstants.space28, vertical: AppConstants.space32),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 20),
-                // Brand Mark
-                Row(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: AppConstants.space24, vertical: AppConstants.space32),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 440),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: ColorTokens.electricBlue,
-                        borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
-                      ),
-                      child: const Icon(Icons.medication_rounded, color: Colors.white, size: 22),
+                    // Brand mark
+                    Row(
+                      children: [
+                        Container(
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            color: ColorTokens.acidGreen,
+                            borderRadius: BorderRadius.circular(AppConstants.radiusButton),
+                            border: Border.all(color: ColorTokens.inkBlack, width: 1.0),
+                          ),
+                          child: const Center(
+                            child: Icon(Icons.lens_rounded, color: ColorTokens.inkBlack, size: 18),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          'DoseLens',
+                          style: TextStyles.displayMedium.copyWith(fontSize: 22),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: AppConstants.space12),
+                    const SizedBox(height: AppConstants.space32),
+
+                    // Display Headline
                     Text(
-                      'DoseLens',
-                      style: TextStyles.headingLarge.copyWith(fontWeight: FontWeight.w700),
+                      'Welcome to\nDoseLens.',
+                      style: TextStyles.displayLarge,
                     ),
-                  ],
-                ),
-                const SizedBox(height: 48),
-
-                // Whispered Display Headline
-                Text(
-                  'Welcome back.',
-                  style: TextStyles.displayLarge,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Sign in to manage your medication schedule and adherence history.',
-                  style: TextStyles.bodySecondary,
-                ),
-                const SizedBox(height: 36),
-
-                // Error banner
-                if (_error != null) ...[
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(AppConstants.space16),
-                    decoration: BoxDecoration(
-                      color: ColorTokens.emberBg,
-                      borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
-                      border: Border.all(color: ColorTokens.emberBorder, width: 0.8),
+                    const SizedBox(height: AppConstants.space8),
+                    Text(
+                      'AI medication scanner, adherence tracker, and family health passport.',
+                      style: TextStyles.bodySecondary,
                     ),
-                    child: Text(
-                      _error!,
-                      style: const TextStyle(color: ColorTokens.ember, fontSize: 13, fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                ],
+                    const SizedBox(height: AppConstants.space32),
 
-                // Email field
-                _ReferoTextField(
-                  controller: _emailCtrl,
-                  label: 'Email',
-                  hint: 'you@example.com',
-                  keyboardType: TextInputType.emailAddress,
-                  validator: Validators.email,
-                ),
-                const SizedBox(height: 18),
-
-                // Password field
-                _ReferoTextField(
-                  controller: _passwordCtrl,
-                  label: 'Password',
-                  hint: '••••••••',
-                  obscureText: _obscure,
-                  validator: Validators.password,
-                  suffix: IconButton(
-                    icon: Icon(
-                      _obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                      size: 20,
-                      color: ColorTokens.midGray,
-                    ),
-                    onPressed: () => setState(() => _obscure = !_obscure),
-                  ),
-                ),
-                const SizedBox(height: 32),
-
-                // Electric Blue Filled Pill Button
-                PrimaryActionButton(
-                  title: 'Sign In',
-                  isLoading: _loading,
-                  onPressed: _signIn,
-                ),
-                const SizedBox(height: 14),
-
-                // Ghost Pill Button
-                PrimaryActionButton(
-                  title: 'Continue as Guest',
-                  isGhost: true,
-                  isLoading: false,
-                  onPressed: _loading ? null : _signInAnonymously,
-                ),
-                const SizedBox(height: 36),
-
-                // Sign up Link
-                Center(
-                  child: GestureDetector(
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RegisterScreen())),
-                    child: RichText(
-                      text: const TextSpan(
-                        text: "Don't have an account? ",
-                        style: TextStyle(color: ColorTokens.midGray, fontSize: 14),
+                    // Form container
+                    Container(
+                      padding: const EdgeInsets.all(AppConstants.space24),
+                      decoration: BoxDecoration(
+                        color: ColorTokens.snow,
+                        borderRadius: BorderRadius.circular(AppConstants.radiusCard),
+                        border: Border.all(color: ColorTokens.hairline, width: 1.0),
+                        boxShadow: const [ColorTokens.cardShadow],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          TextSpan(
-                            text: 'Sign up',
-                            style: TextStyle(color: ColorTokens.linkBlue, fontWeight: FontWeight.w600),
+                          const Text('Email Address', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: ColorTokens.inkBlack)),
+                          const SizedBox(height: 6),
+                          TextFormField(
+                            controller: _emailCtrl,
+                            keyboardType: TextInputType.emailAddress,
+                            validator: Validators.email,
+                            decoration: const InputDecoration(
+                              hintText: 'name@example.com',
+                              prefixIcon: Icon(Icons.mail_outline_rounded, size: 18, color: ColorTokens.graphite),
+                            ),
+                          ),
+                          const SizedBox(height: AppConstants.space16),
+
+                          const Text('Password', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: ColorTokens.inkBlack)),
+                          const SizedBox(height: 6),
+                          TextFormField(
+                            controller: _passCtrl,
+                            obscureText: _obscurePass,
+                            validator: (v) => Validators.minLength(v, 6, 'Password'),
+                            decoration: InputDecoration(
+                              hintText: '••••••••',
+                              prefixIcon: const Icon(Icons.lock_outline_rounded, size: 18, color: ColorTokens.graphite),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscurePass ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                                  size: 18,
+                                  color: ColorTokens.graphite,
+                                ),
+                                onPressed: () => setState(() => _obscurePass = !_obscurePass),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: AppConstants.space24),
+
+                          // Primary Sign In Button (Acid Green)
+                          PrimaryActionButton(
+                            title: 'Sign In',
+                            isLoading: authState.isLoading,
+                            onPressed: _signInWithEmail,
+                          ),
+                          const SizedBox(height: AppConstants.space12),
+
+                          // Guest Access (Obsidian Button)
+                          PrimaryActionButton(
+                            title: 'Try Instant Guest Mode',
+                            isObsidian: true,
+                            isLoading: authState.isLoading,
+                            onPressed: _signInAsGuest,
                           ),
                         ],
                       ),
                     ),
-                  ),
+                    const SizedBox(height: AppConstants.space24),
+
+                    Center(
+                      child: TextButton(
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                        ),
+                        child: Text(
+                          'Don\'t have an account? Create one',
+                          style: TextStyles.labelLarge.copyWith(color: ColorTokens.inkBlack),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
       ),
-    );
-  }
-}
-
-class _ReferoTextField extends StatelessWidget {
-  final TextEditingController controller;
-  final String label;
-  final String hint;
-  final bool obscureText;
-  final TextInputType? keyboardType;
-  final String? Function(String?)? validator;
-  final Widget? suffix;
-
-  const _ReferoTextField({
-    required this.controller,
-    required this.label,
-    required this.hint,
-    this.obscureText = false,
-    this.keyboardType,
-    this.validator,
-    this.suffix,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: ColorTokens.primaryInk, letterSpacing: -0.1),
-        ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          obscureText: obscureText,
-          keyboardType: keyboardType,
-          validator: validator,
-          style: const TextStyle(fontSize: 15, color: ColorTokens.primaryInk),
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: const TextStyle(color: ColorTokens.midGray),
-            suffixIcon: suffix,
-          ),
-        ),
-      ],
     );
   }
 }

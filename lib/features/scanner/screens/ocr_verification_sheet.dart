@@ -83,18 +83,18 @@ class _OcrVerificationSheetState extends ConsumerState<OcrVerificationSheet> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(children: [
-              const Icon(Icons.check_circle_rounded, color: Colors.white, size: 18),
+              const Icon(Icons.check_circle_rounded, color: ColorTokens.inkBlack, size: 18),
               const SizedBox(width: 8),
-              Text('${_nameCtrl.text} added to schedule!'),
+              Text('${_nameCtrl.text} added to schedule!', style: const TextStyle(color: ColorTokens.inkBlack, fontWeight: FontWeight.w700)),
             ]),
-            backgroundColor: ColorTokens.mintSuccess,
+            backgroundColor: ColorTokens.acidGreen,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusMedium)),
           ),
         );
       }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Save failed: $e'), backgroundColor: ColorTokens.ember));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Save failed: $e'), backgroundColor: ColorTokens.vermillion));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -110,7 +110,7 @@ class _OcrVerificationSheetState extends ConsumerState<OcrVerificationSheet> {
       builder: (_, scrollCtrl) {
         return Container(
           decoration: const BoxDecoration(
-            color: ColorTokens.canvas,
+            color: ColorTokens.paper,
             borderRadius: BorderRadius.vertical(top: Radius.circular(AppConstants.radiusCard)),
           ),
           padding: const EdgeInsets.fromLTRB(AppConstants.space24, AppConstants.space16, AppConstants.space24, 24),
@@ -139,55 +139,50 @@ class _OcrVerificationSheetState extends ConsumerState<OcrVerificationSheet> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Verify OCR Label',
-                          style: TextStyles.headingLarge,
-                        ),
+                        Text('Verify OCR Label', style: TextStyles.headingLarge),
                         const SizedBox(height: 2),
-                        Text(
-                          'Review AI-extracted prescription metadata',
-                          style: TextStyles.caption,
-                        ),
+                        Text('Review AI-extracted prescription metadata', style: TextStyles.caption),
                       ],
                     ),
                     if (confidence != null)
                       PillChip(
                         label: '${(confidence * 100).round()}% match',
-                        backgroundColor: ColorTokens.mintSuccessBg,
-                        textColor: ColorTokens.mintSuccess,
-                        borderColor: ColorTokens.mintSuccessBorder,
+                        backgroundColor: ColorTokens.acidGreen,
+                        textColor: ColorTokens.inkBlack,
+                        borderColor: ColorTokens.inkBlack,
                       ),
                   ],
                 ),
-                const SizedBox(height: AppConstants.space24),
+                const SizedBox(height: AppConstants.space20),
 
-                // Fields container
+                // Form card
                 Container(
                   padding: const EdgeInsets.all(AppConstants.space20),
                   decoration: BoxDecoration(
-                    color: ColorTokens.paper,
+                    color: ColorTokens.snow,
                     borderRadius: BorderRadius.circular(AppConstants.radiusCard),
-                    border: Border.all(color: ColorTokens.hairline, width: 0.8),
+                    border: Border.all(color: ColorTokens.hairline, width: 1.0),
+                    boxShadow: const [ColorTokens.cardShadow],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _Label('Brand Name'),
+                      const _Label('Brand Name'),
                       _SheetField(controller: _nameCtrl, hint: 'e.g. Lipitor', validator: (v) => Validators.requiredField(v, 'Name')),
                       const SizedBox(height: AppConstants.space16),
-                      _Label('Generic Ingredient'),
+                      const _Label('Generic Ingredient'),
                       _SheetField(controller: _genericCtrl, hint: 'e.g. Atorvastatin'),
                       const SizedBox(height: AppConstants.space16),
-                      _Label('Dosage Strength'),
+                      const _Label('Dosage Strength'),
                       _SheetField(controller: _dosageCtrl, hint: 'e.g. 20mg', validator: (v) => Validators.requiredField(v, 'Dosage')),
                       const SizedBox(height: AppConstants.space16),
-                      _Label('Frequency'),
+                      const _Label('Frequency'),
                       _FrequencySelector(
                         selected: _frequency,
                         onChanged: (f) => setState(() => _frequency = f),
                       ),
                       const SizedBox(height: AppConstants.space16),
-                      _Label('Special Instructions'),
+                      const _Label('Special Instructions'),
                       _SheetField(controller: _instructionsCtrl, hint: 'e.g. Take 1 tablet daily at bedtime', maxLines: 2),
                     ],
                   ),
@@ -216,7 +211,7 @@ class _Label extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 6),
         child: Text(
           text,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: ColorTokens.primaryInk, letterSpacing: -0.1),
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: ColorTokens.inkBlack, letterSpacing: -0.1),
         ),
       );
 }
@@ -239,18 +234,18 @@ class _SheetField extends StatelessWidget {
         controller: controller,
         maxLines: maxLines,
         validator: validator,
-        style: const TextStyle(fontSize: 15, color: ColorTokens.primaryInk),
+        style: const TextStyle(fontSize: 14, color: ColorTokens.inkBlack, fontWeight: FontWeight.w500),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: const TextStyle(color: ColorTokens.midGray),
+          hintStyle: const TextStyle(color: ColorTokens.ashGray, fontSize: 13),
           filled: true,
-          fillColor: ColorTokens.coolWash,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.radiusMedium), borderSide: BorderSide.none),
-          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.radiusMedium), borderSide: BorderSide.none),
+          fillColor: ColorTokens.fog,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.radiusButton), borderSide: const BorderSide(color: ColorTokens.hairline)),
+          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.radiusButton), borderSide: const BorderSide(color: ColorTokens.hairline)),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
-            borderSide: const BorderSide(color: ColorTokens.electricBlue, width: 1.5),
+            borderRadius: BorderRadius.circular(AppConstants.radiusButton),
+            borderSide: const BorderSide(color: ColorTokens.inkBlack, width: 1.5),
           ),
         ),
       );
@@ -280,15 +275,16 @@ class _FrequencySelector extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
             decoration: BoxDecoration(
-              color: isSelected ? ColorTokens.electricBlue : ColorTokens.coolWash,
-              borderRadius: BorderRadius.circular(AppConstants.radiusFull),
+              color: isSelected ? ColorTokens.obsidian : ColorTokens.fog,
+              borderRadius: BorderRadius.circular(AppConstants.radiusButton),
+              border: Border.all(color: isSelected ? ColorTokens.obsidian : ColorTokens.hairline),
             ),
             child: Text(
               opt.$2,
               style: TextStyle(
                 fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: isSelected ? Colors.white : ColorTokens.primaryInk,
+                fontWeight: FontWeight.w700,
+                color: isSelected ? Colors.white : ColorTokens.inkBlack,
               ),
             ),
           ),

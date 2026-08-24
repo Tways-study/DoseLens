@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../constants/app_constants.dart';
 import '../theme/color_tokens.dart';
 
-/// Refero Styled Card: 28px continuous corner radius, crisp hairline stroke, zero shadow
+/// Craftwork Styled Card: 14px corner radius, crisp #DEE0E3 hairline border, subtle paper shadow
 class NeoCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry padding;
@@ -26,7 +26,7 @@ class NeoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final defaultBg = isDark ? ColorTokens.surfaceDark : ColorTokens.paper;
+    final defaultBg = isDark ? ColorTokens.surfaceDark : ColorTokens.snow;
     final defaultBorder = isDark ? ColorTokens.borderDark : ColorTokens.hairline;
 
     Widget card = Container(
@@ -37,9 +37,10 @@ class NeoCard extends StatelessWidget {
         border: showBorder
             ? Border.all(
                 color: borderColor ?? defaultBorder,
-                width: 0.8,
+                width: 1.0,
               )
             : null,
+        boxShadow: const [ColorTokens.cardShadow],
       ),
       child: child,
     );

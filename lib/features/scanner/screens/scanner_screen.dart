@@ -27,7 +27,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
   void initState() {
     super.initState();
     _pulseCtrl = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat(reverse: true);
-    _pulse = Tween<double>(begin: 0.94, end: 1.0).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+    _pulse = Tween<double>(begin: 0.95, end: 1.0).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
   }
 
   @override
@@ -60,7 +60,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Scan failed: ${e.toString()}'), backgroundColor: ColorTokens.ember),
+          SnackBar(content: Text('Scan failed: ${e.toString()}'), backgroundColor: ColorTokens.vermillion),
         );
       }
     } finally {
@@ -91,7 +91,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Processing failed: ${e.toString()}'), backgroundColor: ColorTokens.ember),
+          SnackBar(content: Text('Processing failed: ${e.toString()}'), backgroundColor: ColorTokens.vermillion),
         );
       }
     } finally {
@@ -102,7 +102,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F1012),
+      backgroundColor: ColorTokens.obsidian,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -111,32 +111,32 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Scan Medication',
+          'Multimodal OCR Lens',
           style: TextStyles.headingMedium.copyWith(color: Colors.white),
         ),
       ),
       body: Stack(
         children: [
-          // Viewfinder Frame
+          // Reticle Viewfinder
           Center(
             child: ScaleTransition(
               scale: _pulse,
               child: CustomPaint(
-                size: const Size(280, 280),
-                painter: _ReferoScannerFramePainter(),
+                size: const Size(270, 270),
+                painter: _CraftworkScannerFramePainter(),
                 child: SizedBox(
-                  width: 280,
-                  height: 280,
+                  width: 270,
+                  height: 270,
                   child: _processing
                       ? const Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              CircularProgressIndicator(color: ColorTokens.electricBlue, strokeWidth: 2.5),
+                              CircularProgressIndicator(color: ColorTokens.acidGreen, strokeWidth: 3.0),
                               SizedBox(height: 16),
                               Text(
-                                'Extracting drug data...',
-                                style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),
+                                'Extracting packaging metadata...',
+                                style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
                               ),
                             ],
                           ),
@@ -149,15 +149,16 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
                                 width: 56,
                                 height: 56,
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.08),
+                                  color: Colors.white.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+                                  border: Border.all(color: ColorTokens.acidGreen.withValues(alpha: 0.5)),
                                 ),
-                                child: const Icon(Icons.medication_rounded, color: Colors.white70, size: 28),
+                                child: const Icon(Icons.qr_code_scanner_rounded, color: ColorTokens.acidGreen, size: 28),
                               ),
                               const SizedBox(height: 12),
-                              Text(
-                                'Align label inside the frame',
-                                style: TextStyles.caption.copyWith(color: Colors.white70),
+                              const Text(
+                                'Align drug label inside frame',
+                                style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500),
                                 textAlign: TextAlign.center,
                               ),
                             ],
@@ -168,41 +169,46 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
             ),
           ),
 
-          // Bottom Control Panel
+          // Bottom Control Panel (Snow Surface)
           Positioned(
             bottom: 0,
             left: 0,
             right: 0,
             child: Container(
-              padding: const EdgeInsets.fromLTRB(AppConstants.space28, AppConstants.space20, AppConstants.space28, 40),
-              decoration: BoxDecoration(
-                color: ColorTokens.paper,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(AppConstants.radiusCard)),
+              padding: const EdgeInsets.fromLTRB(AppConstants.space24, AppConstants.space20, AppConstants.space24, 36),
+              decoration: const BoxDecoration(
+                color: ColorTokens.snow,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(AppConstants.radiusCard)),
+                border: Border(top: BorderSide(color: ColorTokens.hairline)),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    'Multimodal OCR Vision',
-                    style: TextStyles.headingMedium,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(width: 8, height: 8, decoration: const BoxDecoration(color: ColorTokens.acidGreen, shape: BoxShape.circle)),
+                      const SizedBox(width: 6),
+                      Text('Gemini 2.0 Flash Vision', style: TextStyles.headingMedium.copyWith(fontSize: 16)),
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Extracts brand, generic name, strength, and frequency automatically.',
+                    'Extracts brand, active generic ingredient, dosage, and frequency.',
                     style: TextStyles.caption,
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: AppConstants.space20),
+                  const SizedBox(height: AppConstants.space16),
                   Row(
                     children: [
                       Expanded(
                         child: OutlinedButton.icon(
-                          icon: const Icon(Icons.photo_library_outlined, size: 18, color: ColorTokens.primaryInk),
-                          label: const Text('Gallery', style: TextStyle(color: ColorTokens.primaryInk, fontWeight: FontWeight.w600)),
+                          icon: const Icon(Icons.photo_library_outlined, size: 18, color: ColorTokens.inkBlack),
+                          label: const Text('Gallery', style: TextStyle(color: ColorTokens.inkBlack, fontWeight: FontWeight.w700)),
                           style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: ColorTokens.hairline),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusPill)),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            side: const BorderSide(color: ColorTokens.hairline, width: 1.0),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusButton)),
+                            padding: const EdgeInsets.symmetric(vertical: 13),
                           ),
                           onPressed: _processing ? null : _pickFromGallery,
                         ),
@@ -210,12 +216,13 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
                       const SizedBox(width: AppConstants.space12),
                       Expanded(
                         child: ElevatedButton.icon(
-                          icon: const Icon(Icons.camera_alt_rounded, size: 18, color: Colors.white),
-                          label: const Text('Capture', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                          icon: const Icon(Icons.camera_alt_rounded, size: 18, color: ColorTokens.inkBlack),
+                          label: const Text('Scan Label', style: TextStyle(color: ColorTokens.inkBlack, fontWeight: FontWeight.w800)),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: ColorTokens.electricBlue,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusPill)),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            backgroundColor: ColorTokens.acidGreen,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusButton)),
+                            padding: const EdgeInsets.symmetric(vertical: 13),
                           ),
                           onPressed: _processing ? null : _captureImage,
                         ),
@@ -232,17 +239,17 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
   }
 }
 
-class _ReferoScannerFramePainter extends CustomPainter {
+class _CraftworkScannerFramePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = ColorTokens.electricBlue
-      ..strokeWidth = 3.0
+      ..color = ColorTokens.acidGreen
+      ..strokeWidth = 3.5
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
-    const cornerLength = 28.0;
-    const r = 24.0;
+    const cornerLength = 24.0;
+    const r = 14.0;
 
     // Top-left
     canvas.drawPath(
@@ -286,5 +293,5 @@ class _ReferoScannerFramePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_ReferoScannerFramePainter old) => false;
+  bool shouldRepaint(_CraftworkScannerFramePainter old) => false;
 }

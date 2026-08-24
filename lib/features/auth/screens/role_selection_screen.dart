@@ -1,108 +1,89 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/color_tokens.dart';
 import '../../../core/theme/text_styles.dart';
 import '../../../core/widgets/neo_card.dart';
+import '../../../core/widgets/pill_chip.dart';
 import '../../../core/widgets/primary_action_button.dart';
-import '../models/app_user.dart';
+import '../../../main.dart';
 import '../providers/auth_provider.dart';
 
 class RoleSelectionScreen extends ConsumerStatefulWidget {
-  final String uid;
-  final String email;
-  final String displayName;
-
-  const RoleSelectionScreen({
-    super.key,
-    required this.uid,
-    required this.email,
-    required this.displayName,
-  });
+  const RoleSelectionScreen({super.key});
 
   @override
   ConsumerState<RoleSelectionScreen> createState() => _RoleSelectionScreenState();
 }
 
 class _RoleSelectionScreenState extends ConsumerState<RoleSelectionScreen> {
-  UserRole? _selected;
-  bool _loading = false;
+  UserRole _selectedRole = UserRole.patient;
 
-  Future<void> _confirm() async {
-    if (_selected == null) return;
-    setState(() => _loading = true);
-    try {
-      final firestore = ref.read(firestoreServiceProvider);
-      final user = AppUser(
-        uid: widget.uid,
-        email: widget.email,
-        displayName: widget.displayName,
-        role: _selected!,
-        createdAt: DateTime.now(),
+  Future<void> _continue() async {
+    await ref.read(userRoleProvider.notifier).setRole(_selectedRole);
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const MainAppShell()),
       );
-      await firestore.usersCollection
-          .doc(widget.uid)
-          .set({...user.toFirestore(), 'createdAt': FieldValue.serverTimestamp()});
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to save role. Please try again.')),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _loading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorTokens.canvas,
+      backgroundColor: ColorTokens.paper,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppConstants.space28, vertical: AppConstants.space32),
+          padding: const EdgeInsets.symmetric(horizontal: AppConstants.space24, vertical: AppConstants.space32),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 20),
+              const PillChip(
+                label: 'Onboarding · Step 1 of 1',
+                backgroundColor: ColorTokens.acidGreen,
+                textColor: ColorTokens.inkBlack,
+                borderColor: ColorTokens.inkBlack,
+              ),
+              const SizedBox(height: AppConstants.space16),
+
               Text(
-                'Personalize.',
+                'Select Your\nExperience.',
                 style: TextStyles.displayLarge,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppConstants.space8),
               Text(
-                'Select your primary role to configure your daily experience.',
+                'DoseLens personalizes its interface based on how you manage health.',
                 style: TextStyles.bodySecondary,
               ),
-              const SizedBox(height: 36),
+              const SizedBox(height: AppConstants.space32),
 
               _RoleCard(
                 role: UserRole.patient,
-                selected: _selected == UserRole.patient,
-                icon: Icons.medication_liquid_rounded,
-                title: "I'm a Patient",
-                description: 'Scan medication packaging, track daily adherence, and export 30-day health passports.',
-                onTap: () => setState(() => _selected = UserRole.patient),
+                title: 'Patient / Self-Managed',
+                description: 'Track your daily medication schedule, log doses, scan prescriptions, and generate clinical passports.',
+                icon: Icons.person_rounded,
+                badge: 'Recommended',
+                isSelected: _selectedRole == UserRole.patient,
+                onTap: () => setState(() => _selectedRole = UserRole.patient),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppConstants.space16),
 
               _RoleCard(
                 role: UserRole.caregiver,
-                selected: _selected == UserRole.caregiver,
+                title: 'Caregiver / Family Monitor',
+                description: 'Monitor loved ones\' adherence in real-time, receive missed dose heartbeat alerts, and review history.',
                 icon: Icons.favorite_rounded,
-                title: "I'm a Caregiver",
-                description: 'Monitor family members remotely with real-time missed dose heartbeat alerts.',
-                onTap: () => setState(() => _selected = UserRole.caregiver),
+                badge: 'Remote Telemetry',
+                isSelected: _selectedRole == UserRole.caregiver,
+                onTap: () => setState(() => _selectedRole = UserRole.caregiver),
               ),
 
               const Spacer(),
+
               PrimaryActionButton(
-                title: 'Continue',
-                isLoading: _loading,
-                onPressed: _selected != null ? _confirm : null,
-                backgroundColor: _selected != null ? ColorTokens.electricBlue : ColorTokens.coolWash,
-                textColor: _selected != null ? Colors.white : ColorTokens.midGray,
+                title: 'Enter DoseLens',
+                onPressed: _continue,
               ),
             ],
           ),
@@ -114,18 +95,20 @@ class _RoleSelectionScreenState extends ConsumerState<RoleSelectionScreen> {
 
 class _RoleCard extends StatelessWidget {
   final UserRole role;
-  final bool selected;
-  final IconData icon;
   final String title;
   final String description;
+  final IconData icon;
+  final String badge;
+  final bool isSelected;
   final VoidCallback onTap;
 
   const _RoleCard({
     required this.role,
-    required this.selected,
-    required this.icon,
     required this.title,
     required this.description,
+    required this.icon,
+    required this.badge,
+    required this.isSelected,
     required this.onTap,
   });
 
@@ -133,48 +116,49 @@ class _RoleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return NeoCard(
       onTap: onTap,
-      borderRadius: AppConstants.radiusCard,
-      borderColor: selected ? ColorTokens.electricBlue : ColorTokens.hairline,
-      backgroundColor: selected ? const Color(0xFFF0F7FF) : ColorTokens.paper,
+      borderColor: isSelected ? ColorTokens.inkBlack : ColorTokens.hairline,
+      backgroundColor: isSelected ? ColorTokens.snow : ColorTokens.snow,
+      padding: const EdgeInsets.all(AppConstants.space20),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 48,
-            height: 48,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
-              color: selected ? ColorTokens.electricBlue : ColorTokens.coolWash,
+              color: isSelected ? ColorTokens.acidGreen : ColorTokens.fog,
               borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+              border: Border.all(color: ColorTokens.inkBlack, width: isSelected ? 1.5 : 0.8),
             ),
-            child: Icon(
-              icon,
-              color: selected ? Colors.white : ColorTokens.primaryInk,
-              size: 22,
-            ),
+            child: Icon(icon, color: ColorTokens.inkBlack, size: 22),
           ),
           const SizedBox(width: AppConstants.space16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: TextStyles.headingMedium.copyWith(
-                    color: selected ? ColorTokens.electricBlue : ColorTokens.primaryInk,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700),
+                    ),
+                    PillChip(
+                      label: badge,
+                      backgroundColor: isSelected ? ColorTokens.acidGreen : ColorTokens.fog,
+                      textColor: ColorTokens.inkBlack,
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 4),
                 Text(
                   description,
-                  style: TextStyles.bodySecondary.copyWith(fontSize: 13, height: 1.45),
+                  style: TextStyles.caption,
                 ),
               ],
             ),
           ),
-          if (selected) ...[
-            const SizedBox(width: 8),
-            const Icon(Icons.check_circle_rounded, color: ColorTokens.electricBlue, size: 20),
-          ],
         ],
       ),
     );

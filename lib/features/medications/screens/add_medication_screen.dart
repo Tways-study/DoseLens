@@ -10,7 +10,7 @@ import '../models/medication.dart';
 import '../providers/medications_provider.dart';
 
 class AddMedicationScreen extends ConsumerStatefulWidget {
-  final Medication? prefilled; // passed from scanner OCR result
+  final Medication? prefilled;
 
   const AddMedicationScreen({super.key, this.prefilled});
 
@@ -67,7 +67,7 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
       await ref.read(medicationsNotifierProvider.notifier).addMedication(med);
       if (mounted) Navigator.pop(context);
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}'), backgroundColor: ColorTokens.vermillion));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -85,11 +85,14 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorTokens.canvas,
+      backgroundColor: ColorTokens.paper,
       appBar: AppBar(
-        title: Text('New Medication.', style: TextStyles.displayMedium.copyWith(fontSize: 22)),
+        backgroundColor: ColorTokens.paper,
+        scrolledUnderElevation: 0,
+        elevation: 0,
+        title: Text('New Medication', style: TextStyles.displayMedium.copyWith(fontSize: 22)),
         leading: IconButton(
-          icon: const Icon(Icons.close_rounded, size: 20, color: ColorTokens.primaryInk),
+          icon: const Icon(Icons.close_rounded, size: 20, color: ColorTokens.inkBlack),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -102,7 +105,6 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 NeoCard(
-                  borderRadius: AppConstants.radiusCard,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -131,7 +133,6 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                 const SizedBox(height: AppConstants.space16),
 
                 NeoCard(
-                  borderRadius: AppConstants.radiusCard,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -176,19 +177,20 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                               decoration: BoxDecoration(
-                                color: ColorTokens.coolWash,
+                                color: ColorTokens.fog,
                                 borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+                                border: Border.all(color: ColorTokens.hairline),
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(Icons.access_time_rounded, size: 18, color: ColorTokens.electricBlue),
+                                  const Icon(Icons.access_time_rounded, size: 18, color: ColorTokens.inkBlack),
                                   const SizedBox(width: 12),
                                   Text(
                                     _times[i].format(context),
-                                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: ColorTokens.primaryInk),
+                                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: ColorTokens.inkBlack),
                                   ),
                                   const Spacer(),
-                                  const Icon(Icons.chevron_right_rounded, size: 18, color: ColorTokens.midGray),
+                                  const Icon(Icons.chevron_right_rounded, size: 18, color: ColorTokens.graphite),
                                 ],
                               ),
                             ),
@@ -197,9 +199,8 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                       ),
                       TextButton.icon(
                         onPressed: _addTime,
-                        icon: const Icon(Icons.add_rounded, size: 18),
-                        label: const Text('Add Time Slot'),
-                        style: TextButton.styleFrom(foregroundColor: ColorTokens.linkBlue),
+                        icon: const Icon(Icons.add_rounded, size: 18, color: ColorTokens.inkBlack),
+                        label: const Text('Add another time', style: TextStyle(color: ColorTokens.inkBlack, fontWeight: FontWeight.w700, fontSize: 13)),
                       ),
                     ],
                   ),
@@ -207,23 +208,22 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                 const SizedBox(height: AppConstants.space16),
 
                 NeoCard(
-                  borderRadius: AppConstants.radiusCard,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const _Label('Prescription Instructions'),
+                      const _Label('Special Instructions'),
                       _Field(
                         controller: _instructionsCtrl,
-                        hint: 'e.g. Take 1 tablet with warm water after meals',
-                        maxLines: 2,
+                        hint: 'e.g. Take with water after meals',
+                        maxLines: 3,
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: AppConstants.space28),
+                const SizedBox(height: AppConstants.space24),
 
                 PrimaryActionButton(
-                  title: 'Save to Schedule',
+                  title: 'Save Prescription',
                   isLoading: _loading,
                   onPressed: _save,
                 ),
@@ -241,10 +241,10 @@ class _Label extends StatelessWidget {
   const _Label(this.text);
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.only(bottom: 6),
         child: Text(
           text,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: ColorTokens.primaryInk, letterSpacing: -0.1),
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: ColorTokens.inkBlack, letterSpacing: -0.1),
         ),
       );
 }
@@ -255,34 +255,25 @@ class _Field extends StatelessWidget {
   final int maxLines;
   final String? Function(String?)? validator;
 
-  const _Field({
-    required this.controller,
-    required this.hint,
-    this.maxLines = 1,
-    this.validator,
-  });
+  const _Field({required this.controller, required this.hint, this.maxLines = 1, this.validator});
 
   @override
   Widget build(BuildContext context) => TextFormField(
         controller: controller,
         maxLines: maxLines,
         validator: validator,
-        style: const TextStyle(fontSize: 15, color: ColorTokens.primaryInk),
+        style: const TextStyle(fontSize: 14, color: ColorTokens.inkBlack, fontWeight: FontWeight.w500),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: const TextStyle(color: ColorTokens.midGray),
+          hintStyle: const TextStyle(color: ColorTokens.ashGray, fontSize: 13),
           filled: true,
-          fillColor: ColorTokens.coolWash,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.radiusMedium), borderSide: BorderSide.none),
-          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.radiusMedium), borderSide: BorderSide.none),
+          fillColor: ColorTokens.fog,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.radiusButton), borderSide: const BorderSide(color: ColorTokens.hairline)),
+          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.radiusButton), borderSide: const BorderSide(color: ColorTokens.hairline)),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
-            borderSide: const BorderSide(color: ColorTokens.electricBlue, width: 1.5),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
-            borderSide: const BorderSide(color: ColorTokens.ember, width: 1.0),
+            borderRadius: BorderRadius.circular(AppConstants.radiusButton),
+            borderSide: const BorderSide(color: ColorTokens.inkBlack, width: 1.5),
           ),
         ),
       );
@@ -296,7 +287,7 @@ class _FrequencyPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final options = [
+    final opts = [
       (MedicationFrequency.onceDaity, 'Once daily'),
       (MedicationFrequency.twiceDaily, 'Twice daily'),
       (MedicationFrequency.threeTimesDaily, '3× daily'),
@@ -306,23 +297,23 @@ class _FrequencyPicker extends StatelessWidget {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: options.map((opt) {
+      children: opts.map((opt) {
         final isSelected = selected == opt.$1;
         return GestureDetector(
           onTap: () => onChanged(opt.$1),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
             decoration: BoxDecoration(
-              color: isSelected ? ColorTokens.electricBlue : ColorTokens.coolWash,
-              borderRadius: BorderRadius.circular(AppConstants.radiusFull),
+              color: isSelected ? ColorTokens.obsidian : ColorTokens.fog,
+              borderRadius: BorderRadius.circular(AppConstants.radiusButton),
+              border: Border.all(color: isSelected ? ColorTokens.obsidian : ColorTokens.hairline),
             ),
             child: Text(
               opt.$2,
               style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: isSelected ? Colors.white : ColorTokens.primaryInk,
-                letterSpacing: -0.1,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: isSelected ? Colors.white : ColorTokens.inkBlack,
               ),
             ),
           ),

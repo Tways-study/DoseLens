@@ -30,7 +30,7 @@ class PdfService {
                     children: [
                       pw.Text(
                         'DOSELENS CLINICAL PASSPORT',
-                        style: pw.TextStyle(
+                        style: const pw.TextStyle(
                           fontSize: 20,
                           fontWeight: pw.FontWeight.bold,
                           color: PdfColors.blueGrey900,
@@ -73,7 +73,7 @@ class PdfService {
               // Active Medications Section
               pw.Text(
                 'Active Medications',
-                style: pw.TextStyle(
+                style: const pw.TextStyle(
                   fontSize: 16,
                   fontWeight: pw.FontWeight.bold,
                   color: PdfColors.blueGrey800,
@@ -91,7 +91,7 @@ class PdfService {
                           med['instructions'] ?? '',
                         ])
                     .toList(),
-                headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                headerStyle: const pw.TextStyle(fontWeight: pw.FontWeight.bold),
                 headerDecoration:
                     const pw.BoxDecoration(color: PdfColors.grey100),
                 cellHeight: 30,
@@ -100,7 +100,7 @@ class PdfService {
               pw.SizedBox(height: 24),
               pw.Text(
                 'Recent Adherence Log (30 Days)',
-                style: pw.TextStyle(
+                style: const pw.TextStyle(
                   fontSize: 16,
                   fontWeight: pw.FontWeight.bold,
                   color: PdfColors.blueGrey800,
@@ -118,7 +118,7 @@ class PdfService {
                           log['status'] ?? '',
                         ])
                     .toList(),
-                headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                headerStyle: const pw.TextStyle(fontWeight: pw.FontWeight.bold),
                 headerDecoration:
                     const pw.BoxDecoration(color: PdfColors.grey100),
                 cellHeight: 28,

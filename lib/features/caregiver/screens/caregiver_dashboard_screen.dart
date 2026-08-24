@@ -8,7 +8,6 @@ import '../../../core/utils/validators.dart';
 import '../../../core/widgets/neo_card.dart';
 import '../../../core/widgets/pill_chip.dart';
 import '../../../core/widgets/section_header.dart';
-import '../../../core/widgets/status_badge.dart';
 import '../../../features/auth/providers/auth_provider.dart';
 import '../models/caregiver_link.dart';
 import '../providers/caregiver_provider.dart';
@@ -23,41 +22,49 @@ class CaregiverDashboardScreen extends ConsumerWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: ColorTokens.canvas,
+        backgroundColor: ColorTokens.paper,
         appBar: AppBar(
-          backgroundColor: ColorTokens.canvas,
+          backgroundColor: ColorTokens.paper,
           scrolledUnderElevation: 0,
           elevation: 0,
-          title: Text(
-            'Caregiver.',
-            style: TextStyles.displayMedium.copyWith(
-              color: ColorTokens.primaryInk,
-              fontWeight: FontWeight.w700,
-              fontSize: 28,
-            ),
+          title: Row(
+            children: [
+              Container(
+                width: 10,
+                height: 10,
+                decoration: const BoxDecoration(
+                  color: ColorTokens.acidGreen,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Caregiver Link',
+                style: TextStyles.displayMedium.copyWith(fontSize: 24),
+              ),
+            ],
           ),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(48),
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: AppConstants.space20, vertical: 6),
               decoration: BoxDecoration(
-                color: ColorTokens.coolWash,
-                borderRadius: BorderRadius.circular(AppConstants.radiusFull),
+                color: ColorTokens.fog,
+                borderRadius: BorderRadius.circular(AppConstants.radiusButton),
+                border: Border.all(color: ColorTokens.hairline),
               ),
               child: TabBar(
-                dividerColor: Colors.transparent,
-                indicatorSize: TabBarIndicatorSize.tab,
                 indicator: BoxDecoration(
-                  color: ColorTokens.paper,
-                  borderRadius: BorderRadius.circular(AppConstants.radiusFull),
-                  boxShadow: const [ColorTokens.cardShadow],
+                  color: ColorTokens.obsidian,
+                  borderRadius: BorderRadius.circular(AppConstants.radiusButton),
                 ),
-                labelColor: ColorTokens.primaryInk,
-                labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-                unselectedLabelColor: ColorTokens.midGray,
-                unselectedLabelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+                indicatorSize: TabBarIndicatorSize.tab,
+                labelColor: Colors.white,
+                unselectedLabelColor: ColorTokens.inkBlack,
+                labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                dividerColor: Colors.transparent,
                 tabs: const [
-                  Tab(text: 'Patients I Monitor'),
+                  Tab(text: 'Monitored Patients'),
                   Tab(text: 'My Caregivers'),
                 ],
               ),
@@ -66,8 +73,8 @@ class CaregiverDashboardScreen extends ConsumerWidget {
         ),
         body: const TabBarView(
           children: [
-            _CaregiverView(),
-            _PatientView(),
+            _MonitoredPatientsTab(),
+            _MyCaregiversTab(),
           ],
         ),
       ),
@@ -75,48 +82,56 @@ class CaregiverDashboardScreen extends ConsumerWidget {
   }
 }
 
-// ─── Caregiver View: Monitor linked patients ──────────────────────────────────
-
-class _CaregiverView extends ConsumerWidget {
-  const _CaregiverView();
+class _MonitoredPatientsTab extends ConsumerWidget {
+  const _MonitoredPatientsTab();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final linksAsync = ref.watch(myLinkedPatientsProvider);
+    final patientsAsync = ref.watch(monitoredPatientsProvider);
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(AppConstants.space20, AppConstants.space16, AppConstants.space20, 100),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          linksAsync.when(
-            loading: () => const Center(
-              child: Padding(
-                padding: EdgeInsets.all(32),
-                child: CircularProgressIndicator(color: ColorTokens.electricBlue, strokeWidth: 2),
-              ),
+    return patientsAsync.when(
+      data: (patients) {
+        if (patients.isEmpty) {
+          return Padding(
+            padding: const EdgeInsets.all(AppConstants.space24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+                  child: SizedBox(
+                    width: 90,
+                    height: 90,
+                    child: Image.asset(
+                      'assets/images/craftwork_caregiver_heart.jpg',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppConstants.space16),
+                Text('No Linked Patients', style: TextStyles.headingMedium),
+                const SizedBox(height: 6),
+                Text(
+                  'When a family member or patient grants you caregiver access, their real-time telemetry will appear here.',
+                  style: TextStyles.caption,
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
-            error: (e, _) => _ErrorBanner(message: e.toString()),
-            data: (links) {
-              if (links.isEmpty) {
-                return const _EmptyState(
-                  icon: Icons.favorite_border_rounded,
-                  title: 'No patients linked yet.',
-                  subtitle: 'Ask the patient to invite you from their "My Caregivers" tab.',
-                );
-              }
-              return Column(
-                children: links
-                    .map((link) => Padding(
-                          padding: const EdgeInsets.only(bottom: AppConstants.space16),
-                          child: _PatientMonitorCard(link: link),
-                        ))
-                    .toList(),
-              );
-            },
-          ),
-        ],
-      ),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.fromLTRB(AppConstants.space20, AppConstants.space16, AppConstants.space20, 100),
+          itemCount: patients.length,
+          itemBuilder: (context, idx) {
+            final link = patients[idx];
+            return _PatientMonitorCard(link: link);
+          },
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator(color: ColorTokens.inkBlack)),
+      error: (e, _) => Center(child: Text('Error: $e')),
     );
   }
 }
@@ -129,371 +144,287 @@ class _PatientMonitorCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final missedAsync = ref.watch(patientMissedDosesProvider(link.patientId));
 
-    return NeoCard(
-      borderRadius: AppConstants.radiusCard,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Patient header
-          Row(
-            children: [
-              CircleAvatar(
-                backgroundColor: const Color(0xFFF0F7FF),
-                child: const Icon(Icons.person_rounded, color: ColorTokens.electricBlue, size: 20),
-              ),
-              const SizedBox(width: AppConstants.space12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppConstants.space16),
+      child: NeoCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
                   children: [
-                    Text(
-                      'Patient ID: ...${link.patientId.substring(link.patientId.length > 8 ? link.patientId.length - 8 : 0)}',
-                      style: TextStyles.labelLarge,
+                    Container(
+                      width: 38,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        color: ColorTokens.fog,
+                        borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+                        border: Border.all(color: ColorTokens.hairline),
+                      ),
+                      child: const Center(
+                        child: Icon(Icons.person_rounded, color: ColorTokens.inkBlack, size: 20),
+                      ),
                     ),
-                    Text(
-                      'Linked since ${DateFormatters.formatDate(link.createdAt)}',
-                      style: TextStyles.caption,
+                    const SizedBox(width: 10),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          link.patientEmail,
+                          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                        ),
+                        Text('Linked on ${DateFormatters.formatShortDate(link.createdAt)}', style: TextStyles.caption),
+                      ],
                     ),
                   ],
                 ),
-              ),
-              PillChip(
-                label: 'Active',
-                backgroundColor: ColorTokens.mintSuccessBg,
-                textColor: ColorTokens.mintSuccess,
-                borderColor: ColorTokens.mintSuccessBorder,
-              ),
-            ],
-          ),
+                const PillChip(
+                  label: 'Live Heartbeat',
+                  backgroundColor: ColorTokens.acidGreen,
+                  textColor: ColorTokens.inkBlack,
+                  borderColor: ColorTokens.inkBlack,
+                ),
+              ],
+            ),
+            const SizedBox(height: AppConstants.space16),
 
-          // Missed doses in last 24h
-          const SizedBox(height: AppConstants.space16),
-          missedAsync.when(
-            loading: () => const LinearProgressIndicator(color: ColorTokens.electricBlue, minHeight: 2),
-            error: (_, __) => const SizedBox.shrink(),
-            data: (missed) {
-              if (missed.isEmpty) {
-                return Row(
-                  children: [
-                    const Icon(Icons.check_circle_rounded, color: ColorTokens.mintSuccess, size: 16),
-                    const SizedBox(width: 8),
-                    Text(
-                      'No missed doses in the last 24 hours',
-                      style: TextStyles.caption.copyWith(color: ColorTokens.mintSuccess, fontWeight: FontWeight.w600),
+            // Missed doses section
+            missedAsync.when(
+              data: (missed) {
+                if (missed.isEmpty) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: ColorTokens.mintSuccessBg,
+                      borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+                      border: Border.all(color: ColorTokens.mintSuccessBorder),
                     ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.check_circle_outline_rounded, color: ColorTokens.mintSuccess, size: 16),
+                        SizedBox(width: 8),
+                        Text('All doses taken on schedule today!', style: TextStyle(color: ColorTokens.mintSuccess, fontSize: 12, fontWeight: FontWeight.w600)),
+                      ],
+                    ),
+                  );
+                }
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.warning_amber_rounded, color: ColorTokens.vermillion, size: 16),
+                        const SizedBox(width: 6),
+                        Text('${missed.length} Missed Dose Alert(s)', style: const TextStyle(color: ColorTokens.vermillion, fontWeight: FontWeight.w700, fontSize: 13)),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    ...missed.map((log) => Padding(
+                          padding: const EdgeInsets.only(bottom: 6),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: ColorTokens.vermillionBg,
+                              borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+                              border: Border.all(color: ColorTokens.vermillionBorder),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(log.medicationName, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: ColorTokens.inkBlack)),
+                                Text(DateFormatters.formatTime(log.scheduledTime), style: const TextStyle(color: ColorTokens.vermillion, fontWeight: FontWeight.w600, fontSize: 12)),
+                              ],
+                            ),
+                          ),
+                        )),
                   ],
                 );
-              }
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.warning_amber_rounded, color: ColorTokens.ember, size: 16),
-                      const SizedBox(width: 8),
-                      Text(
-                        '${missed.length} missed dose${missed.length > 1 ? 's' : ''} in 24h',
-                        style: TextStyles.caption.copyWith(color: ColorTokens.ember, fontWeight: FontWeight.w700),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  ...missed.take(3).map((log) => Padding(
-                        padding: const EdgeInsets.only(bottom: 6),
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: ColorTokens.emberBg,
-                            borderRadius: BorderRadius.circular(AppConstants.radiusSmall),
-                            border: Border.all(color: ColorTokens.emberBorder, width: 0.8),
-                          ),
-                          child: Row(
-                            children: [
-                              const StatusBadge(status: AdherenceStatus.missed),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Text(
-                                  log.medicationName,
-                                  style: TextStyles.labelLarge.copyWith(fontSize: 13),
-                                ),
-                              ),
-                              Text(
-                                DateFormatters.formatTime(log.scheduledTime),
-                                style: TextStyles.caption,
-                              ),
-                            ],
-                          ),
-                        ),
-                      )),
-                ],
-              );
-            },
-          ),
-        ],
+              },
+              loading: () => const SizedBox(height: 24),
+              error: (e, _) => Text('Failed to load telemetry: $e'),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-// ─── Patient View: Manage my caregivers ───────────────────────────────────────
-
-class _PatientView extends ConsumerWidget {
-  const _PatientView();
+class _MyCaregiversTab extends ConsumerWidget {
+  const _MyCaregiversTab();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final linksAsync = ref.watch(myCaregiversProvider);
-    final user = ref.watch(firebaseAuthStateProvider).valueOrNull;
+    final caregiversAsync = ref.watch(myCaregiversProvider);
 
-    return SingleChildScrollView(
+    return ListView(
       padding: const EdgeInsets.fromLTRB(AppConstants.space20, AppConstants.space16, AppConstants.space20, 100),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          NeoCard(
-            borderRadius: AppConstants.radiusCard,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Invite a Caregiver',
-                  style: TextStyles.headingMedium.copyWith(fontSize: 16),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Share adherence telemetry with a family member or physician.',
-                  style: TextStyles.bodySecondary.copyWith(fontSize: 13),
-                ),
-                const SizedBox(height: AppConstants.space16),
-                _InviteButton(patientId: user?.uid ?? ''),
-              ],
-            ),
-          ),
-          const SizedBox(height: AppConstants.space28),
-          SectionHeader(title: 'Active Caregivers', subtitle: 'Persons with remote heartbeat access'),
-          const SizedBox(height: AppConstants.space8),
-          linksAsync.when(
-            loading: () => const Center(
-              child: Padding(
-                padding: EdgeInsets.all(32),
-                child: CircularProgressIndicator(color: ColorTokens.electricBlue, strokeWidth: 2),
-              ),
-            ),
-            error: (e, _) => _ErrorBanner(message: e.toString()),
-            data: (links) {
-              if (links.isEmpty) {
-                return const _EmptyState(
-                  icon: Icons.group_outlined,
-                  title: 'No caregivers invited yet.',
-                  subtitle: 'Invite someone to monitor your medication adherence heartbeat.',
-                );
-              }
-              return Column(
-                children: links
-                    .map((link) => Padding(
-                          padding: const EdgeInsets.only(bottom: AppConstants.space12),
-                          child: _CaregiverLinkCard(link: link),
-                        ))
-                    .toList(),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _InviteButton extends ConsumerStatefulWidget {
-  final String patientId;
-  const _InviteButton({required this.patientId});
-
-  @override
-  ConsumerState<_InviteButton> createState() => _InviteButtonState();
-}
-
-class _InviteButtonState extends ConsumerState<_InviteButton> {
-  final _emailCtrl = TextEditingController();
-  bool _loading = false;
-
-  @override
-  void dispose() {
-    _emailCtrl.dispose();
-    super.dispose();
-  }
-
-  Future<void> _invite() async {
-    final email = _emailCtrl.text.trim();
-    if (Validators.email(email) != null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Enter a valid email address')));
-      return;
-    }
-    setState(() => _loading = true);
-    try {
-      await ref.read(caregiverNotifierProvider.notifier).inviteCaregiver(
-            patientId: widget.patientId,
-            caregiverEmail: email,
-          );
-      _emailCtrl.clear();
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Invitation sent to $email'),
-            backgroundColor: ColorTokens.electricBlue,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusMedium)),
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
-    } finally {
-      if (mounted) setState(() => _loading = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
       children: [
-        Expanded(
-          child: TextFormField(
-            controller: _emailCtrl,
-            keyboardType: TextInputType.emailAddress,
-            style: const TextStyle(fontSize: 14, color: ColorTokens.primaryInk),
-            decoration: InputDecoration(
-              hintText: 'caregiver@email.com',
-              hintStyle: const TextStyle(color: ColorTokens.midGray),
-              filled: true,
-              fillColor: ColorTokens.coolWash,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.radiusMedium), borderSide: BorderSide.none),
-              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.radiusMedium), borderSide: BorderSide.none),
-              focusedBorder: OutlineInputBorder(
+        // Telemetry info banner
+        NeoCard(
+          child: Row(
+            children: [
+              ClipRRect(
                 borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
-                borderSide: const BorderSide(color: ColorTokens.electricBlue, width: 1.5),
+                child: SizedBox(
+                  width: 56,
+                  height: 56,
+                  child: Image.asset(
+                    'assets/images/craftwork_caregiver_heart.jpg',
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(width: AppConstants.space16),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Remote Heartbeat Alerts', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+                    SizedBox(height: 2),
+                    Text(
+                      'Your caregivers will be alerted automatically if any critical dose is missed.',
+                      style: TextStyle(fontSize: 12, color: ColorTokens.graphite),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(width: AppConstants.space12),
-        SizedBox(
-          height: 46,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: ColorTokens.electricBlue,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusPill)),
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+        const SizedBox(height: AppConstants.space20),
+
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const SectionHeader(
+              title: 'Authorized Caregivers',
             ),
-            onPressed: _loading ? null : _invite,
-            child: _loading
-                ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                : const Text('Invite', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 14)),
-          ),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.add_rounded, size: 16, color: ColorTokens.inkBlack),
+              label: const Text('Invite', style: TextStyle(color: ColorTokens.inkBlack, fontWeight: FontWeight.w700, fontSize: 12)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ColorTokens.acidGreen,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusFull)),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              ),
+              onPressed: () => _showInviteDialog(context, ref),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppConstants.space8),
+
+        caregiversAsync.when(
+          data: (caregivers) {
+            if (caregivers.isEmpty) {
+              return const NeoCard(
+                child: Center(
+                  child: Text('No caregivers linked yet. Tap Invite above to share access.', style: TextStyle(color: ColorTokens.graphite, fontSize: 13)),
+                ),
+              );
+            }
+            return Column(
+              children: caregivers.map((link) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: NeoCard(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(link.caregiverEmail, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+                            Text('Status: ${link.status.name}', style: TextStyles.caption),
+                          ],
+                        ),
+                        PillChip(
+                          label: link.status.name.toUpperCase(),
+                          backgroundColor: link.status == CaregiverLinkStatus.active ? ColorTokens.acidGreen : ColorTokens.fog,
+                          textColor: ColorTokens.inkBlack,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            );
+          },
+          loading: () => const SizedBox(height: 60),
+          error: (e, _) => Text('Error: $e'),
         ),
       ],
     );
   }
-}
 
-class _CaregiverLinkCard extends ConsumerWidget {
-  final CaregiverLink link;
-  const _CaregiverLinkCard({required this.link});
+  void _showInviteDialog(BuildContext context, WidgetRef ref) {
+    final emailCtrl = TextEditingController();
+    final formKey = GlobalKey<FormState>();
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isPending = link.status == CaregiverLinkStatus.pending;
-    return NeoCard(
-      borderRadius: AppConstants.radiusCard,
-      child: Row(
-        children: [
-          CircleAvatar(
-            backgroundColor: ColorTokens.coolWash,
-            child: Text(
-              link.caregiverEmail.substring(0, 1).toUpperCase(),
-              style: const TextStyle(fontWeight: FontWeight.w700, color: ColorTokens.primaryInk),
-            ),
-          ),
-          const SizedBox(width: AppConstants.space12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  link.caregiverEmail,
-                  style: TextStyles.labelLarge,
-                ),
-                Text(
-                  DateFormatters.formatDate(link.createdAt),
-                  style: TextStyles.caption,
-                ),
-              ],
-            ),
-          ),
-          PillChip(
-            label: isPending ? 'Pending' : link.status.name[0].toUpperCase() + link.status.name.substring(1),
-            backgroundColor: isPending ? ColorTokens.warningAmberBg : ColorTokens.mintSuccessBg,
-            textColor: isPending ? ColorTokens.warningAmber : ColorTokens.mintSuccess,
-            borderColor: isPending ? ColorTokens.warningAmberBorder : ColorTokens.mintSuccessBorder,
-          ),
-          const SizedBox(width: 8),
-          IconButton(
-            icon: const Icon(Icons.remove_circle_outline_rounded, color: ColorTokens.ember, size: 20),
-            onPressed: () async {
-              await ref.read(caregiverNotifierProvider.notifier).revokeLink(link.id);
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _EmptyState extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  const _EmptyState({required this.icon, required this.title, required this.subtitle});
-
-  @override
-  Widget build(BuildContext context) {
-    return NeoCard(
-      borderRadius: AppConstants.radiusCard,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 16),
-        child: Center(
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: ColorTokens.snow,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppConstants.radiusCard),
+          side: const BorderSide(color: ColorTokens.hairline),
+        ),
+        title: const Text('Invite Caregiver', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: ColorTokens.inkBlack)),
+        content: Form(
+          key: formKey,
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 36, color: ColorTokens.midGray),
-              const SizedBox(height: AppConstants.space12),
-              Text(
-                title,
-                style: TextStyles.headingMedium,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                subtitle,
-                style: TextStyles.caption,
-                textAlign: TextAlign.center,
+              const Text('Enter your caregiver\'s email to send them a monitoring link.', style: TextStyle(fontSize: 13, color: ColorTokens.graphite)),
+              const SizedBox(height: AppConstants.space16),
+              TextFormField(
+                controller: emailCtrl,
+                validator: Validators.email,
+                decoration: const InputDecoration(
+                  labelText: 'Caregiver Email',
+                  hintText: 'e.g. daughter@example.com',
+                ),
               ),
             ],
           ),
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel', style: TextStyle(color: ColorTokens.graphite)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: ColorTokens.acidGreen,
+              foregroundColor: ColorTokens.inkBlack,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusButton)),
+            ),
+            onPressed: () async {
+              if (!formKey.currentState!.validate()) return;
+              try {
+                final user = ref.read(firebaseAuthStateProvider).valueOrNull;
+                if (user != null) {
+                  await ref.read(caregiverNotifierProvider.notifier).inviteCaregiver(
+                        patientId: user.uid,
+                        patientEmail: user.email ?? '',
+                        caregiverEmail: emailCtrl.text.trim(),
+                      );
+                }
+                if (ctx.mounted) Navigator.pop(ctx);
+              } catch (e) {
+                if (ctx.mounted) {
+                  ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text('Error: $e')));
+                }
+              }
+            },
+            child: const Text('Send Invite', style: TextStyle(fontWeight: FontWeight.w700)),
+          ),
+        ],
       ),
-    );
-  }
-}
-
-class _ErrorBanner extends StatelessWidget {
-  final String message;
-  const _ErrorBanner({required this.message});
-  @override
-  Widget build(BuildContext context) {
-    return NeoCard(
-      borderRadius: AppConstants.radiusCard,
-      borderColor: ColorTokens.emberBorder,
-      backgroundColor: ColorTokens.emberBg,
-      child: Text(message, style: const TextStyle(color: ColorTokens.ember, fontSize: 13)),
     );
   }
 }
