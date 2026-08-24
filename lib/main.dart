@@ -61,7 +61,7 @@ class _AuthGate extends ConsumerWidget {
   }
 }
 
-/// Main bottom navigation shell with prominent CENTERED Scan action button
+/// Main bottom navigation shell with Prominent Floating Action Pill
 class MainAppShell extends StatefulWidget {
   const MainAppShell({super.key});
 
@@ -86,13 +86,11 @@ class _MainAppShellState extends State<MainAppShell> {
         index: _currentIndex,
         children: _screens,
       ),
-      // Prominent Centered Scan Button
+      // Prominent Extended Floating Action Pill with Laser Cyan Glow
       floatingActionButton: Container(
-        height: 60,
-        width: 60,
-        margin: const EdgeInsets.only(top: 18),
+        margin: const EdgeInsets.only(bottom: 8),
         decoration: BoxDecoration(
-          shape: BoxShape.circle,
+          borderRadius: BorderRadius.circular(AppConstants.radiusFull),
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -102,45 +100,76 @@ class _MainAppShellState extends State<MainAppShell> {
             ],
           ),
           border: Border.all(
-            color: ColorTokens.cyanLaser.withValues(alpha: 0.9),
-            width: 2.2,
+            color: ColorTokens.cyanLaser.withValues(alpha: 0.95),
+            width: 1.8,
           ),
           boxShadow: const [
             BoxShadow(
-              color: Color(0x400284C7),
-              blurRadius: 14,
-              offset: Offset(0, 5),
+              color: Color(0x4D0284C7),
+              blurRadius: 18,
+              offset: Offset(0, 6),
             ),
           ],
         ),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(AppConstants.radiusFull),
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const ScannerScreen()),
             ),
-            child: const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.document_scanner_rounded, color: Colors.white, size: 24),
-                SizedBox(height: 1),
-                Text(
-                  'SCAN',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 8.5,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.6,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.18),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.qr_code_scanner_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 10),
+                  const Text(
+                    'Scan Medication',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: ColorTokens.cyanLaser,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: const Text(
+                      'AI',
+                      style: TextStyle(
+                        color: ColorTokens.midnightObsidian,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           color: ColorTokens.snow,
@@ -150,41 +179,27 @@ class _MainAppShellState extends State<MainAppShell> {
         ),
         child: SafeArea(
           child: SizedBox(
-            height: 64,
+            height: 60,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                // Tab 0: Today
-                Expanded(
-                  child: _NavBarItem(
-                    icon: Icons.calendar_today_rounded,
-                    label: 'Today',
-                    isSelected: _currentIndex == 0,
-                    onTap: () => setState(() => _currentIndex = 0),
-                  ),
+                _NavBarItem(
+                  icon: Icons.calendar_today_rounded,
+                  label: 'Today',
+                  isSelected: _currentIndex == 0,
+                  onTap: () => setState(() => _currentIndex = 0),
                 ),
-
-                // Tab 1: Passport
-                Expanded(
-                  child: _NavBarItem(
-                    icon: Icons.verified_user_outlined,
-                    label: 'Passport',
-                    isSelected: _currentIndex == 1,
-                    onTap: () => setState(() => _currentIndex = 1),
-                  ),
+                _NavBarItem(
+                  icon: Icons.verified_user_outlined,
+                  label: 'Passport',
+                  isSelected: _currentIndex == 1,
+                  onTap: () => setState(() => _currentIndex = 1),
                 ),
-
-                // Center Spacer reserved for the floating Scan button
-                const SizedBox(width: 72),
-
-                // Tab 2: Caregiver
-                Expanded(
-                  child: _NavBarItem(
-                    icon: Icons.favorite_border_rounded,
-                    label: 'Caregiver',
-                    isSelected: _currentIndex == 2,
-                    onTap: () => setState(() => _currentIndex = 2),
-                  ),
+                _NavBarItem(
+                  icon: Icons.favorite_border_rounded,
+                  label: 'Caregiver',
+                  isSelected: _currentIndex == 2,
+                  onTap: () => setState(() => _currentIndex = 2),
                 ),
               ],
             ),
@@ -214,7 +229,7 @@ class _NavBarItem extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppConstants.radiusButton),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
