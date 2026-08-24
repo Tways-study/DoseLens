@@ -26,20 +26,27 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: ColorTokens.canvas,
       appBar: AppBar(
+        backgroundColor: ColorTokens.canvas,
+        scrolledUnderElevation: 0,
+        elevation: 0,
         title: Text(
           'Today.',
-          style: TextStyles.displayMedium,
+          style: TextStyles.displayMedium.copyWith(
+            color: ColorTokens.primaryInk,
+            fontWeight: FontWeight.w700,
+            fontSize: 28,
+          ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add_rounded, color: ColorTokens.primaryInk, size: 24),
+            icon: const Icon(Icons.add_circle_outline_rounded, color: ColorTokens.electricBlue, size: 26),
             tooltip: 'Add Medication',
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const AddMedicationScreen()),
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 12),
         ],
       ),
       body: RefreshIndicator(

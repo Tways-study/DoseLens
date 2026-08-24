@@ -8,7 +8,7 @@ class TextStyles {
   TextStyles._();
 
   // ── Display & Hero Headlines (Inter / SF Pro Display) ──────────────────
-  /// 40px Display Headline with tight tracking (-0.8px)
+  /// 36px Display Headline with tight tracking (-1.0px)
   static TextStyle displayLarge = GoogleFonts.inter(
     fontSize: 36,
     fontWeight: FontWeight.w700,

@@ -26,7 +26,17 @@ class PassportScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: ColorTokens.canvas,
       appBar: AppBar(
-        title: Text('Passport.', style: TextStyles.displayMedium),
+        backgroundColor: ColorTokens.canvas,
+        scrolledUnderElevation: 0,
+        elevation: 0,
+        title: Text(
+          'Passport.',
+          style: TextStyles.displayMedium.copyWith(
+            color: ColorTokens.primaryInk,
+            fontWeight: FontWeight.w700,
+            fontSize: 28,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(AppConstants.space20, AppConstants.space8, AppConstants.space20, 100),

@@ -25,7 +25,17 @@ class CaregiverDashboardScreen extends ConsumerWidget {
       child: Scaffold(
         backgroundColor: ColorTokens.canvas,
         appBar: AppBar(
-          title: Text('Caregiver.', style: TextStyles.displayMedium),
+          backgroundColor: ColorTokens.canvas,
+          scrolledUnderElevation: 0,
+          elevation: 0,
+          title: Text(
+            'Caregiver.',
+            style: TextStyles.displayMedium.copyWith(
+              color: ColorTokens.primaryInk,
+              fontWeight: FontWeight.w700,
+              fontSize: 28,
+            ),
+          ),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(48),
             child: Container(
