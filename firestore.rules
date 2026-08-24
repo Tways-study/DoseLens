@@ -1,0 +1,60 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Base helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // 1. Users Collection
+    match /users/{userId} {
+      // Users can only read and write their own profile document
+      allow read, write: if isOwner(userId);
+      
+      // 1.1 Medications Subcollection
+      match /medications/{medId} {
+        allow read, write: if isOwner(userId);
+      }
+      
+      // 1.2 Adherence Logs Subcollection
+      match /adherence_logs/{logId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // 2. Caregiver Links Collection
+    match /caregiver_links/{linkId} {
+      // A user can read a link if they are either the patient OR the caregiver
+      allow read: if isAuthenticated() && 
+                  (resource.data.patientId == request.auth.uid || 
+                   resource.data.caregiverId == request.auth.uid ||
+                   resource.data.caregiverEmail == request.auth.token.email);
+      
+      // A user can create a link if they are setting themselves as the patient
+      allow create: if isAuthenticated() && request.resource.data.patientId == request.auth.uid;
+      
+      // A user can update/delete a link if they are the patient OR the caregiver
+      allow update, delete: if isAuthenticated() && 
+                            (resource.data.patientId == request.auth.uid || 
+                             resource.data.caregiverId == request.auth.uid);
+    }
+
+    // 3. Passports Collection (if used)
+    match /passports/{passportId} {
+      // Assuming passports have a userId field
+      allow read, write: if isAuthenticated() && 
+                         (resource.data.userId == request.auth.uid || request.resource.data.userId == request.auth.uid);
+    }
+    
+    // Default deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,25 @@
+rules_version = '2';
+
+// Craft rules based on the specific paths used in DoseLens
+// Users can only access their own storage folder (users/{userId}/*)
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper function to check if user is authenticated and owns the path
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    match /users/{userId} {
+      match /{allPaths=**} {
+        // Only the owner can read, write, or delete files in their own directory
+        allow read, write: if isOwner(userId);
+      }
+    }
+    
+    // Default deny all other access
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
