@@ -1,0 +1,4 @@
+- Always use Flutter Riverpod (v2.x) with code generation.
+- Enforce the Refero-inspired Neo-Utility design system (8pt grid, 18px card radii, 1px subtle borders).
+- Never place hardcoded API keys or secrets in Dart files.
+- Implement full error handling and loading skeletons for every async operation.
