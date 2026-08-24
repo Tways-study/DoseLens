@@ -76,6 +76,27 @@ class MedicationsNotifier extends AsyncNotifier<void> {
     await firestore.medicationsCollection(user.uid).doc(medId).update({'active': false});
   }
 
+  Future<void> logAdherence({
+    required String medicationId,
+    required String medicationName,
+    required AdherenceStatus status,
+    String? notes,
+  }) async {
+    final user = ref.read(firebaseAuthStateProvider).valueOrNull;
+    if (user == null) return;
+    final firestore = ref.read(firestoreServiceProvider);
+    final log = AdherenceLog(
+      id: '',
+      medicationId: medicationId,
+      medicationName: medicationName,
+      scheduledTime: DateTime.now(),
+      takenTime: status == AdherenceStatus.taken ? DateTime.now() : null,
+      status: status,
+      notes: notes,
+    );
+    await firestore.adherenceLogsCollection(user.uid).add(log.toFirestore());
+  }
+
   Future<void> logDose({
     required String userId,
     required AdherenceLog log,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/color_tokens.dart';
+import '../../../core/theme/text_styles.dart';
 import '../../../core/widgets/neo_card.dart';
 import '../../../core/widgets/pill_chip.dart';
 import '../models/medication.dart';
@@ -16,98 +18,120 @@ class MedicationDetailScreen extends ConsumerWidget {
     final rateAsync = ref.watch(adherenceRateProvider);
 
     return Scaffold(
-      backgroundColor: ColorTokens.backgroundLight,
+      backgroundColor: ColorTokens.canvas,
       appBar: AppBar(
-        title: const Text('Medication Detail', style: TextStyle(fontWeight: FontWeight.w700, color: ColorTokens.textPrimaryLight)),
-        leading: IconButton(icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20), onPressed: () => Navigator.pop(context)),
+        title: Text('Details.', style: TextStyles.displayMedium.copyWith(fontSize: 22)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: ColorTokens.primaryInk),
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.delete_outline_rounded, color: ColorTokens.alertCoral),
+            icon: const Icon(Icons.delete_outline_rounded, color: ColorTokens.ember, size: 22),
             onPressed: () => _confirmDelete(context, ref),
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppConstants.space20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header card
+            // Header card (28px radius)
             NeoCard(
+              borderRadius: AppConstants.radiusCard,
+              padding: const EdgeInsets.all(AppConstants.space24),
               child: Row(
                 children: [
                   Container(
                     width: 56,
                     height: 56,
                     decoration: BoxDecoration(
-                      color: ColorTokens.primaryTeal.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(14),
+                      color: const Color(0xFFF0F7FF),
+                      borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
                     ),
-                    child: const Icon(Icons.medication_liquid_rounded, color: ColorTokens.primaryTeal, size: 28),
+                    child: const Icon(Icons.medication_liquid_rounded, color: ColorTokens.electricBlue, size: 28),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: AppConstants.space16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(medication.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: ColorTokens.textPrimaryLight)),
+                        Text(
+                          medication.name,
+                          style: TextStyles.headingLarge,
+                        ),
                         if (medication.genericName != null) ...[
                           const SizedBox(height: 3),
-                          Text(medication.genericName!, style: const TextStyle(fontSize: 13, color: ColorTokens.textSecondaryLight)),
+                          Text(
+                            medication.genericName!,
+                            style: TextStyles.caption,
+                          ),
                         ],
                       ],
                     ),
                   ),
                   PillChip(
                     label: medication.active ? 'Active' : 'Inactive',
-                    backgroundColor: medication.active ? ColorTokens.mintSuccessBg : const Color(0xFFF3F4F6),
-                    textColor: medication.active ? ColorTokens.mintSuccess : ColorTokens.textSecondaryLight,
-                    borderColor: medication.active ? ColorTokens.mintSuccessBorder : ColorTokens.borderLight,
+                    backgroundColor: medication.active ? ColorTokens.mintSuccessBg : ColorTokens.coolWash,
+                    textColor: medication.active ? ColorTokens.mintSuccess : ColorTokens.midGray,
+                    borderColor: medication.active ? ColorTokens.mintSuccessBorder : ColorTokens.hairline,
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppConstants.space16),
 
-            // Details
+            // Clinical Prescription Details Card
             NeoCard(
+              borderRadius: AppConstants.radiusCard,
               child: Column(
                 children: [
                   _DetailRow(icon: Icons.scale_rounded, label: 'Dosage', value: medication.dosage),
-                  const Divider(color: ColorTokens.borderLight),
+                  const Divider(color: ColorTokens.hairline),
                   _DetailRow(icon: Icons.repeat_rounded, label: 'Frequency', value: medication.frequencyLabel),
-                  const Divider(color: ColorTokens.borderLight),
-                  _DetailRow(icon: Icons.access_time_rounded, label: 'Schedule', value: medication.times.join(' · ')),
+                  const Divider(color: ColorTokens.hairline),
+                  _DetailRow(icon: Icons.access_time_rounded, label: 'Scheduled Times', value: medication.times.join(' · ')),
                   if (medication.instructions != null) ...[
-                    const Divider(color: ColorTokens.borderLight),
+                    const Divider(color: ColorTokens.hairline),
                     _DetailRow(icon: Icons.info_outline_rounded, label: 'Instructions', value: medication.instructions!),
                   ],
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppConstants.space16),
 
-            // Adherence
+            // 30-Day Adherence Card
             rateAsync.when(
               loading: () => const SizedBox.shrink(),
               error: (_, __) => const SizedBox.shrink(),
               data: (rate) => NeoCard(
+                borderRadius: AppConstants.radiusCard,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('30-Day Adherence', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: ColorTokens.textSecondaryLight)),
+                    Text(
+                      '30-Day Adherence Rate',
+                      style: TextStyles.caption.copyWith(fontWeight: FontWeight.w500),
+                    ),
                     const SizedBox(height: 12),
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(999),
+                      borderRadius: BorderRadius.circular(AppConstants.radiusFull),
                       child: LinearProgressIndicator(
                         value: rate,
-                        minHeight: 10,
-                        backgroundColor: ColorTokens.borderLight,
-                        valueColor: AlwaysStoppedAnimation<Color>(rate >= 0.8 ? ColorTokens.mintSuccess : ColorTokens.warningAmber),
+                        minHeight: 8,
+                        backgroundColor: ColorTokens.coolWash,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          rate >= 0.8 ? ColorTokens.electricBlue : ColorTokens.ember,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Text('${(rate * 100).round()}% of doses taken on schedule', style: const TextStyle(fontSize: 12, color: ColorTokens.textMutedLight)),
+                    Text(
+                      '${(rate * 100).round()}% of scheduled doses taken on time.',
+                      style: TextStyles.caption,
+                    ),
                   ],
                 ),
               ),
@@ -122,13 +146,21 @@ class MedicationDetailScreen extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Remove Medication?'),
-        content: Text('${medication.name} will be removed from your active medications.'),
+        backgroundColor: ColorTokens.paper,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusCard)),
+        title: Text('Remove Medication?', style: TextStyles.headingMedium),
+        content: Text(
+          '${medication.name} will be permanently removed from your active schedule.',
+          style: TextStyles.bodySecondary,
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel', style: TextStyle(color: ColorTokens.midGray)),
+          ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Remove', style: TextStyle(color: ColorTokens.alertCoral)),
+            child: const Text('Remove', style: TextStyle(color: ColorTokens.ember, fontWeight: FontWeight.w600)),
           ),
         ],
       ),
@@ -150,14 +182,20 @@ class _DetailRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: AppConstants.space12),
       child: Row(
         children: [
-          Icon(icon, size: 18, color: ColorTokens.primaryTeal),
-          const SizedBox(width: 12),
-          Text(label, style: const TextStyle(fontSize: 13, color: ColorTokens.textSecondaryLight, fontWeight: FontWeight.w500)),
+          Icon(icon, size: 18, color: ColorTokens.electricBlue),
+          const SizedBox(width: AppConstants.space12),
+          Text(label, style: TextStyles.bodySecondary.copyWith(fontSize: 14)),
           const Spacer(),
-          Flexible(child: Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: ColorTokens.textPrimaryLight), textAlign: TextAlign.right)),
+          Flexible(
+            child: Text(
+              value,
+              style: TextStyles.labelLarge,
+              textAlign: TextAlign.right,
+            ),
+          ),
         ],
       ),
     );

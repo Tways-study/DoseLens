@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/color_tokens.dart';
+import '../../../core/theme/text_styles.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/primary_action_button.dart';
 import '../providers/auth_provider.dart';
@@ -42,7 +44,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => RoleSelectionScreen(uid: cred.user!.uid, email: _emailCtrl.text.trim(), displayName: _nameCtrl.text.trim())),
+          MaterialPageRoute(
+            builder: (_) => RoleSelectionScreen(
+              uid: cred.user!.uid,
+              email: _emailCtrl.text.trim(),
+              displayName: _nameCtrl.text.trim(),
+            ),
+          ),
         );
       }
     } catch (e) {
@@ -62,69 +70,79 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorTokens.backgroundLight,
+      backgroundColor: ColorTokens.canvas,
       appBar: AppBar(
-        backgroundColor: ColorTokens.backgroundLight,
+        backgroundColor: ColorTokens.canvas,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: ColorTokens.primaryInk),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: AppConstants.space28, vertical: AppConstants.space16),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Create account',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: ColorTokens.textPrimaryLight,
-                  ),
+                  'Create account.',
+                  style: TextStyles.displayLarge,
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Start tracking your medications today.',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: ColorTokens.textSecondaryLight,
-                  ),
+                  'Start tracking your medications and health passport today.',
+                  style: TextStyles.bodySecondary,
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 36),
 
                 if (_error != null) ...[
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(AppConstants.space16),
                     decoration: BoxDecoration(
-                      color: ColorTokens.alertCoralBg,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: ColorTokens.alertCoralBorder),
+                      color: ColorTokens.emberBg,
+                      borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+                      border: Border.all(color: ColorTokens.emberBorder, width: 0.8),
                     ),
-                    child: Text(_error!, style: const TextStyle(color: ColorTokens.alertCoral, fontSize: 13)),
+                    child: Text(_error!, style: const TextStyle(color: ColorTokens.ember, fontSize: 13, fontWeight: FontWeight.w500)),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                 ],
 
-                _NeoField(controller: _nameCtrl, label: 'Full Name', hint: 'Jane Doe', validator: (v) => Validators.requiredField(v, 'Name')),
-                const SizedBox(height: 16),
-                _NeoField(controller: _emailCtrl, label: 'Email', hint: 'you@example.com', keyboardType: TextInputType.emailAddress, validator: Validators.email),
-                const SizedBox(height: 16),
-                _NeoField(
+                _ReferoField(
+                  controller: _nameCtrl,
+                  label: 'Full Name',
+                  hint: 'Jane Doe',
+                  validator: (v) => Validators.requiredField(v, 'Name'),
+                ),
+                const SizedBox(height: 18),
+                _ReferoField(
+                  controller: _emailCtrl,
+                  label: 'Email',
+                  hint: 'you@example.com',
+                  keyboardType: TextInputType.emailAddress,
+                  validator: Validators.email,
+                ),
+                const SizedBox(height: 18),
+                _ReferoField(
                   controller: _passwordCtrl,
                   label: 'Password',
                   hint: '••••••••',
                   obscureText: _obscure,
                   validator: Validators.password,
                   suffix: IconButton(
-                    icon: Icon(_obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 20, color: ColorTokens.textMutedLight),
+                    icon: Icon(
+                      _obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                      size: 20,
+                      color: ColorTokens.midGray,
+                    ),
                     onPressed: () => setState(() => _obscure = !_obscure),
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 36),
 
                 PrimaryActionButton(
                   title: 'Create Account',
@@ -140,7 +158,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 }
 
-class _NeoField extends StatelessWidget {
+class _ReferoField extends StatelessWidget {
   final TextEditingController controller;
   final String label;
   final String hint;
@@ -149,7 +167,7 @@ class _NeoField extends StatelessWidget {
   final String? Function(String?)? validator;
   final Widget? suffix;
 
-  const _NeoField({
+  const _ReferoField({
     required this.controller,
     required this.label,
     required this.hint,
@@ -164,25 +182,21 @@ class _NeoField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: ColorTokens.textPrimaryLight)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: ColorTokens.primaryInk, letterSpacing: -0.1),
+        ),
         const SizedBox(height: 8),
         TextFormField(
           controller: controller,
           obscureText: obscureText,
           keyboardType: keyboardType,
           validator: validator,
-          style: const TextStyle(fontSize: 15, color: ColorTokens.textPrimaryLight),
+          style: const TextStyle(fontSize: 15, color: ColorTokens.primaryInk),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: const TextStyle(color: ColorTokens.textMutedLight),
+            hintStyle: const TextStyle(color: ColorTokens.midGray),
             suffixIcon: suffix,
-            filled: true,
-            fillColor: Colors.white,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: ColorTokens.borderLight)),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: ColorTokens.borderLight)),
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: ColorTokens.primaryTeal, width: 1.5)),
-            errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: ColorTokens.alertCoral)),
           ),
         ),
       ],

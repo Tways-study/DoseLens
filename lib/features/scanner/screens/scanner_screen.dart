@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/color_tokens.dart';
+import '../../../core/theme/text_styles.dart';
 import '../providers/scanner_provider.dart';
 import 'ocr_verification_sheet.dart';
 
@@ -25,7 +27,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
   void initState() {
     super.initState();
     _pulseCtrl = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat(reverse: true);
-    _pulse = Tween<double>(begin: 0.92, end: 1.0).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
+    _pulse = Tween<double>(begin: 0.94, end: 1.0).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
   }
 
   @override
@@ -58,7 +60,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Scan failed: ${e.toString()}'), backgroundColor: ColorTokens.alertCoral),
+          SnackBar(content: Text('Scan failed: ${e.toString()}'), backgroundColor: ColorTokens.ember),
         );
       }
     } finally {
@@ -89,7 +91,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Processing failed: ${e.toString()}'), backgroundColor: ColorTokens.alertCoral),
+          SnackBar(content: Text('Processing failed: ${e.toString()}'), backgroundColor: ColorTokens.ember),
         );
       }
     } finally {
@@ -100,21 +102,28 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF0F1012),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.close_rounded, color: Colors.white, size: 22),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          'Scan Medication',
+          style: TextStyles.headingMedium.copyWith(color: Colors.white),
+        ),
+      ),
       body: Stack(
         children: [
-          // Dark background for scanner feel
-          Container(
-            color: const Color(0xFF0A0A0A),
-          ),
-
-          // Scanner frame overlay
+          // Viewfinder Frame
           Center(
             child: ScaleTransition(
               scale: _pulse,
               child: CustomPaint(
                 size: const Size(280, 280),
-                painter: _ScannerFramePainter(),
+                painter: _ReferoScannerFramePainter(),
                 child: SizedBox(
                   width: 280,
                   height: 280,
@@ -123,19 +132,34 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              CircularProgressIndicator(color: ColorTokens.primaryTeal, strokeWidth: 2),
+                              CircularProgressIndicator(color: ColorTokens.electricBlue, strokeWidth: 2.5),
                               SizedBox(height: 16),
-                              Text('Analyzing label...', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500)),
+                              Text(
+                                'Extracting drug data...',
+                                style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),
+                              ),
                             ],
                           ),
                         )
-                      : const Center(
+                      : Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.medication_liquid_rounded, color: Colors.white38, size: 40),
-                              SizedBox(height: 12),
-                              Text('Point at medication label', style: TextStyle(color: Colors.white60, fontSize: 13), textAlign: TextAlign.center),
+                              Container(
+                                width: 56,
+                                height: 56,
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.08),
+                                  borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+                                ),
+                                child: const Icon(Icons.medication_rounded, color: Colors.white70, size: 28),
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                'Align label inside the frame',
+                                style: TextStyles.caption.copyWith(color: Colors.white70),
+                                textAlign: TextAlign.center,
+                              ),
                             ],
                           ),
                         ),
@@ -144,90 +168,58 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
             ),
           ),
 
-          // Frosted info banner
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(20, 56, 20, 20),
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.black87, Colors.transparent],
-                ),
-              ),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  const Expanded(
-                    child: Text('Medication Scanner', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700), textAlign: TextAlign.center),
-                  ),
-                  const SizedBox(width: 44),
-                ],
-              ),
-            ),
-          ),
-
-          // Bottom controls
+          // Bottom Control Panel
           Positioned(
             bottom: 0,
             left: 0,
             right: 0,
             child: Container(
-              padding: const EdgeInsets.fromLTRB(32, 32, 32, 48),
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  colors: [Colors.black87, Colors.transparent],
-                ),
+              padding: const EdgeInsets.fromLTRB(AppConstants.space28, AppConstants.space20, AppConstants.space28, 40),
+              decoration: BoxDecoration(
+                color: ColorTokens.paper,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(AppConstants.radiusCard)),
               ),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text('Position the label within the frame', style: TextStyle(color: Colors.white60, fontSize: 13)),
-                  const SizedBox(height: 32),
+                  Text(
+                    'Multimodal OCR Vision',
+                    style: TextStyles.headingMedium,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Extracts brand, generic name, strength, and frequency automatically.',
+                    style: TextStyles.caption,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: AppConstants.space20),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      // Gallery
-                      GestureDetector(
-                        onTap: _processing ? null : _pickFromGallery,
-                        child: Container(
-                          width: 52,
-                          height: 52,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: Colors.white24),
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          icon: const Icon(Icons.photo_library_outlined, size: 18, color: ColorTokens.primaryInk),
+                          label: const Text('Gallery', style: TextStyle(color: ColorTokens.primaryInk, fontWeight: FontWeight.w600)),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: ColorTokens.hairline),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusPill)),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
-                          child: const Icon(Icons.photo_library_outlined, color: Colors.white, size: 22),
+                          onPressed: _processing ? null : _pickFromGallery,
                         ),
                       ),
-
-                      // Capture button
-                      GestureDetector(
-                        onTap: _processing ? null : _captureImage,
-                        child: Container(
-                          width: 76,
-                          height: 76,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: _processing ? Colors.white30 : Colors.white,
-                            border: Border.all(color: Colors.white38, width: 4),
+                      const SizedBox(width: AppConstants.space12),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          icon: const Icon(Icons.camera_alt_rounded, size: 18, color: Colors.white),
+                          label: const Text('Capture', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ColorTokens.electricBlue,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusPill)),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
-                          child: _processing
-                              ? const SizedBox.shrink()
-                              : const Icon(Icons.camera_alt_rounded, color: ColorTokens.primarySlate, size: 32),
+                          onPressed: _processing ? null : _captureImage,
                         ),
                       ),
-
-                      // Placeholder for symmetry
-                      const SizedBox(width: 52),
                     ],
                   ),
                 ],
@@ -240,48 +232,59 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
   }
 }
 
-/// Custom corner-bracket scanner frame painter
-class _ScannerFramePainter extends CustomPainter {
+class _ReferoScannerFramePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = ColorTokens.primaryTeal
+      ..color = ColorTokens.electricBlue
       ..strokeWidth = 3.0
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
-    const cornerLen = 28.0;
-    const r = 8.0;
-
-    final path = Path();
+    const cornerLength = 28.0;
+    const r = 24.0;
 
     // Top-left
-    path.moveTo(r, cornerLen);
-    path.lineTo(r, r);
-    path.arcToPoint(Offset(r + r, 0), radius: const Radius.circular(r));
-    path.lineTo(cornerLen, 0);
+    canvas.drawPath(
+      Path()
+        ..moveTo(0, cornerLength)
+        ..lineTo(0, r)
+        ..arcToPoint(const Offset(r, 0), radius: const Radius.circular(r))
+        ..lineTo(cornerLength, 0),
+      paint,
+    );
 
     // Top-right
-    path.moveTo(size.width - cornerLen, 0);
-    path.lineTo(size.width - r, 0);
-    path.arcToPoint(Offset(size.width, r), radius: const Radius.circular(r));
-    path.lineTo(size.width, cornerLen);
-
-    // Bottom-right
-    path.moveTo(size.width, size.height - cornerLen);
-    path.lineTo(size.width, size.height - r);
-    path.arcToPoint(Offset(size.width - r, size.height), radius: const Radius.circular(r));
-    path.lineTo(size.width - cornerLen, size.height);
+    canvas.drawPath(
+      Path()
+        ..moveTo(size.width - cornerLength, 0)
+        ..lineTo(size.width - r, 0)
+        ..arcToPoint(Offset(size.width, r), radius: const Radius.circular(r))
+        ..lineTo(size.width, cornerLength),
+      paint,
+    );
 
     // Bottom-left
-    path.moveTo(cornerLen, size.height);
-    path.lineTo(r, size.height);
-    path.arcToPoint(Offset(0, size.height - r), radius: const Radius.circular(r));
-    path.lineTo(0, size.height - cornerLen);
+    canvas.drawPath(
+      Path()
+        ..moveTo(0, size.height - cornerLength)
+        ..lineTo(0, size.height - r)
+        ..arcToPoint(Offset(r, size.height), radius: const Radius.circular(r))
+        ..lineTo(cornerLength, size.height),
+      paint,
+    );
 
-    canvas.drawPath(path, paint);
+    // Bottom-right
+    canvas.drawPath(
+      Path()
+        ..moveTo(size.width - cornerLength, size.height)
+        ..lineTo(size.width - r, size.height)
+        ..arcToPoint(Offset(size.width, size.height - r), radius: const Radius.circular(r))
+        ..lineTo(size.width, size.height - cornerLength),
+      paint,
+    );
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(_ReferoScannerFramePainter old) => false;
 }

@@ -45,8 +45,13 @@ class _AuthGate extends ConsumerWidget {
 
     return authState.when(
       loading: () => const Scaffold(
-        backgroundColor: ColorTokens.backgroundLight,
-        body: Center(child: CircularProgressIndicator(color: ColorTokens.primaryTeal)),
+        backgroundColor: ColorTokens.canvas,
+        body: Center(
+          child: CircularProgressIndicator(
+            color: ColorTokens.electricBlue,
+            strokeWidth: 2.5,
+          ),
+        ),
       ),
       error: (_, __) => const LoginScreen(),
       data: (user) {
@@ -57,7 +62,7 @@ class _AuthGate extends ConsumerWidget {
   }
 }
 
-/// Bottom navigation shell with 4 tabs
+/// Refero-styled Bottom Navigation Shell with 3 tabs + Central Scanner Action
 class MainShell extends ConsumerStatefulWidget {
   const MainShell({super.key});
 
@@ -77,18 +82,26 @@ class _MainShellState extends ConsumerState<MainShell> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorTokens.canvas,
       body: IndexedStack(
         index: _currentIndex,
         children: _screens,
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'scanner_fab',
-        backgroundColor: ColorTokens.primarySlate,
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const ScannerScreen()),
+      floatingActionButton: Container(
+        height: 56,
+        width: 56,
+        margin: const EdgeInsets.only(top: 24),
+        child: FloatingActionButton(
+          heroTag: 'scanner_fab',
+          backgroundColor: ColorTokens.electricBlue,
+          elevation: 0,
+          shape: const CircleBorder(),
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const ScannerScreen()),
+          ),
+          child: const Icon(Icons.document_scanner_rounded, color: Colors.white, size: 24),
         ),
-        child: const Icon(Icons.document_scanner_rounded, color: Colors.white, size: 26),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: _BottomNav(
@@ -107,43 +120,43 @@ class _BottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BottomAppBar(
-      color: Colors.white,
-      elevation: 0,
-      shape: const CircularNotchedRectangle(),
-      notchMargin: 8,
-      child: Container(
-        decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: ColorTokens.borderLight, width: 1)),
-        ),
-        height: 60,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _NavItem(
-              icon: Icons.home_outlined,
-              activeIcon: Icons.home_rounded,
-              label: 'Home',
-              isActive: currentIndex == 0,
-              onTap: () => onTap(0),
-            ),
-            // Gap for FAB
-            const SizedBox(width: 56),
-            _NavItem(
-              icon: Icons.article_outlined,
-              activeIcon: Icons.article_rounded,
-              label: 'Passport',
-              isActive: currentIndex == 1,
-              onTap: () => onTap(1),
-            ),
-            _NavItem(
-              icon: Icons.favorite_outline_rounded,
-              activeIcon: Icons.favorite_rounded,
-              label: 'Caregiver',
-              isActive: currentIndex == 2,
-              onTap: () => onTap(2),
-            ),
-          ],
+    return Container(
+      decoration: const BoxDecoration(
+        color: ColorTokens.paper,
+        border: Border(top: BorderSide(color: ColorTokens.hairline, width: 0.5)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: 60,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _NavItem(
+                icon: Icons.home_outlined,
+                activeIcon: Icons.home_rounded,
+                label: 'Home',
+                isActive: currentIndex == 0,
+                onTap: () => onTap(0),
+              ),
+              // Gap for Floating Scanner Button
+              const SizedBox(width: 56),
+              _NavItem(
+                icon: Icons.description_outlined,
+                activeIcon: Icons.description_rounded,
+                label: 'Passport',
+                isActive: currentIndex == 1,
+                onTap: () => onTap(1),
+              ),
+              _NavItem(
+                icon: Icons.favorite_outline_rounded,
+                activeIcon: Icons.favorite_rounded,
+                label: 'Caregiver',
+                isActive: currentIndex == 2,
+                onTap: () => onTap(2),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -177,8 +190,8 @@ class _NavItem extends StatelessWidget {
           children: [
             Icon(
               isActive ? activeIcon : icon,
-              color: isActive ? ColorTokens.primaryTeal : ColorTokens.textMutedLight,
-              size: 24,
+              color: isActive ? ColorTokens.electricBlue : ColorTokens.midGray,
+              size: 22,
             ),
             const SizedBox(height: 2),
             Text(
@@ -186,7 +199,8 @@ class _NavItem extends StatelessWidget {
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-                color: isActive ? ColorTokens.primaryTeal : ColorTokens.textMutedLight,
+                color: isActive ? ColorTokens.electricBlue : ColorTokens.midGray,
+                letterSpacing: -0.1,
               ),
             ),
           ],

@@ -9,7 +9,7 @@ enum AdherenceStatus {
   skipped,
 }
 
-/// Semantic status badge for Taken, Missed, Pending, and Skipped doses
+/// Semantic status badge with Refero pastel palette & pill capsule shape
 class StatusBadge extends StatelessWidget {
   final AdherenceStatus status;
 
@@ -27,15 +27,15 @@ class StatusBadge extends StatelessWidget {
           backgroundColor: ColorTokens.mintSuccessBg,
           textColor: ColorTokens.mintSuccess,
           borderColor: ColorTokens.mintSuccessBorder,
-          icon: Icon(Icons.check_circle, size: 14, color: ColorTokens.mintSuccess),
+          icon: Icon(Icons.check_rounded, size: 14, color: ColorTokens.mintSuccess),
         );
       case AdherenceStatus.missed:
         return const PillChip(
           label: 'Missed',
-          backgroundColor: ColorTokens.alertCoralBg,
-          textColor: ColorTokens.alertCoral,
-          borderColor: ColorTokens.alertCoralBorder,
-          icon: Icon(Icons.cancel, size: 14, color: ColorTokens.alertCoral),
+          backgroundColor: ColorTokens.emberBg,
+          textColor: ColorTokens.ember,
+          borderColor: ColorTokens.emberBorder,
+          icon: Icon(Icons.close_rounded, size: 14, color: ColorTokens.ember),
         );
       case AdherenceStatus.pending:
         return const PillChip(
@@ -43,16 +43,15 @@ class StatusBadge extends StatelessWidget {
           backgroundColor: ColorTokens.warningAmberBg,
           textColor: ColorTokens.warningAmber,
           borderColor: ColorTokens.warningAmberBorder,
-          icon: Icon(Icons.schedule, size: 14, color: ColorTokens.warningAmber),
+          icon: Icon(Icons.schedule_rounded, size: 14, color: ColorTokens.warningAmber),
         );
       case AdherenceStatus.skipped:
         return const PillChip(
           label: 'Skipped',
-          backgroundColor: Color(0xFFF3F4F6),
-          textColor: ColorTokens.textSecondaryLight,
-          borderColor: ColorTokens.borderLight,
-          icon: Icon(Icons.remove_circle_outline,
-              size: 14, color: ColorTokens.textSecondaryLight),
+          backgroundColor: ColorTokens.coolWash,
+          textColor: ColorTokens.midGray,
+          borderColor: ColorTokens.hairline,
+          icon: Icon(Icons.remove_rounded, size: 14, color: ColorTokens.midGray),
         );
     }
   }

@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/color_tokens.dart';
+import '../../../core/theme/text_styles.dart';
 import '../../../core/widgets/neo_card.dart';
 import '../../../core/widgets/primary_action_button.dart';
 import '../models/app_user.dart';
@@ -42,7 +44,6 @@ class _RoleSelectionScreenState extends ConsumerState<RoleSelectionScreen> {
       await firestore.usersCollection
           .doc(widget.uid)
           .set({...user.toFirestore(), 'createdAt': FieldValue.serverTimestamp()});
-      // Navigation handled by auth stream listener in main.dart
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -57,35 +58,31 @@ class _RoleSelectionScreenState extends ConsumerState<RoleSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorTokens.backgroundLight,
+      backgroundColor: ColorTokens.canvas,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
+          padding: const EdgeInsets.symmetric(horizontal: AppConstants.space28, vertical: AppConstants.space32),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 20),
               Text(
-                'How will you use DoseLens?',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: ColorTokens.textPrimaryLight,
-                ),
+                'Personalize.',
+                style: TextStyles.displayLarge,
               ),
               const SizedBox(height: 8),
               Text(
-                'This helps us personalize your experience.',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: ColorTokens.textSecondaryLight,
-                ),
+                'Select your primary role to configure your daily experience.',
+                style: TextStyles.bodySecondary,
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 36),
 
               _RoleCard(
                 role: UserRole.patient,
                 selected: _selected == UserRole.patient,
                 icon: Icons.medication_liquid_rounded,
-                title: 'I\'m a Patient',
-                description: 'Scan medications, track daily doses, and generate your health passport.',
+                title: "I'm a Patient",
+                description: 'Scan medication packaging, track daily adherence, and export 30-day health passports.',
                 onTap: () => setState(() => _selected = UserRole.patient),
               ),
               const SizedBox(height: 16),
@@ -94,17 +91,18 @@ class _RoleSelectionScreenState extends ConsumerState<RoleSelectionScreen> {
                 role: UserRole.caregiver,
                 selected: _selected == UserRole.caregiver,
                 icon: Icons.favorite_rounded,
-                title: 'I\'m a Caregiver',
-                description: 'Monitor a loved one\'s adherence and receive real-time missed dose alerts.',
+                title: "I'm a Caregiver",
+                description: 'Monitor family members remotely with real-time missed dose heartbeat alerts.',
                 onTap: () => setState(() => _selected = UserRole.caregiver),
               ),
 
               const Spacer(),
               PrimaryActionButton(
-                title: 'Get Started',
+                title: 'Continue',
                 isLoading: _loading,
                 onPressed: _selected != null ? _confirm : null,
-                backgroundColor: _selected != null ? ColorTokens.primarySlate : ColorTokens.borderLight,
+                backgroundColor: _selected != null ? ColorTokens.electricBlue : ColorTokens.coolWash,
+                textColor: _selected != null ? Colors.white : ColorTokens.midGray,
               ),
             ],
           ),
@@ -135,8 +133,9 @@ class _RoleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return NeoCard(
       onTap: onTap,
-      borderColor: selected ? ColorTokens.primaryTeal : ColorTokens.borderLight,
-      backgroundColor: selected ? const Color(0xFFF0FDFA) : Colors.white,
+      borderRadius: AppConstants.radiusCard,
+      borderColor: selected ? ColorTokens.electricBlue : ColorTokens.hairline,
+      backgroundColor: selected ? const Color(0xFFF0F7FF) : ColorTokens.paper,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -144,25 +143,37 @@ class _RoleCard extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: selected ? ColorTokens.primaryTeal : ColorTokens.backgroundSecondaryLight,
-              borderRadius: BorderRadius.circular(12),
+              color: selected ? ColorTokens.electricBlue : ColorTokens.coolWash,
+              borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
             ),
-            child: Icon(icon, color: selected ? Colors.white : ColorTokens.textSecondaryLight, size: 24),
+            child: Icon(
+              icon,
+              color: selected ? Colors.white : ColorTokens.primaryInk,
+              size: 22,
+            ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: AppConstants.space16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: ColorTokens.textPrimaryLight)),
+                Text(
+                  title,
+                  style: TextStyles.headingMedium.copyWith(
+                    color: selected ? ColorTokens.electricBlue : ColorTokens.primaryInk,
+                  ),
+                ),
                 const SizedBox(height: 4),
-                Text(description, style: const TextStyle(fontSize: 13, color: ColorTokens.textSecondaryLight, height: 1.5)),
+                Text(
+                  description,
+                  style: TextStyles.bodySecondary.copyWith(fontSize: 13, height: 1.45),
+                ),
               ],
             ),
           ),
           if (selected) ...[
-            const SizedBox(width: 12),
-            const Icon(Icons.check_circle_rounded, color: ColorTokens.primaryTeal, size: 20),
+            const SizedBox(width: 8),
+            const Icon(Icons.check_circle_rounded, color: ColorTokens.electricBlue, size: 20),
           ],
         ],
       ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/color_tokens.dart';
+import '../../../core/theme/text_styles.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/primary_action_button.dart';
 import '../providers/auth_provider.dart';
@@ -65,128 +67,124 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorTokens.backgroundLight,
+      backgroundColor: ColorTokens.canvas,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
+          padding: const EdgeInsets.symmetric(horizontal: AppConstants.space28, vertical: AppConstants.space32),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 24),
-                // Logo / Brand
+                const SizedBox(height: 20),
+                // Brand Mark
                 Row(
                   children: [
                     Container(
                       width: 44,
                       height: 44,
                       decoration: BoxDecoration(
-                        color: ColorTokens.primaryTeal,
-                        borderRadius: BorderRadius.circular(12),
+                        color: ColorTokens.electricBlue,
+                        borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
                       ),
-                      child: const Icon(Icons.medication_rounded, color: Colors.white, size: 24),
+                      child: const Icon(Icons.medication_rounded, color: Colors.white, size: 22),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: AppConstants.space12),
                     Text(
                       'DoseLens',
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: ColorTokens.textPrimaryLight,
-                      ),
+                      style: TextStyles.headingLarge.copyWith(fontWeight: FontWeight.w700),
                     ),
                   ],
                 ),
                 const SizedBox(height: 48),
+
+                // Whispered Display Headline
                 Text(
-                  'Welcome back',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: ColorTokens.textPrimaryLight,
-                  ),
+                  'Welcome back.',
+                  style: TextStyles.displayLarge,
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Sign in to continue managing your medications.',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: ColorTokens.textSecondaryLight,
-                  ),
+                  'Sign in to manage your medication schedule and adherence history.',
+                  style: TextStyles.bodySecondary,
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 36),
 
                 // Error banner
                 if (_error != null) ...[
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(AppConstants.space16),
                     decoration: BoxDecoration(
-                      color: ColorTokens.alertCoralBg,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: ColorTokens.alertCoralBorder),
+                      color: ColorTokens.emberBg,
+                      borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+                      border: Border.all(color: ColorTokens.emberBorder, width: 0.8),
                     ),
-                    child: Text(_error!, style: const TextStyle(color: ColorTokens.alertCoral, fontSize: 13)),
+                    child: Text(
+                      _error!,
+                      style: const TextStyle(color: ColorTokens.ember, fontSize: 13, fontWeight: FontWeight.w500),
+                    ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                 ],
 
                 // Email field
-                _NeoTextField(
+                _ReferoTextField(
                   controller: _emailCtrl,
                   label: 'Email',
                   hint: 'you@example.com',
                   keyboardType: TextInputType.emailAddress,
                   validator: Validators.email,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 18),
 
                 // Password field
-                _NeoTextField(
+                _ReferoTextField(
                   controller: _passwordCtrl,
                   label: 'Password',
                   hint: '••••••••',
                   obscureText: _obscure,
                   validator: Validators.password,
                   suffix: IconButton(
-                    icon: Icon(_obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined, size: 20, color: ColorTokens.textMutedLight),
+                    icon: Icon(
+                      _obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                      size: 20,
+                      color: ColorTokens.midGray,
+                    ),
                     onPressed: () => setState(() => _obscure = !_obscure),
                   ),
                 ),
                 const SizedBox(height: 32),
 
+                // Electric Blue Filled Pill Button
                 PrimaryActionButton(
                   title: 'Sign In',
                   isLoading: _loading,
                   onPressed: _signIn,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
 
-                // Guest
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: ColorTokens.borderLight),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    onPressed: _loading ? null : _signInAnonymously,
-                    child: const Text('Continue as Guest', style: TextStyle(color: ColorTokens.textSecondaryLight, fontWeight: FontWeight.w600)),
-                  ),
+                // Ghost Pill Button
+                PrimaryActionButton(
+                  title: 'Continue as Guest',
+                  isGhost: true,
+                  isLoading: false,
+                  onPressed: _loading ? null : _signInAnonymously,
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 36),
 
-                // Register link
+                // Sign up Link
                 Center(
                   child: GestureDetector(
                     onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RegisterScreen())),
                     child: RichText(
                       text: const TextSpan(
                         text: "Don't have an account? ",
-                        style: TextStyle(color: ColorTokens.textSecondaryLight, fontSize: 14),
+                        style: TextStyle(color: ColorTokens.midGray, fontSize: 14),
                         children: [
                           TextSpan(
                             text: 'Sign up',
-                            style: TextStyle(color: ColorTokens.primaryTeal, fontWeight: FontWeight.w700),
+                            style: TextStyle(color: ColorTokens.linkBlue, fontWeight: FontWeight.w600),
                           ),
                         ],
                       ),
@@ -202,7 +200,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 }
 
-class _NeoTextField extends StatelessWidget {
+class _ReferoTextField extends StatelessWidget {
   final TextEditingController controller;
   final String label;
   final String hint;
@@ -211,7 +209,7 @@ class _NeoTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final Widget? suffix;
 
-  const _NeoTextField({
+  const _ReferoTextField({
     required this.controller,
     required this.label,
     required this.hint,
@@ -226,37 +224,21 @@ class _NeoTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: ColorTokens.textPrimaryLight)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: ColorTokens.primaryInk, letterSpacing: -0.1),
+        ),
         const SizedBox(height: 8),
         TextFormField(
           controller: controller,
           obscureText: obscureText,
           keyboardType: keyboardType,
           validator: validator,
-          style: const TextStyle(fontSize: 15, color: ColorTokens.textPrimaryLight),
+          style: const TextStyle(fontSize: 15, color: ColorTokens.primaryInk),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: const TextStyle(color: ColorTokens.textMutedLight),
+            hintStyle: const TextStyle(color: ColorTokens.midGray),
             suffixIcon: suffix,
-            filled: true,
-            fillColor: Colors.white,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: ColorTokens.borderLight),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: ColorTokens.borderLight),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: ColorTokens.primaryTeal, width: 1.5),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: ColorTokens.alertCoral),
-            ),
           ),
         ),
       ],

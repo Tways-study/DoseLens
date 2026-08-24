@@ -19,4 +19,8 @@ class DateFormatters {
   static String formatShortDate(DateTime dateTime) {
     return '${dateTime.month}/${dateTime.day}';
   }
+
+  static String formatDateTime(DateTime dateTime) {
+    return '${formatDate(dateTime)} · ${formatTime(dateTime)}';
+  }
 }

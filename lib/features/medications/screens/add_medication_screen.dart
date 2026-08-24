@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/color_tokens.dart';
+import '../../../core/theme/text_styles.dart';
 import '../../../core/utils/validators.dart';
+import '../../../core/widgets/neo_card.dart';
 import '../../../core/widgets/primary_action_button.dart';
 import '../models/medication.dart';
 import '../providers/medications_provider.dart';
@@ -55,7 +58,9 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
         genericName: _genericCtrl.text.trim().isEmpty ? null : _genericCtrl.text.trim(),
         dosage: _dosageCtrl.text.trim(),
         frequency: _frequency,
-        times: _times.map((t) => '${t.hour.toString().padLeft(2,'0')}:${t.minute.toString().padLeft(2,'0')}').toList(),
+        times: _times
+            .map((t) => '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}')
+            .toList(),
         instructions: _instructionsCtrl.text.trim().isEmpty ? null : _instructionsCtrl.text.trim(),
         startDate: DateTime.now(),
       );
@@ -80,89 +85,148 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorTokens.backgroundLight,
+      backgroundColor: ColorTokens.canvas,
       appBar: AppBar(
-        title: const Text('Add Medication', style: TextStyle(fontWeight: FontWeight.w700, color: ColorTokens.textPrimaryLight)),
+        title: Text('New Medication.', style: TextStyles.displayMedium.copyWith(fontSize: 22)),
         leading: IconButton(
-          icon: const Icon(Icons.close_rounded),
+          icon: const Icon(Icons.close_rounded, size: 20, color: ColorTokens.primaryInk),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+          padding: const EdgeInsets.fromLTRB(AppConstants.space20, AppConstants.space16, AppConstants.space20, 100),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _Label('Brand / Product Name'),
-                _Field(controller: _nameCtrl, hint: 'e.g. Biogesic', validator: (v) => Validators.requiredField(v, 'Name')),
-                const SizedBox(height: 16),
-                _Label('Generic Name'),
-                _Field(controller: _genericCtrl, hint: 'e.g. Paracetamol (optional)'),
-                const SizedBox(height: 16),
-                _Label('Dosage'),
-                _Field(controller: _dosageCtrl, hint: 'e.g. 500mg', validator: (v) => Validators.requiredField(v, 'Dosage')),
-                const SizedBox(height: 16),
-                _Label('Frequency'),
-                _FrequencyPicker(
-                  selected: _frequency,
-                  onChanged: (f) {
-                    setState(() {
-                      _frequency = f;
-                      // Auto-populate sensible times
-                      _times.clear();
-                      switch (f) {
-                        case MedicationFrequency.onceDaity:
-                          _times.add(const TimeOfDay(hour: 8, minute: 0));
-                          break;
-                        case MedicationFrequency.twiceDaily:
-                          _times.addAll([const TimeOfDay(hour: 8, minute: 0), const TimeOfDay(hour: 20, minute: 0)]);
-                          break;
-                        case MedicationFrequency.threeTimesDaily:
-                          _times.addAll([const TimeOfDay(hour: 8, minute: 0), const TimeOfDay(hour: 14, minute: 0), const TimeOfDay(hour: 20, minute: 0)]);
-                          break;
-                        default:
-                          _times.add(const TimeOfDay(hour: 8, minute: 0));
-                      }
-                    });
-                  },
-                ),
-                const SizedBox(height: 16),
-                _Label('Reminder Time(s)'),
-                ...List.generate(_times.length, (i) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: GestureDetector(
-                    onTap: () => _pickTime(i),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: ColorTokens.borderLight),
+                NeoCard(
+                  borderRadius: AppConstants.radiusCard,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const _Label('Brand / Product Name'),
+                      _Field(
+                        controller: _nameCtrl,
+                        hint: 'e.g. Biogesic',
+                        validator: (v) => Validators.requiredField(v, 'Name'),
                       ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.access_time_rounded, size: 18, color: ColorTokens.primaryTeal),
-                          const SizedBox(width: 12),
-                          Text(_times[i].format(context), style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: ColorTokens.textPrimaryLight)),
-                        ],
+                      const SizedBox(height: AppConstants.space16),
+                      const _Label('Generic Active Ingredient'),
+                      _Field(
+                        controller: _genericCtrl,
+                        hint: 'e.g. Paracetamol (optional)',
                       ),
-                    ),
+                      const SizedBox(height: AppConstants.space16),
+                      const _Label('Dosage Strength'),
+                      _Field(
+                        controller: _dosageCtrl,
+                        hint: 'e.g. 500mg',
+                        validator: (v) => Validators.requiredField(v, 'Dosage'),
+                      ),
+                    ],
                   ),
-                )),
-                TextButton.icon(
-                  onPressed: _addTime,
-                  icon: const Icon(Icons.add_rounded, size: 18),
-                  label: const Text('Add time'),
-                  style: TextButton.styleFrom(foregroundColor: ColorTokens.primaryTeal),
                 ),
-                const SizedBox(height: 8),
-                _Label('Instructions (optional)'),
-                _Field(controller: _instructionsCtrl, hint: 'e.g. Take with food', maxLines: 2),
-                const SizedBox(height: 32),
-                PrimaryActionButton(title: 'Save Medication', isLoading: _loading, onPressed: _save),
+                const SizedBox(height: AppConstants.space16),
+
+                NeoCard(
+                  borderRadius: AppConstants.radiusCard,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const _Label('Frequency'),
+                      _FrequencyPicker(
+                        selected: _frequency,
+                        onChanged: (f) {
+                          setState(() {
+                            _frequency = f;
+                            _times.clear();
+                            switch (f) {
+                              case MedicationFrequency.onceDaity:
+                                _times.add(const TimeOfDay(hour: 8, minute: 0));
+                                break;
+                              case MedicationFrequency.twiceDaily:
+                                _times.addAll([
+                                  const TimeOfDay(hour: 8, minute: 0),
+                                  const TimeOfDay(hour: 20, minute: 0),
+                                ]);
+                                break;
+                              case MedicationFrequency.threeTimesDaily:
+                                _times.addAll([
+                                  const TimeOfDay(hour: 8, minute: 0),
+                                  const TimeOfDay(hour: 14, minute: 0),
+                                  const TimeOfDay(hour: 20, minute: 0),
+                                ]);
+                                break;
+                              default:
+                                _times.add(const TimeOfDay(hour: 8, minute: 0));
+                            }
+                          });
+                        },
+                      ),
+                      const SizedBox(height: AppConstants.space20),
+                      const _Label('Scheduled Times'),
+                      ...List.generate(
+                        _times.length,
+                        (i) => Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: GestureDetector(
+                            onTap: () => _pickTime(i),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                              decoration: BoxDecoration(
+                                color: ColorTokens.coolWash,
+                                borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.access_time_rounded, size: 18, color: ColorTokens.electricBlue),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    _times[i].format(context),
+                                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: ColorTokens.primaryInk),
+                                  ),
+                                  const Spacer(),
+                                  const Icon(Icons.chevron_right_rounded, size: 18, color: ColorTokens.midGray),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      TextButton.icon(
+                        onPressed: _addTime,
+                        icon: const Icon(Icons.add_rounded, size: 18),
+                        label: const Text('Add Time Slot'),
+                        style: TextButton.styleFrom(foregroundColor: ColorTokens.linkBlue),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: AppConstants.space16),
+
+                NeoCard(
+                  borderRadius: AppConstants.radiusCard,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const _Label('Prescription Instructions'),
+                      _Field(
+                        controller: _instructionsCtrl,
+                        hint: 'e.g. Take 1 tablet with warm water after meals',
+                        maxLines: 2,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: AppConstants.space28),
+
+                PrimaryActionButton(
+                  title: 'Save to Schedule',
+                  isLoading: _loading,
+                  onPressed: _save,
+                ),
               ],
             ),
           ),
@@ -177,9 +241,12 @@ class _Label extends StatelessWidget {
   const _Label(this.text);
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 8),
-    child: Text(text, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: ColorTokens.textPrimaryLight)),
-  );
+        padding: const EdgeInsets.only(bottom: 8),
+        child: Text(
+          text,
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: ColorTokens.primaryInk, letterSpacing: -0.1),
+        ),
+      );
 }
 
 class _Field extends StatelessWidget {
@@ -188,26 +255,37 @@ class _Field extends StatelessWidget {
   final int maxLines;
   final String? Function(String?)? validator;
 
-  const _Field({required this.controller, required this.hint, this.maxLines = 1, this.validator});
+  const _Field({
+    required this.controller,
+    required this.hint,
+    this.maxLines = 1,
+    this.validator,
+  });
 
   @override
   Widget build(BuildContext context) => TextFormField(
-    controller: controller,
-    maxLines: maxLines,
-    validator: validator,
-    style: const TextStyle(fontSize: 15, color: ColorTokens.textPrimaryLight),
-    decoration: InputDecoration(
-      hintText: hint,
-      hintStyle: const TextStyle(color: ColorTokens.textMutedLight),
-      filled: true,
-      fillColor: Colors.white,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: ColorTokens.borderLight)),
-      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: ColorTokens.borderLight)),
-      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: ColorTokens.primaryTeal, width: 1.5)),
-      errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: ColorTokens.alertCoral)),
-    ),
-  );
+        controller: controller,
+        maxLines: maxLines,
+        validator: validator,
+        style: const TextStyle(fontSize: 15, color: ColorTokens.primaryInk),
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: const TextStyle(color: ColorTokens.midGray),
+          filled: true,
+          fillColor: ColorTokens.coolWash,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.radiusMedium), borderSide: BorderSide.none),
+          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.radiusMedium), borderSide: BorderSide.none),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+            borderSide: const BorderSide(color: ColorTokens.electricBlue, width: 1.5),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+            borderSide: const BorderSide(color: ColorTokens.ember, width: 1.0),
+          ),
+        ),
+      );
 }
 
 class _FrequencyPicker extends StatelessWidget {
@@ -235,11 +313,18 @@ class _FrequencyPicker extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
-              color: isSelected ? ColorTokens.primaryTeal : Colors.white,
-              borderRadius: BorderRadius.circular(999),
-              border: Border.all(color: isSelected ? ColorTokens.primaryTeal : ColorTokens.borderLight),
+              color: isSelected ? ColorTokens.electricBlue : ColorTokens.coolWash,
+              borderRadius: BorderRadius.circular(AppConstants.radiusFull),
             ),
-            child: Text(opt.$2, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: isSelected ? Colors.white : ColorTokens.textSecondaryLight)),
+            child: Text(
+              opt.$2,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: isSelected ? Colors.white : ColorTokens.primaryInk,
+                letterSpacing: -0.1,
+              ),
+            ),
           ),
         );
       }).toList(),

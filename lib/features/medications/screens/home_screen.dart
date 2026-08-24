@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/color_tokens.dart';
+import '../../../core/theme/text_styles.dart';
 import '../../../core/utils/date_formatters.dart';
 import '../../../core/widgets/neo_card.dart';
 import '../../../core/widgets/pill_chip.dart';
@@ -9,7 +11,6 @@ import '../../../core/widgets/status_badge.dart' as sb;
 import '../models/adherence_log.dart';
 import '../models/medication.dart';
 import '../providers/medications_provider.dart';
-import '../../auth/providers/auth_provider.dart';
 import 'add_medication_screen.dart';
 import 'medication_detail_screen.dart';
 
@@ -23,62 +24,59 @@ class HomeScreen extends ConsumerWidget {
     final rateAsync = ref.watch(adherenceRateProvider);
 
     return Scaffold(
-      backgroundColor: ColorTokens.backgroundLight,
+      backgroundColor: ColorTokens.canvas,
       appBar: AppBar(
-        title: const Text('DoseLens', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 22, color: ColorTokens.textPrimaryLight)),
+        title: Text(
+          'Today.',
+          style: TextStyles.displayMedium,
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.person_outline_rounded, color: ColorTokens.textSecondaryLight),
-            onPressed: () {},
+            icon: const Icon(Icons.add_rounded, color: ColorTokens.primaryInk, size: 24),
+            tooltip: 'Add Medication',
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const AddMedicationScreen()),
+            ),
           ),
+          const SizedBox(width: 8),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: ColorTokens.primarySlate,
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AddMedicationScreen())),
-        child: const Icon(Icons.add_rounded, color: Colors.white),
-      ),
       body: RefreshIndicator(
-        color: ColorTokens.primaryTeal,
+        color: ColorTokens.electricBlue,
         onRefresh: () async => ref.invalidate(medicationsStreamProvider),
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+          padding: const EdgeInsets.fromLTRB(AppConstants.space20, AppConstants.space8, AppConstants.space20, 100),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Greeting
-              Text(
-                _greeting(),
-                style: const TextStyle(fontSize: 14, color: ColorTokens.textSecondaryLight, fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(height: 4),
+              // Greeting & Date Subtitle
               Text(
                 _todayLabel(),
-                style: const TextStyle(fontSize: 13, color: ColorTokens.textMutedLight),
+                style: TextStyles.bodySecondary.copyWith(fontSize: 14),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: AppConstants.space20),
 
               // Adherence Metric Card
               rateAsync.when(
-                loading: () => _AdherenceCardSkeleton(),
+                loading: () => const _AdherenceCardSkeleton(),
                 error: (_, __) => const SizedBox.shrink(),
                 data: (rate) => _AdherenceCard(rate: rate),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppConstants.space28),
 
-              // Today's Doses
+              // Today's Doses Section Header
               SectionHeader(
-                title: 'Today\'s Doses',
-                subtitle: 'Swipe right to take, left to skip',
+                title: 'Schedule',
+                subtitle: 'Swipe right to record taken, left to skip',
                 trailing: PillChip(
                   label: _todayDoseLabel(logsAsync.valueOrNull ?? []),
-                  backgroundColor: ColorTokens.mintSuccessBg,
-                  textColor: ColorTokens.mintSuccess,
-                  borderColor: ColorTokens.mintSuccessBorder,
+                  backgroundColor: ColorTokens.coolWash,
+                  textColor: ColorTokens.primaryInk,
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppConstants.space8),
 
               medsAsync.when(
                 loading: () => Column(children: List.generate(3, (_) => const _MedCardSkeleton())),
@@ -98,23 +96,16 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  String _greeting() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) return 'Good morning 👋';
-    if (hour < 17) return 'Good afternoon 👋';
-    return 'Good evening 👋';
-  }
-
   String _todayLabel() {
     final now = DateTime.now();
-    const days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     return '${days[now.weekday - 1]}, ${DateFormatters.formatDate(now)}';
   }
 
   String _todayDoseLabel(List<AdherenceLog> logs) {
     if (logs.isEmpty) return '0 logged';
     final taken = logs.where((l) => l.status == AdherenceStatus.taken).length;
-    return '$taken / ${logs.length} taken';
+    return '$taken of ${logs.length} taken';
   }
 }
 
@@ -127,42 +118,47 @@ class _AdherenceCard extends StatelessWidget {
     final pct = (rate * 100).round();
     final isGood = pct >= 80;
     return NeoCard(
+      borderRadius: AppConstants.radiusCard,
+      padding: const EdgeInsets.all(AppConstants.space24),
       child: Row(
         children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('30-Day Adherence', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: ColorTokens.textSecondaryLight)),
-                const SizedBox(height: 6),
+                Text(
+                  '30-Day Adherence',
+                  style: TextStyles.caption.copyWith(fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 4),
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
                   children: [
                     Text(
                       '$pct%',
-                      style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w800, color: ColorTokens.textPrimaryLight, height: 1),
+                      style: TextStyles.metricNumber,
                     ),
-                    const SizedBox(width: 10),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
-                      child: PillChip(
-                        label: isGood ? 'On Track' : 'Needs Attention',
-                        backgroundColor: isGood ? ColorTokens.mintSuccessBg : ColorTokens.warningAmberBg,
-                        textColor: isGood ? ColorTokens.mintSuccess : ColorTokens.warningAmber,
-                        borderColor: isGood ? ColorTokens.mintSuccessBorder : ColorTokens.warningAmberBorder,
-                      ),
+                    const SizedBox(width: AppConstants.space12),
+                    PillChip(
+                      label: isGood ? 'Optimal' : 'Attention',
+                      backgroundColor: isGood ? ColorTokens.mintSuccessBg : ColorTokens.emberBg,
+                      textColor: isGood ? ColorTokens.mintSuccess : ColorTokens.ember,
+                      borderColor: isGood ? ColorTokens.mintSuccessBorder : ColorTokens.emberBorder,
                     ),
                   ],
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  isGood ? 'Great job keeping up with your medications!' : 'Try to take your doses as scheduled.',
-                  style: const TextStyle(fontSize: 12, color: ColorTokens.textMutedLight),
+                  isGood
+                      ? 'Consistent schedule maintained over past 30 days.'
+                      : 'Recommended to take doses according to prescribed times.',
+                  style: TextStyles.bodySecondary.copyWith(fontSize: 13),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AppConstants.space16),
           _AdherenceDonut(rate: rate),
         ],
       ),
@@ -177,8 +173,8 @@ class _AdherenceDonut extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 64,
-      height: 64,
+      width: 68,
+      height: 68,
       child: CustomPaint(
         painter: _DonutPainter(rate: rate),
       ),
@@ -193,7 +189,7 @@ class _DonutPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2 - 5;
+    final radius = size.width / 2 - 6;
     const strokeWidth = 7.0;
 
     // Background track
@@ -203,7 +199,7 @@ class _DonutPainter extends CustomPainter {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = strokeWidth
-        ..color = const Color(0xFFE5E7EB),
+        ..color = ColorTokens.coolWash,
     );
 
     // Progress arc
@@ -217,7 +213,7 @@ class _DonutPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeWidth = strokeWidth
         ..strokeCap = StrokeCap.round
-        ..color = rate >= 0.8 ? ColorTokens.mintSuccess : ColorTokens.warningAmber,
+        ..color = rate >= 0.8 ? ColorTokens.electricBlue : ColorTokens.ember,
     );
   }
 
@@ -241,18 +237,29 @@ class _TimelinedDoseList extends ConsumerWidget {
         for (final entry in grouped.entries) ...[
           if (entry.value.isNotEmpty) ...[
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.only(top: AppConstants.space16, bottom: AppConstants.space8),
               child: Row(
                 children: [
-                  Icon(_timeIcon(entry.key), size: 14, color: ColorTokens.textMutedLight),
+                  Icon(_timeIcon(entry.key), size: 14, color: ColorTokens.midGray),
                   const SizedBox(width: 6),
-                  Text(entry.key, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: ColorTokens.textMutedLight, letterSpacing: 0.8)),
+                  Text(
+                    entry.key.toUpperCase(),
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: ColorTokens.midGray,
+                      letterSpacing: 0.8,
+                    ),
+                  ),
                 ],
               ),
             ),
             ...entry.value.map((med) => Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: _DoseCard(medication: med, logs: logs),
+              padding: const EdgeInsets.only(bottom: AppConstants.space12),
+              child: _DoseCard(
+                medication: med,
+                todayLogs: logs.where((l) => l.medicationId == med.id).toList(),
+              ),
             )),
           ],
         ],
@@ -261,164 +268,189 @@ class _TimelinedDoseList extends ConsumerWidget {
   }
 
   Map<String, List<Medication>> _groupByTimeOfDay(List<Medication> meds) {
-    final groups = <String, List<Medication>>{'MORNING': [], 'AFTERNOON': [], 'EVENING': []};
+    final map = <String, List<Medication>>{
+      'Morning': [],
+      'Afternoon': [],
+      'Evening': [],
+      'Night': [],
+    };
     for (final med in meds) {
-      for (final t in med.times) {
-        final hour = int.tryParse(t.split(':').first) ?? 8;
-        if (hour < 12) { groups['MORNING']!.add(med); break; }
-        else if (hour < 17) { groups['AFTERNOON']!.add(med); break; }
-        else { groups['EVENING']!.add(med); break; }
+      if (med.times.isEmpty) {
+        map['Morning']!.add(med);
+        continue;
+      }
+      final firstTime = med.times.first;
+      final hour = int.tryParse(firstTime.split(':').first) ?? 8;
+      if (hour < 12) {
+        map['Morning']!.add(med);
+      } else if (hour < 17) {
+        map['Afternoon']!.add(med);
+      } else if (hour < 21) {
+        map['Evening']!.add(med);
+      } else {
+        map['Night']!.add(med);
       }
     }
-    return groups;
+    return map;
   }
 
-  IconData _timeIcon(String label) {
-    switch (label) {
-      case 'MORNING': return Icons.wb_sunny_outlined;
-      case 'AFTERNOON': return Icons.wb_cloudy_outlined;
-      default: return Icons.nights_stay_outlined;
+  IconData _timeIcon(String slot) {
+    switch (slot) {
+      case 'Morning': return Icons.wb_sunny_outlined;
+      case 'Afternoon': return Icons.wb_twilight_rounded;
+      case 'Evening': return Icons.nights_stay_outlined;
+      default: return Icons.bedtime_outlined;
     }
   }
 }
 
 class _DoseCard extends ConsumerWidget {
   final Medication medication;
-  final List<AdherenceLog> logs;
+  final List<AdherenceLog> todayLogs;
 
-  const _DoseCard({required this.medication, required this.logs});
+  const _DoseCard({required this.medication, required this.todayLogs});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final log = logs.cast<AdherenceLog?>().firstWhere(
-      (l) => l?.medicationId == medication.id,
-      orElse: () => null,
-    );
-    final isTaken = log?.status == AdherenceStatus.taken;
+    final isTaken = todayLogs.any((l) => l.status == AdherenceStatus.taken);
+    final isSkipped = todayLogs.any((l) => l.status == AdherenceStatus.skipped);
 
     return Dismissible(
-      key: Key('dose_${medication.id}'),
-      confirmDismiss: (direction) async {
-        if (direction == DismissDirection.startToEnd) {
-          await _logDose(ref, context, AdherenceStatus.taken);
+      key: Key(medication.id),
+      direction: DismissDirection.horizontal,
+      confirmDismiss: (dir) async {
+        if (dir == DismissDirection.startToEnd) {
+          await ref.read(medicationsNotifierProvider.notifier).logAdherence(
+            medicationId: medication.id,
+            medicationName: medication.name,
+            status: AdherenceStatus.taken,
+          );
         } else {
-          await _logDose(ref, context, AdherenceStatus.skipped);
+          await ref.read(medicationsNotifierProvider.notifier).logAdherence(
+            medicationId: medication.id,
+            medicationName: medication.name,
+            status: AdherenceStatus.skipped,
+          );
         }
-        return false; // don't remove card
+        return false;
       },
       background: Container(
-        alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.only(left: 24),
         decoration: BoxDecoration(
           color: ColorTokens.mintSuccessBg,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: ColorTokens.mintSuccessBorder),
+          borderRadius: BorderRadius.circular(AppConstants.radiusCard),
+          border: Border.all(color: ColorTokens.mintSuccessBorder, width: 0.8),
         ),
-        child: const Row(children: [Icon(Icons.check_rounded, color: ColorTokens.mintSuccess), SizedBox(width: 8), Text('Taken', style: TextStyle(color: ColorTokens.mintSuccess, fontWeight: FontWeight.w600))]),
+        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.only(left: 24),
+        child: const Icon(Icons.check_rounded, color: ColorTokens.mintSuccess, size: 24),
       ),
       secondaryBackground: Container(
+        decoration: BoxDecoration(
+          color: ColorTokens.coolWash,
+          borderRadius: BorderRadius.circular(AppConstants.radiusCard),
+        ),
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 24),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF3F4F6),
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: ColorTokens.borderLight),
-        ),
-        child: const Row(mainAxisAlignment: MainAxisAlignment.end, children: [Text('Skip', style: TextStyle(color: ColorTokens.textSecondaryLight, fontWeight: FontWeight.w600)), SizedBox(width: 8), Icon(Icons.remove_circle_outline, color: ColorTokens.textSecondaryLight)]),
+        child: const Icon(Icons.close_rounded, color: ColorTokens.midGray, size: 24),
       ),
       child: NeoCard(
-        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => MedicationDetailScreen(medication: medication))),
-        backgroundColor: isTaken ? ColorTokens.mintSuccessBg : Colors.white,
-        borderColor: isTaken ? ColorTokens.mintSuccessBorder : ColorTokens.borderLight,
+        borderRadius: AppConstants.radiusCard,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => MedicationDetailScreen(medication: medication)),
+        ),
         child: Row(
           children: [
+            // Pill Icon container with Refero Pastel Sky / Citrus swatch
             Container(
-              width: 44,
-              height: 44,
+              width: 48,
+              height: 48,
               decoration: BoxDecoration(
-                color: isTaken ? ColorTokens.mintSuccess.withValues(alpha: 0.15) : ColorTokens.backgroundSecondaryLight,
-                borderRadius: BorderRadius.circular(12),
+                color: isTaken
+                    ? ColorTokens.mintSuccessBg
+                    : (isSkipped ? ColorTokens.coolWash : const Color(0xFFF0F7FF)),
+                borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
               ),
-              child: Icon(Icons.medication_liquid_rounded, color: isTaken ? ColorTokens.mintSuccess : ColorTokens.primaryTeal, size: 22),
+              child: Icon(
+                Icons.medication_rounded,
+                color: isTaken
+                    ? ColorTokens.mintSuccess
+                    : (isSkipped ? ColorTokens.midGray : ColorTokens.electricBlue),
+                size: 22,
+              ),
             ),
-            const SizedBox(width: 14),
+            const SizedBox(width: AppConstants.space16),
+
+            // Drug Info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(medication.name, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: ColorTokens.textPrimaryLight)),
-                  const SizedBox(height: 3),
-                  Text('${medication.dosage} · ${medication.frequencyLabel}', style: const TextStyle(fontSize: 12, color: ColorTokens.textSecondaryLight)),
+                  Text(
+                    medication.name,
+                    style: TextStyles.headingMedium.copyWith(
+                      decoration: isSkipped ? TextDecoration.lineThrough : null,
+                      color: isSkipped ? ColorTokens.midGray : ColorTokens.primaryInk,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '${medication.dosage} · ${medication.frequencyLabel}',
+                    style: TextStyles.caption,
+                  ),
                 ],
               ),
             ),
-            const SizedBox(width: 8),
-            sb.StatusBadge(
-              status: log == null
-                  ? sb.AdherenceStatus.pending
-                  : log.status == AdherenceStatus.taken
-                      ? sb.AdherenceStatus.taken
-                      : log.status == AdherenceStatus.missed
-                          ? sb.AdherenceStatus.missed
-                          : sb.AdherenceStatus.skipped,
-            ),
+
+            // Status chip
+            if (isTaken)
+              const sb.StatusBadge(status: sb.AdherenceStatus.taken)
+            else if (isSkipped)
+              const sb.StatusBadge(status: sb.AdherenceStatus.skipped)
+            else
+              PillChip(
+                label: medication.times.isNotEmpty ? medication.times.first : 'Pending',
+                backgroundColor: ColorTokens.coolWash,
+                textColor: ColorTokens.primaryInk,
+              ),
           ],
         ),
       ),
-    );
-  }
-
-  Future<void> _logDose(WidgetRef ref, BuildContext context, AdherenceStatus status) async {
-    final user = ref.read(firebaseAuthStateProvider).valueOrNull;
-    if (user == null) return;
-    final log = AdherenceLog(
-      id: '',
-      medicationId: medication.id,
-      medicationName: medication.name,
-      scheduledTime: DateTime.now(),
-      takenTime: status == AdherenceStatus.taken ? DateTime.now() : null,
-      status: status,
-    );
-    try {
-      await ref.read(medicationsNotifierProvider.notifier).logDose(userId: user.uid, log: log);
-    } catch (_) {
-      if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to log dose')));
-    }
-  }
-}
-
-class _AdherenceCardSkeleton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return NeoCard(child: Container(height: 80, color: ColorTokens.backgroundSecondaryLight));
-  }
-}
-
-class _MedCardSkeleton extends StatelessWidget {
-  const _MedCardSkeleton();
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: NeoCard(child: Container(height: 68, color: ColorTokens.backgroundSecondaryLight)),
     );
   }
 }
 
 class _EmptyMedicationsCard extends StatelessWidget {
   const _EmptyMedicationsCard();
+
   @override
   Widget build(BuildContext context) {
     return NeoCard(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 32),
+      borderRadius: AppConstants.radiusCard,
+      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+      child: Center(
         child: Column(
           children: [
-            const Icon(Icons.medication_outlined, size: 40, color: ColorTokens.textMutedLight),
-            const SizedBox(height: 12),
-            const Text('No medications yet', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: ColorTokens.textPrimaryLight)),
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: ColorTokens.coolWash,
+                borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+              ),
+              child: const Icon(Icons.document_scanner_rounded, size: 26, color: ColorTokens.midGray),
+            ),
+            const SizedBox(height: AppConstants.space16),
+            Text(
+              'No medications added yet.',
+              style: TextStyles.headingMedium,
+            ),
             const SizedBox(height: 4),
-            const Text('Tap + to add your first medication.', style: TextStyle(fontSize: 13, color: ColorTokens.textSecondaryLight)),
+            Text(
+              'Scan your prescription bottle or add one manually.',
+              style: TextStyles.caption,
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       ),
@@ -429,12 +461,48 @@ class _EmptyMedicationsCard extends StatelessWidget {
 class _ErrorCard extends StatelessWidget {
   final String message;
   const _ErrorCard({required this.message});
+
   @override
   Widget build(BuildContext context) {
     return NeoCard(
-      borderColor: ColorTokens.alertCoralBorder,
-      backgroundColor: ColorTokens.alertCoralBg,
-      child: Text(message, style: const TextStyle(color: ColorTokens.alertCoral, fontSize: 13)),
+      borderRadius: AppConstants.radiusCard,
+      backgroundColor: ColorTokens.emberBg,
+      borderColor: ColorTokens.emberBorder,
+      child: Text(
+        message,
+        style: const TextStyle(color: ColorTokens.ember, fontSize: 13),
+      ),
+    );
+  }
+}
+
+class _AdherenceCardSkeleton extends StatelessWidget {
+  const _AdherenceCardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return NeoCard(
+      borderRadius: AppConstants.radiusCard,
+      child: Container(
+        height: 80,
+        alignment: Alignment.center,
+        child: const CircularProgressIndicator(strokeWidth: 2, color: ColorTokens.electricBlue),
+      ),
+    );
+  }
+}
+
+class _MedCardSkeleton extends StatelessWidget {
+  const _MedCardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppConstants.space12),
+      child: NeoCard(
+        borderRadius: AppConstants.radiusCard,
+        child: Container(height: 50),
+      ),
     );
   }
 }

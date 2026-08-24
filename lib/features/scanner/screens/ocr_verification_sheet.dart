@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/color_tokens.dart';
+import '../../../core/theme/text_styles.dart';
+import '../../../core/widgets/pill_chip.dart';
 import '../../../core/widgets/primary_action_button.dart';
 import '../../../core/utils/validators.dart';
 import '../../medications/models/medication.dart';
 import '../../medications/providers/medications_provider.dart';
+import '../models/ocr_result.dart';
 import '../providers/scanner_provider.dart';
 
 class OcrVerificationSheet extends ConsumerStatefulWidget {
@@ -78,15 +82,19 @@ class _OcrVerificationSheetState extends ConsumerState<OcrVerificationSheet> {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Row(children: [const Icon(Icons.check_circle_rounded, color: Colors.white, size: 18), const SizedBox(width: 8), Text('${_nameCtrl.text} added!')]),
+            content: Row(children: [
+              const Icon(Icons.check_circle_rounded, color: Colors.white, size: 18),
+              const SizedBox(width: 8),
+              Text('${_nameCtrl.text} added to schedule!'),
+            ]),
             backgroundColor: ColorTokens.mintSuccess,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusMedium)),
           ),
         );
       }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Save failed: $e'), backgroundColor: ColorTokens.alertCoral));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Save failed: $e'), backgroundColor: ColorTokens.ember));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -96,148 +104,193 @@ class _OcrVerificationSheetState extends ConsumerState<OcrVerificationSheet> {
   Widget build(BuildContext context) {
     final confidence = widget.result.confidence;
     return DraggableScrollableSheet(
-      initialChildSize: 0.92,
+      initialChildSize: 0.90,
       minChildSize: 0.5,
       maxChildSize: 0.95,
-      builder: (_, scrollController) => Container(
-        decoration: const BoxDecoration(
-          color: ColorTokens.backgroundLight,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        child: Column(
-          children: [
-            // Drag handle
-            Padding(
-              padding: const EdgeInsets.only(top: 12, bottom: 4),
-              child: Container(width: 40, height: 4, decoration: BoxDecoration(color: ColorTokens.borderLight, borderRadius: BorderRadius.circular(99))),
-            ),
-
-            // Header
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(color: ColorTokens.mintSuccessBg, borderRadius: BorderRadius.circular(10)),
-                    child: const Icon(Icons.auto_fix_high_rounded, color: ColorTokens.mintSuccess, size: 20),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('OCR Result', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: ColorTokens.textPrimaryLight)),
-                        if (confidence != null)
-                          Text('${(confidence * 100).round()}% confidence', style: TextStyle(fontSize: 12, color: confidence >= 0.8 ? ColorTokens.mintSuccess : ColorTokens.warningAmber)),
-                      ],
+      builder: (_, scrollCtrl) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: ColorTokens.canvas,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(AppConstants.radiusCard)),
+          ),
+          padding: const EdgeInsets.fromLTRB(AppConstants.space24, AppConstants.space16, AppConstants.space24, 24),
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              controller: scrollCtrl,
+              children: [
+                // Handle bar
+                Center(
+                  child: Container(
+                    width: 36,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: ColorTokens.hairline,
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  IconButton(icon: const Icon(Icons.close_rounded, color: ColorTokens.textSecondaryLight), onPressed: () => Navigator.pop(context)),
-                ],
-              ),
-            ),
-            const Divider(color: ColorTokens.borderLight, height: 24),
+                ),
+                const SizedBox(height: AppConstants.space16),
 
-            // Form (scrollable)
-            Expanded(
-              child: SingleChildScrollView(
-                controller: scrollController,
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                child: Form(
-                  key: _formKey,
+                // Header
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Verify OCR Label',
+                          style: TextStyles.headingLarge,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Review AI-extracted prescription metadata',
+                          style: TextStyles.caption,
+                        ),
+                      ],
+                    ),
+                    if (confidence != null)
+                      PillChip(
+                        label: '${(confidence * 100).round()}% match',
+                        backgroundColor: ColorTokens.mintSuccessBg,
+                        textColor: ColorTokens.mintSuccess,
+                        borderColor: ColorTokens.mintSuccessBorder,
+                      ),
+                  ],
+                ),
+                const SizedBox(height: AppConstants.space24),
+
+                // Fields container
+                Container(
+                  padding: const EdgeInsets.all(AppConstants.space20),
+                  decoration: BoxDecoration(
+                    color: ColorTokens.paper,
+                    borderRadius: BorderRadius.circular(AppConstants.radiusCard),
+                    border: Border.all(color: ColorTokens.hairline, width: 0.8),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Verify & edit before saving', style: TextStyle(fontSize: 13, color: ColorTokens.textSecondaryLight)),
-                      const SizedBox(height: 20),
-
-                      _SheetField(controller: _nameCtrl, label: 'Brand / Product Name', hint: 'e.g. Biogesic', validator: (v) => Validators.requiredField(v, 'Name')),
-                      const SizedBox(height: 14),
-                      _SheetField(controller: _genericCtrl, label: 'Generic Name', hint: 'e.g. Paracetamol'),
-                      const SizedBox(height: 14),
-                      _SheetField(controller: _dosageCtrl, label: 'Dosage', hint: 'e.g. 500mg', validator: (v) => Validators.requiredField(v, 'Dosage')),
-                      const SizedBox(height: 14),
-                      const Text('Frequency', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: ColorTokens.textPrimaryLight)),
-                      const SizedBox(height: 8),
-                      _FreqRow(selected: _frequency, onChanged: (f) => setState(() => _frequency = f)),
-                      const SizedBox(height: 14),
-                      _SheetField(controller: _instructionsCtrl, label: 'Instructions', hint: 'e.g. Take with food', maxLines: 2),
-                      const SizedBox(height: 28),
-                      PrimaryActionButton(title: 'Confirm & Save', isLoading: _loading, onPressed: _confirmAndSave, backgroundColor: ColorTokens.primaryTeal),
+                      _Label('Brand Name'),
+                      _SheetField(controller: _nameCtrl, hint: 'e.g. Lipitor', validator: (v) => Validators.requiredField(v, 'Name')),
+                      const SizedBox(height: AppConstants.space16),
+                      _Label('Generic Ingredient'),
+                      _SheetField(controller: _genericCtrl, hint: 'e.g. Atorvastatin'),
+                      const SizedBox(height: AppConstants.space16),
+                      _Label('Dosage Strength'),
+                      _SheetField(controller: _dosageCtrl, hint: 'e.g. 20mg', validator: (v) => Validators.requiredField(v, 'Dosage')),
+                      const SizedBox(height: AppConstants.space16),
+                      _Label('Frequency'),
+                      _FrequencySelector(
+                        selected: _frequency,
+                        onChanged: (f) => setState(() => _frequency = f),
+                      ),
+                      const SizedBox(height: AppConstants.space16),
+                      _Label('Special Instructions'),
+                      _SheetField(controller: _instructionsCtrl, hint: 'e.g. Take 1 tablet daily at bedtime', maxLines: 2),
                     ],
                   ),
                 ),
-              ),
+                const SizedBox(height: AppConstants.space24),
+
+                PrimaryActionButton(
+                  title: 'Confirm & Save Schedule',
+                  isLoading: _loading,
+                  onPressed: _confirmAndSave,
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
+}
+
+class _Label extends StatelessWidget {
+  final String text;
+  const _Label(this.text);
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.only(bottom: 6),
+        child: Text(
+          text,
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: ColorTokens.primaryInk, letterSpacing: -0.1),
+        ),
+      );
 }
 
 class _SheetField extends StatelessWidget {
   final TextEditingController controller;
-  final String label;
   final String hint;
   final int maxLines;
   final String? Function(String?)? validator;
 
-  const _SheetField({required this.controller, required this.label, required this.hint, this.maxLines = 1, this.validator});
+  const _SheetField({
+    required this.controller,
+    required this.hint,
+    this.maxLines = 1,
+    this.validator,
+  });
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: ColorTokens.textPrimaryLight)),
-        const SizedBox(height: 6),
-        TextFormField(
-          controller: controller,
-          maxLines: maxLines,
-          validator: validator,
-          style: const TextStyle(fontSize: 15, color: ColorTokens.textPrimaryLight),
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: const TextStyle(color: ColorTokens.textMutedLight),
-            filled: true,
-            fillColor: Colors.white,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: ColorTokens.borderLight)),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: ColorTokens.borderLight)),
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: ColorTokens.primaryTeal, width: 1.5)),
-            errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: ColorTokens.alertCoral)),
+  Widget build(BuildContext context) => TextFormField(
+        controller: controller,
+        maxLines: maxLines,
+        validator: validator,
+        style: const TextStyle(fontSize: 15, color: ColorTokens.primaryInk),
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: const TextStyle(color: ColorTokens.midGray),
+          filled: true,
+          fillColor: ColorTokens.coolWash,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.radiusMedium), borderSide: BorderSide.none),
+          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.radiusMedium), borderSide: BorderSide.none),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+            borderSide: const BorderSide(color: ColorTokens.electricBlue, width: 1.5),
           ),
         ),
-      ],
-    );
-  }
+      );
 }
 
-class _FreqRow extends StatelessWidget {
+class _FrequencySelector extends StatelessWidget {
   final MedicationFrequency selected;
   final ValueChanged<MedicationFrequency> onChanged;
 
-  const _FreqRow({required this.selected, required this.onChanged});
+  const _FrequencySelector({required this.selected, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
-    final opts = [(MedicationFrequency.onceDaity, 'Once'), (MedicationFrequency.twiceDaily, '2×'), (MedicationFrequency.threeTimesDaily, '3×'), (MedicationFrequency.weekly, 'Weekly'), (MedicationFrequency.asNeeded, 'PRN')];
+    final opts = [
+      (MedicationFrequency.onceDaity, 'Once daily'),
+      (MedicationFrequency.twiceDaily, 'Twice daily'),
+      (MedicationFrequency.threeTimesDaily, '3× daily'),
+      (MedicationFrequency.asNeeded, 'As needed'),
+    ];
     return Wrap(
-      spacing: 8, runSpacing: 8,
-      children: opts.map((o) {
-        final sel = selected == o.$1;
+      spacing: 8,
+      runSpacing: 8,
+      children: opts.map((opt) {
+        final isSelected = selected == opt.$1;
         return GestureDetector(
-          onTap: () => onChanged(o.$1),
+          onTap: () => onChanged(opt.$1),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
             decoration: BoxDecoration(
-              color: sel ? ColorTokens.primaryTeal : Colors.white,
-              borderRadius: BorderRadius.circular(999),
-              border: Border.all(color: sel ? ColorTokens.primaryTeal : ColorTokens.borderLight),
+              color: isSelected ? ColorTokens.electricBlue : ColorTokens.coolWash,
+              borderRadius: BorderRadius.circular(AppConstants.radiusFull),
             ),
-            child: Text(o.$2, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: sel ? Colors.white : ColorTokens.textSecondaryLight)),
+            child: Text(
+              opt.$2,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: isSelected ? Colors.white : ColorTokens.primaryInk,
+              ),
+            ),
           ),
         );
       }).toList(),

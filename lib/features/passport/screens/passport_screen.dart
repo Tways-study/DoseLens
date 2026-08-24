@@ -1,8 +1,9 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:printing/printing.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/color_tokens.dart';
+import '../../../core/theme/text_styles.dart';
 import '../../../core/utils/date_formatters.dart';
 import '../../../core/widgets/neo_card.dart';
 import '../../../core/widgets/pill_chip.dart';
@@ -23,26 +24,34 @@ class PassportScreen extends ConsumerWidget {
     final passportState = ref.watch(passportProvider);
 
     return Scaffold(
-      backgroundColor: ColorTokens.backgroundLight,
+      backgroundColor: ColorTokens.canvas,
       appBar: AppBar(
-        title: const Text('Health Passport', style: TextStyle(fontWeight: FontWeight.w700, color: ColorTokens.textPrimaryLight)),
+        title: Text('Passport.', style: TextStyles.displayMedium),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+        padding: const EdgeInsets.fromLTRB(AppConstants.space20, AppConstants.space8, AppConstants.space20, 100),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Adherence Score Card
+            // Adherence Score Card (28px radius)
             rateAsync.when(
-              loading: () => const Center(child: Padding(padding: EdgeInsets.all(32), child: CircularProgressIndicator(color: ColorTokens.primaryTeal))),
+              loading: () => const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(32),
+                  child: CircularProgressIndicator(color: ColorTokens.electricBlue, strokeWidth: 2),
+                ),
+              ),
               error: (_, __) => const SizedBox.shrink(),
               data: (rate) => _AdherenceScoreCard(rate: rate),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppConstants.space28),
 
-            // Active Medications
-            SectionHeader(title: 'Active Medications', subtitle: 'Included in your passport'),
-            const SizedBox(height: 12),
+            // Active Medications Section
+            SectionHeader(
+              title: 'Prescribed Drugs',
+              subtitle: 'Active regimens included in clinical report',
+            ),
+            const SizedBox(height: AppConstants.space8),
             medsAsync.when(
               loading: () => const SizedBox.shrink(),
               error: (_, __) => const SizedBox.shrink(),
@@ -50,28 +59,43 @@ class PassportScreen extends ConsumerWidget {
                 if (meds.isEmpty) return const _EmptyMeds();
                 return Column(
                   children: meds.map((med) => Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.only(bottom: AppConstants.space12),
                     child: NeoCard(
+                      borderRadius: AppConstants.radiusCard,
                       child: Row(
                         children: [
                           Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(color: ColorTokens.primaryTeal.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
-                            child: const Icon(Icons.medication_liquid_rounded, color: ColorTokens.primaryTeal, size: 20),
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF0F7FF),
+                              borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+                            ),
+                            child: const Icon(Icons.medication_liquid_rounded, color: ColorTokens.electricBlue, size: 20),
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: AppConstants.space16),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(med.name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: ColorTokens.textPrimaryLight)),
-                                Text('${med.dosage} · ${med.frequencyLabel}', style: const TextStyle(fontSize: 12, color: ColorTokens.textSecondaryLight)),
+                                Text(
+                                  med.name,
+                                  style: TextStyles.headingMedium.copyWith(fontSize: 16),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  '${med.dosage} · ${med.frequencyLabel}',
+                                  style: TextStyles.caption,
+                                ),
                               ],
                             ),
                           ),
                           if (med.instructions != null)
-                            PillChip(label: 'Instructions', backgroundColor: ColorTokens.backgroundSecondaryLight, textColor: ColorTokens.textSecondaryLight, borderColor: ColorTokens.borderLight),
+                            PillChip(
+                              label: 'Instructions',
+                              backgroundColor: ColorTokens.coolWash,
+                              textColor: ColorTokens.midGray,
+                            ),
                         ],
                       ),
                     ),
@@ -79,11 +103,14 @@ class PassportScreen extends ConsumerWidget {
                 );
               },
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppConstants.space28),
 
-            // Recent adherence log preview
-            SectionHeader(title: '30-Day Log Preview', subtitle: 'Last 5 dose events'),
-            const SizedBox(height: 12),
+            // 30-Day Log Preview Section
+            SectionHeader(
+              title: 'Recent Activity',
+              subtitle: 'Latest verification events',
+            ),
+            const SizedBox(height: AppConstants.space8),
             logsAsync.when(
               loading: () => const SizedBox.shrink(),
               error: (_, __) => const SizedBox.shrink(),
@@ -91,6 +118,7 @@ class PassportScreen extends ConsumerWidget {
                 final preview = logs.take(5).toList();
                 if (preview.isEmpty) return const SizedBox.shrink();
                 return NeoCard(
+                  borderRadius: AppConstants.radiusCard,
                   child: Column(
                     children: preview.asMap().entries.map((e) {
                       final log = e.value;
@@ -98,7 +126,7 @@ class PassportScreen extends ConsumerWidget {
                       return Column(
                         children: [
                           _LogRow(log: log),
-                          if (!isLast) const Divider(color: ColorTokens.borderLight, height: 1),
+                          if (!isLast) const Divider(color: ColorTokens.hairline, height: 16),
                         ],
                       );
                     }).toList(),
@@ -106,22 +134,21 @@ class PassportScreen extends ConsumerWidget {
                 );
               },
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: AppConstants.space32),
 
-            // Export PDF
-            passportState.isLoading
-                ? const Center(child: CircularProgressIndicator(color: ColorTokens.primaryTeal))
-                : PrimaryActionButton(
-                    title: 'Export PDF Passport',
-                    icon: const Icon(Icons.picture_as_pdf_rounded, color: Colors.white, size: 20),
-                    onPressed: () async {
-                      await ref.read(passportProvider.notifier).generatePdf();
-                      final pdfBytes = ref.read(passportProvider).valueOrNull;
-                      if (pdfBytes != null && context.mounted) {
-                        await Printing.layoutPdf(onLayout: (_) => pdfBytes);
-                      }
-                    },
-                  ),
+            // 1-Tap Export Button
+            PrimaryActionButton(
+              title: 'Generate Clinical Passport PDF',
+              icon: const Icon(Icons.print_rounded, size: 18, color: Colors.white),
+              isLoading: passportState.isLoading,
+              onPressed: () async {
+                await ref.read(passportProvider.notifier).generatePdf();
+                final pdfBytes = ref.read(passportProvider).valueOrNull;
+                if (pdfBytes != null) {
+                  await Printing.layoutPdf(onLayout: (_) => pdfBytes);
+                }
+              },
+            ),
           ],
         ),
       ),
@@ -137,76 +164,70 @@ class _AdherenceScoreCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final pct = (rate * 100).round();
     final isGood = pct >= 80;
+
     return NeoCard(
-      child: Row(
+      borderRadius: AppConstants.radiusCard,
+      padding: const EdgeInsets.all(AppConstants.space24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Donut chart
-          SizedBox(
-            width: 90,
-            height: 90,
-            child: CustomPaint(
-              painter: _LargeDonutPainter(rate: rate),
-              child: Center(
-                child: Text('$pct%', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: ColorTokens.textPrimaryLight)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Clinical Summary',
+                style: TextStyles.caption.copyWith(fontWeight: FontWeight.w500),
               ),
-            ),
+              PillChip(
+                label: isGood ? 'High Adherence' : 'Needs Review',
+                backgroundColor: isGood ? ColorTokens.mintSuccessBg : ColorTokens.emberBg,
+                textColor: isGood ? ColorTokens.mintSuccess : ColorTokens.ember,
+                borderColor: isGood ? ColorTokens.mintSuccessBorder : ColorTokens.emberBorder,
+              ),
+            ],
           ),
-          const SizedBox(width: 20),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('30-Day Adherence', style: TextStyle(fontSize: 13, color: ColorTokens.textSecondaryLight, fontWeight: FontWeight.w500)),
-                const SizedBox(height: 6),
-                PillChip(
-                  label: isGood ? '✓ Clinical Goal Met' : '⚠ Needs Improvement',
-                  backgroundColor: isGood ? ColorTokens.mintSuccessBg : ColorTokens.warningAmberBg,
-                  textColor: isGood ? ColorTokens.mintSuccess : ColorTokens.warningAmber,
-                  borderColor: isGood ? ColorTokens.mintSuccessBorder : ColorTokens.warningAmberBorder,
+          const SizedBox(height: AppConstants.space16),
+          Row(
+            children: [
+              Text(
+                '$pct%',
+                style: TextStyles.metricNumber.copyWith(fontSize: 48),
+              ),
+              const SizedBox(width: AppConstants.space20),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '30-Day Index',
+                      style: TextStyles.headingMedium.copyWith(fontSize: 15),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Aggregated adherence score prepared for clinical doctor consultations.',
+                      style: TextStyles.caption,
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  isGood ? 'Excellent adherence. Ready for your doctor visit.' : 'Try to improve consistency before your appointment.',
-                  style: const TextStyle(fontSize: 12, color: ColorTokens.textMutedLight, height: 1.4),
-                ),
-              ],
+              ),
+            ],
+          ),
+          const SizedBox(height: AppConstants.space20),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(AppConstants.radiusFull),
+            child: LinearProgressIndicator(
+              value: rate,
+              minHeight: 8,
+              backgroundColor: ColorTokens.coolWash,
+              valueColor: AlwaysStoppedAnimation<Color>(
+                isGood ? ColorTokens.electricBlue : ColorTokens.ember,
+              ),
             ),
           ),
         ],
       ),
     );
   }
-}
-
-class _LargeDonutPainter extends CustomPainter {
-  final double rate;
-  _LargeDonutPainter({required this.rate});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2 - 8;
-    const strokeWidth = 9.0;
-
-    canvas.drawCircle(center, radius,
-        Paint()..style = PaintingStyle.stroke..strokeWidth = strokeWidth..color = const Color(0xFFE5E7EB));
-
-    final sweepAngle = rate.clamp(0.0, 1.0) * 2 * math.pi;
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      -math.pi / 2,
-      sweepAngle,
-      false,
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = strokeWidth
-        ..strokeCap = StrokeCap.round
-        ..color = rate >= 0.8 ? ColorTokens.mintSuccess : ColorTokens.warningAmber,
-    );
-  }
-
-  @override
-  bool shouldRepaint(_LargeDonutPainter old) => old.rate != rate;
 }
 
 class _LogRow extends StatelessWidget {
@@ -216,19 +237,45 @@ class _LogRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isTaken = log.status == AdherenceStatus.taken;
-    final isMissed = log.status == AdherenceStatus.missed;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Icon(
-            isTaken ? Icons.check_circle_rounded : isMissed ? Icons.cancel_rounded : Icons.remove_circle_rounded,
-            color: isTaken ? ColorTokens.mintSuccess : isMissed ? ColorTokens.alertCoral : ColorTokens.textMutedLight,
-            size: 18,
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: isTaken ? ColorTokens.mintSuccessBg : ColorTokens.emberBg,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              isTaken ? Icons.check_rounded : Icons.close_rounded,
+              color: isTaken ? ColorTokens.mintSuccess : ColorTokens.ember,
+              size: 16,
+            ),
           ),
-          const SizedBox(width: 12),
-          Expanded(child: Text(log.medicationName, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: ColorTokens.textPrimaryLight))),
-          Text(DateFormatters.formatShortDate(log.scheduledTime), style: const TextStyle(fontSize: 12, color: ColorTokens.textMutedLight)),
+          const SizedBox(width: AppConstants.space12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  log.medicationName,
+                  style: TextStyles.labelLarge,
+                ),
+                Text(
+                  DateFormatters.formatDateTime(log.scheduledTime),
+                  style: TextStyles.caption,
+                ),
+              ],
+            ),
+          ),
+          PillChip(
+            label: isTaken ? 'Taken' : (log.status == AdherenceStatus.missed ? 'Missed' : 'Skipped'),
+            backgroundColor: isTaken ? ColorTokens.mintSuccessBg : ColorTokens.emberBg,
+            textColor: isTaken ? ColorTokens.mintSuccess : ColorTokens.ember,
+            borderColor: isTaken ? ColorTokens.mintSuccessBorder : ColorTokens.emberBorder,
+          ),
         ],
       ),
     );
@@ -238,12 +285,16 @@ class _LogRow extends StatelessWidget {
 class _EmptyMeds extends StatelessWidget {
   const _EmptyMeds();
   @override
-  Widget build(BuildContext context) {
-    return const NeoCard(
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 20),
-        child: Center(child: Text('No active medications tracked yet', style: TextStyle(fontSize: 13, color: ColorTokens.textSecondaryLight))),
+  Widget build(BuildContext context) => NeoCard(
+    borderRadius: AppConstants.radiusCard,
+    child: Padding(
+      padding: const EdgeInsets.all(24),
+      child: Center(
+        child: Text(
+          'No active medications to display in passport.',
+          style: TextStyles.caption,
+        ),
       ),
-    );
-  }
+    ),
+  );
 }

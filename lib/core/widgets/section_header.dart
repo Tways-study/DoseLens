@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../constants/app_constants.dart';
 import '../theme/text_styles.dart';
 
-/// Section Header with title, optional subtitle, and optional trailing action
+/// Refero Section Header: 20-24px heading with approachable tracking, muted subtitle
 class SectionHeader extends StatelessWidget {
   final String title;
   final String? subtitle;
@@ -18,28 +18,33 @@ class SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppConstants.space8),
+      padding: const EdgeInsets.symmetric(vertical: AppConstants.space12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyles.headingMedium,
-              ),
-              if (subtitle != null) ...[
-                const SizedBox(height: AppConstants.space4),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Text(
-                  subtitle!,
-                  style: TextStyles.caption,
+                  title,
+                  style: TextStyles.headingLarge,
                 ),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 3),
+                  Text(
+                    subtitle!,
+                    style: TextStyles.caption,
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
-          if (trailing != null) trailing!,
+          if (trailing != null) ...[
+            const SizedBox(width: AppConstants.space12),
+            trailing!,
+          ],
         ],
       ),
     );
