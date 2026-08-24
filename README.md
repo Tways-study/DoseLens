@@ -22,19 +22,19 @@
 
 ---
 
-## 🌟 Core Features
+## Core Features
 
 | Feature | Description |
 |---|---|
-| 📷 **Multimodal AI Vision Scanner** | Viewfinder reticle with glowing Cyan Laser corner brackets. Powered by **Gemini 2.0 Flash Vision** to extract brand, generic ingredient, dosage, frequency, and instructions directly from packaging bytes. |
-| 💊 **Daily Prescription Timeline** | Morning, Afternoon, Evening, and As-Needed segmented schedule. Swipe right to mark **Taken** (Mint), swipe left to **Skip**. |
-| 🛡️ **30-Day Clinical Passport** | Live 30-day adherence score index. Generates a one-tap clinical PDF passport summary ready for physician consultation. |
-| 📡 **Caregiver Remote Heartbeat** | Real-time Cloud Firestore listeners stream patient telemetry. Caregivers receive instant alerts when a dose is missed. |
-| 🔐 **Firebase Authentication** | Email/password login, registration, instant guest exploration mode, and role-tailored onboarding. |
+| **Multimodal AI Vision Scanner** | Viewfinder reticle with glowing Cyan Laser corner brackets. Powered by **Gemini 2.0 Flash Vision** to extract brand, generic ingredient, dosage, frequency, and instructions directly from packaging bytes. |
+| **Daily Prescription Timeline** | Morning, Afternoon, Evening, and As-Needed segmented schedule. Swipe right to mark **Taken** (Mint), swipe left to **Skip**. |
+| **30-Day Clinical Passport** | Live 30-day adherence score index. Generates a one-tap clinical PDF passport summary ready for physician consultation. |
+| **Caregiver Remote Heartbeat** | Real-time Cloud Firestore listeners stream patient telemetry. Caregivers receive instant alerts when a dose is missed. |
+| **Firebase Authentication** | Email/password login, registration, instant guest exploration mode, and role-tailored onboarding. |
 
 ---
 
-## 🎨 Design System: Precision Digital Rx
+## Design System: Precision Digital Rx
 
 DoseLens follows the **Precision Digital Rx** design architecture — combining high-precision medical optics with modern clinical minimalism.
 
@@ -54,7 +54,7 @@ DoseLens follows the **Precision Digital Rx** design architecture — combining 
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 lib/
@@ -77,7 +77,7 @@ lib/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -119,7 +119,7 @@ flutter run -d android
 
 ---
 
-## 🔒 Security & Privacy
+## Security & Privacy
 
 ![gitignored](https://img.shields.io/badge/.env-gitignored-22C55E?logo=gnuprivacyguard&logoColor=white)
 ![no hardcoded keys](https://img.shields.io/badge/API_keys-runtime_only-22C55E?logo=gnuprivacyguard&logoColor=white)
@@ -131,6 +131,6 @@ flutter run -d android
 
 ---
 
-## 📄 License
+## License
 
 MIT © 2026 DoseLens
