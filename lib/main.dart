@@ -61,7 +61,7 @@ class _AuthGate extends ConsumerWidget {
   }
 }
 
-/// Main bottom navigation shell with Precision Digital Rx aesthetic
+/// Main bottom navigation shell with prominent CENTERED Scan action button
 class MainAppShell extends StatefulWidget {
   const MainAppShell({super.key});
 
@@ -86,21 +86,61 @@ class _MainAppShellState extends State<MainAppShell> {
         index: _currentIndex,
         children: _screens,
       ),
-      floatingActionButton: FloatingActionButton(
-        elevation: 2,
-        highlightElevation: 4,
-        backgroundColor: ColorTokens.electricCerulean,
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusFull),
+      // Prominent Centered Scan Button
+      floatingActionButton: Container(
+        height: 60,
+        width: 60,
+        margin: const EdgeInsets.only(top: 18),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              ColorTokens.electricCerulean,
+              ColorTokens.ceruleanDark,
+            ],
+          ),
+          border: Border.all(
+            color: ColorTokens.cyanLaser.withValues(alpha: 0.9),
+            width: 2.2,
+          ),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x400284C7),
+              blurRadius: 14,
+              offset: Offset(0, 5),
+            ),
+          ],
         ),
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const ScannerScreen()),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(30),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ScannerScreen()),
+            ),
+            child: const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.document_scanner_rounded, color: Colors.white, size: 24),
+                SizedBox(height: 1),
+                Text(
+                  'SCAN',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 8.5,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.6,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-        child: const Icon(Icons.document_scanner_rounded, size: 22),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           color: ColorTokens.snow,
@@ -110,27 +150,41 @@ class _MainAppShellState extends State<MainAppShell> {
         ),
         child: SafeArea(
           child: SizedBox(
-            height: 62,
+            height: 64,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _NavBarItem(
-                  icon: Icons.calendar_today_rounded,
-                  label: 'Today',
-                  isSelected: _currentIndex == 0,
-                  onTap: () => setState(() => _currentIndex = 0),
+                // Tab 0: Today
+                Expanded(
+                  child: _NavBarItem(
+                    icon: Icons.calendar_today_rounded,
+                    label: 'Today',
+                    isSelected: _currentIndex == 0,
+                    onTap: () => setState(() => _currentIndex = 0),
+                  ),
                 ),
-                _NavBarItem(
-                  icon: Icons.verified_user_outlined,
-                  label: 'Passport',
-                  isSelected: _currentIndex == 1,
-                  onTap: () => setState(() => _currentIndex = 1),
+
+                // Tab 1: Passport
+                Expanded(
+                  child: _NavBarItem(
+                    icon: Icons.verified_user_outlined,
+                    label: 'Passport',
+                    isSelected: _currentIndex == 1,
+                    onTap: () => setState(() => _currentIndex = 1),
+                  ),
                 ),
-                _NavBarItem(
-                  icon: Icons.favorite_border_rounded,
-                  label: 'Caregiver',
-                  isSelected: _currentIndex == 2,
-                  onTap: () => setState(() => _currentIndex = 2),
+
+                // Center Spacer reserved for the floating Scan button
+                const SizedBox(width: 72),
+
+                // Tab 2: Caregiver
+                Expanded(
+                  child: _NavBarItem(
+                    icon: Icons.favorite_border_rounded,
+                    label: 'Caregiver',
+                    isSelected: _currentIndex == 2,
+                    onTap: () => setState(() => _currentIndex = 2),
+                  ),
                 ),
               ],
             ),
@@ -160,7 +214,7 @@ class _NavBarItem extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppConstants.radiusButton),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
