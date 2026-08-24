@@ -69,23 +69,28 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: ColorTokens.snow,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         hintStyle: const TextStyle(color: ColorTokens.mutedMist, fontSize: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusButton),
-          borderSide: const BorderSide(color: ColorTokens.coolHairline, width: 1.0),
+          borderSide:
+              const BorderSide(color: ColorTokens.coolHairline, width: 1.0),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusButton),
-          borderSide: const BorderSide(color: ColorTokens.coolHairline, width: 1.0),
+          borderSide:
+              const BorderSide(color: ColorTokens.coolHairline, width: 1.0),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusButton),
-          borderSide: const BorderSide(color: ColorTokens.electricCerulean, width: 1.5),
+          borderSide:
+              const BorderSide(color: ColorTokens.electricCerulean, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusButton),
-          borderSide: const BorderSide(color: ColorTokens.crimsonAlert, width: 1.0),
+          borderSide:
+              const BorderSide(color: ColorTokens.crimsonAlert, width: 1.0),
         ),
       ),
     );
@@ -106,7 +111,8 @@ class AppTheme {
         error: ColorTokens.crimsonAlert,
         onError: Colors.white,
       ),
-      textTheme: GoogleFonts.plusJakartaSansTextTheme(ThemeData.dark().textTheme),
+      textTheme:
+          GoogleFonts.plusJakartaSansTextTheme(ThemeData.dark().textTheme),
       cardTheme: CardThemeData(
         color: ColorTokens.surfaceDark,
         elevation: 0,
