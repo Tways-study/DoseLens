@@ -23,7 +23,7 @@ class AppTheme {
         onError: Colors.white,
       ),
       textTheme: GoogleFonts.plusJakartaSansTextTheme(),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: ColorTokens.surfaceLight,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -68,7 +68,7 @@ class AppTheme {
         onError: Colors.white,
       ),
       textTheme: GoogleFonts.plusJakartaSansTextTheme(ThemeData.dark().textTheme),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: ColorTokens.surfaceDark,
         elevation: 0,
         shape: RoundedRectangleBorder(

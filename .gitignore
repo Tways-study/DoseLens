@@ -79,3 +79,5 @@ Thumbs.db
 
 # ─── Test Coverage ─────────────────────────────────────────────────
 coverage/
+# Widget Preview related
+.widget_preview/

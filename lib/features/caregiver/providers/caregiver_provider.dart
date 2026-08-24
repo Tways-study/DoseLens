@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/constants/firebase_constants.dart';
 import '../../../features/auth/providers/auth_provider.dart';
 import '../../../features/medications/models/adherence_log.dart';
 import '../models/caregiver_link.dart';
@@ -29,7 +28,8 @@ final myCaregiversProvider = StreamProvider<List<CaregiverLink>>((ref) {
 });
 
 // Missed doses for a specific patient (last 24 hours) — used by caregiver
-final patientMissedDosesProvider = StreamProvider.family<List<AdherenceLog>, String>((ref, patientId) {
+final patientMissedDosesProvider =
+    StreamProvider.family<List<AdherenceLog>, String>((ref, patientId) {
   final firestore = ref.watch(firestoreServiceProvider);
   final since = DateTime.now().subtract(const Duration(hours: 24));
   return firestore
@@ -46,7 +46,8 @@ class CaregiverNotifier extends AsyncNotifier<void> {
   @override
   Future<void> build() async {}
 
-  Future<void> inviteCaregiver({required String patientId, required String caregiverEmail}) async {
+  Future<void> inviteCaregiver(
+      {required String patientId, required String caregiverEmail}) async {
     // In a real app: look up caregiver by email, create link doc
     final firestore = ref.read(firestoreServiceProvider);
     await firestore.caregiverLinksCollection.add({
@@ -66,4 +67,5 @@ class CaregiverNotifier extends AsyncNotifier<void> {
   }
 }
 
-final caregiverNotifierProvider = AsyncNotifierProvider<CaregiverNotifier, void>(CaregiverNotifier.new);
+final caregiverNotifierProvider =
+    AsyncNotifierProvider<CaregiverNotifier, void>(CaregiverNotifier.new);

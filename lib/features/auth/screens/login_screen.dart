@@ -5,7 +5,6 @@ import '../../../core/utils/validators.dart';
 import '../../../core/widgets/primary_action_button.dart';
 import '../providers/auth_provider.dart';
 import 'register_screen.dart';
-import 'role_selection_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});

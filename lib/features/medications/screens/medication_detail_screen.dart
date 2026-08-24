@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/color_tokens.dart';
 import '../../../core/widgets/neo_card.dart';
 import '../../../core/widgets/pill_chip.dart';
-import '../models/adherence_log.dart';
 import '../models/medication.dart';
 import '../providers/medications_provider.dart';
 

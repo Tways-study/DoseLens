@@ -19,7 +19,7 @@ class PdfService {
         margin: const pw.EdgeInsets.all(32),
         build: (pw.Context context) {
           return pw.Column(
-            crossContent: pw.CrossAxisAlignment.start,
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
               // Header
               pw.Row(
@@ -54,17 +54,15 @@ class PdfService {
                           : PdfColors.amber50,
                       borderRadius: pw.BorderRadius.circular(12),
                     ),
-                    children: [
-                      pw.Text(
-                        '${(adherenceRate * 100).toStringAsFixed(0)}% Adherence',
-                        style: pw.TextStyle(
-                          fontWeight: pw.FontWeight.bold,
-                          color: adherenceRate >= 0.8
-                              ? PdfColors.green800
-                              : PdfColors.amber800,
-                        ),
+                    child: pw.Text(
+                      '${(adherenceRate * 100).toStringAsFixed(0)}% Adherence',
+                      style: pw.TextStyle(
+                        fontWeight: pw.FontWeight.bold,
+                        color: adherenceRate >= 0.8
+                            ? PdfColors.green800
+                            : PdfColors.amber800,
                       ),
-                    ],
+                    ),
                   ),
                 ],
               ),
@@ -83,7 +81,7 @@ class PdfService {
               ),
               pw.SizedBox(height: 8),
 
-              pw.Table.fromTextArray(
+              pw.TableHelper.fromTextArray(
                 headers: ['Medication', 'Dosage', 'Frequency', 'Instructions'],
                 data: activeMedications
                     .map((med) => [
@@ -110,7 +108,7 @@ class PdfService {
               ),
               pw.SizedBox(height: 8),
 
-              pw.Table.fromTextArray(
+              pw.TableHelper.fromTextArray(
                 headers: ['Date & Time', 'Medication', 'Status'],
                 data: adherenceHistory
                     .take(15)

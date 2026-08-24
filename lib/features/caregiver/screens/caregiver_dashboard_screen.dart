@@ -5,12 +5,9 @@ import '../../../core/utils/date_formatters.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/neo_card.dart';
 import '../../../core/widgets/pill_chip.dart';
-import '../../../core/widgets/primary_action_button.dart';
 import '../../../core/widgets/section_header.dart';
 import '../../../core/widgets/status_badge.dart';
-import '../../../features/auth/models/app_user.dart';
 import '../../../features/auth/providers/auth_provider.dart';
-import '../../../features/medications/models/adherence_log.dart';
 import '../models/caregiver_link.dart';
 import '../providers/caregiver_provider.dart';
 
@@ -19,7 +16,7 @@ class CaregiverDashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final role = ref.watch(userRoleProvider);
+    ref.watch(userRoleProvider);
 
     return DefaultTabController(
       length: 2,
