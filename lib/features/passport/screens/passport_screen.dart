@@ -24,9 +24,9 @@ class PassportScreen extends ConsumerWidget {
     final passportState = ref.watch(passportProvider);
 
     return Scaffold(
-      backgroundColor: ColorTokens.paper,
+      backgroundColor: ColorTokens.icePaper,
       appBar: AppBar(
-        backgroundColor: ColorTokens.paper,
+        backgroundColor: ColorTokens.icePaper,
         scrolledUnderElevation: 0,
         elevation: 0,
         title: Row(
@@ -35,7 +35,7 @@ class PassportScreen extends ConsumerWidget {
               width: 10,
               height: 10,
               decoration: const BoxDecoration(
-                color: ColorTokens.acidGreen,
+                color: ColorTokens.electricCerulean,
                 shape: BoxShape.circle,
               ),
             ),
@@ -63,7 +63,7 @@ class PassportScreen extends ConsumerWidget {
                       width: 72,
                       height: 72,
                       child: Image.asset(
-                        'assets/images/craftwork_passport_seal.jpg',
+                        'assets/images/precision_rx_passport_seal.jpg',
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -75,9 +75,9 @@ class PassportScreen extends ConsumerWidget {
                       children: [
                         const PillChip(
                           label: '30-Day Clinical Summary',
-                          backgroundColor: ColorTokens.acidGreen,
-                          textColor: ColorTokens.inkBlack,
-                          borderColor: ColorTokens.inkBlack,
+                          backgroundColor: ColorTokens.ceruleanBg,
+                          textColor: ColorTokens.electricCerulean,
+                          borderColor: ColorTokens.ceruleanBorder,
                         ),
                         const SizedBox(height: 6),
                         Text(
@@ -111,9 +111,9 @@ class PassportScreen extends ConsumerWidget {
                           Text('Overall Adherence', style: TextStyles.caption.copyWith(fontWeight: FontWeight.w600)),
                           PillChip(
                             label: pct >= 80 ? 'Optimal' : 'Needs Review',
-                            backgroundColor: pct >= 80 ? ColorTokens.mintSuccessBg : ColorTokens.vermillionBg,
-                            textColor: pct >= 80 ? ColorTokens.mintSuccess : ColorTokens.vermillion,
-                            borderColor: pct >= 80 ? ColorTokens.mintSuccessBorder : ColorTokens.vermillionBorder,
+                            backgroundColor: pct >= 80 ? ColorTokens.mintSuccessBg : ColorTokens.crimsonAlertBg,
+                            textColor: pct >= 80 ? ColorTokens.mintSuccess : ColorTokens.crimsonAlert,
+                            borderColor: pct >= 80 ? ColorTokens.mintSuccessBorder : ColorTokens.crimsonAlertBorder,
                           ),
                         ],
                       ),
@@ -138,8 +138,8 @@ class PassportScreen extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(AppConstants.radiusFull),
                         child: LinearProgressIndicator(
                           value: rate.clamp(0.0, 1.0),
-                          backgroundColor: ColorTokens.fog,
-                          valueColor: const AlwaysStoppedAnimation<Color>(ColorTokens.acidGreen),
+                          backgroundColor: ColorTokens.iceSlate,
+                          valueColor: const AlwaysStoppedAnimation<Color>(ColorTokens.electricCerulean),
                           minHeight: 8,
                         ),
                       ),
@@ -162,7 +162,7 @@ class PassportScreen extends ConsumerWidget {
                 if (meds.isEmpty) {
                   return const NeoCard(
                     child: Center(
-                      child: Text('No active prescriptions', style: TextStyle(color: ColorTokens.graphite)),
+                      child: Text('No active prescriptions', style: TextStyle(color: ColorTokens.coolSlate)),
                     ),
                   );
                 }
@@ -185,13 +185,13 @@ class PassportScreen extends ConsumerWidget {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(
-                                color: ColorTokens.fog,
+                                color: ColorTokens.iceSlate,
                                 borderRadius: BorderRadius.circular(AppConstants.radiusButton),
-                                border: Border.all(color: ColorTokens.hairline),
+                                border: Border.all(color: ColorTokens.coolHairline),
                               ),
                               child: Text(
                                 m.times.join(', '),
-                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: ColorTokens.inkBlack),
+                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: ColorTokens.midnightObsidian),
                               ),
                             ),
                           ],
@@ -215,7 +215,7 @@ class PassportScreen extends ConsumerWidget {
               data: (logs) {
                 if (logs.isEmpty) {
                   return const NeoCard(
-                    child: Center(child: Text('No logs recorded yet', style: TextStyle(color: ColorTokens.graphite))),
+                    child: Center(child: Text('No logs recorded yet', style: TextStyle(color: ColorTokens.coolSlate))),
                   );
                 }
                 return Column(
@@ -249,10 +249,10 @@ class PassportScreen extends ConsumerWidget {
             ),
             const SizedBox(height: AppConstants.space28),
 
-            // 1-Tap Export Button (Acid Green Pill)
+            // 1-Tap Export Button (Electric Cerulean Pill)
             PrimaryActionButton(
               title: 'Generate Clinical Passport PDF',
-              icon: const Icon(Icons.picture_as_pdf_rounded, size: 18, color: ColorTokens.inkBlack),
+              icon: const Icon(Icons.picture_as_pdf_rounded, size: 18, color: Colors.white),
               isLoading: passportState.isLoading,
               isPill: true,
               onPressed: () async {

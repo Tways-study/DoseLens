@@ -1,101 +1,102 @@
 import 'package:flutter/material.dart';
 
-/// Semantic color tokens strictly following the Craftwork Design Architecture
-/// (Refero Style Reference: https://styles.refero.design/style/47c9e353-bed3-4d6c-8316-63a2db5cc377)
+/// Semantic color tokens strictly following Palette 2: "Precision Digital Rx"
+/// (Electric Cerulean, Cyan Laser, Midnight Obsidian, Ice Slate Canvas)
 class ColorTokens {
   ColorTokens._();
 
-  // ── Brand & Signature Accents ──────────────────────────────────────────
-  /// #CAFC00 — Acid Green: The singular chromatic highlight for primary CTAs, Pro pills, and active states
-  static const Color acidGreen = Color(0xFFCAFC00);
+  // ── Precision Digital Rx Accents ───────────────────────────────────────
+  /// #0284C7 — Electric Cerulean: The signature digital pharmacy CTA & active state
+  static const Color electricCerulean = Color(0xFF0284C7);
+  static const Color ceruleanDark = Color(0xFF0369A1);
+  static const Color ceruleanBg = Color(0xFFEFF6FF);
+  static const Color ceruleanBorder = Color(0xFFBFDBFE);
 
-  /// #F54911 — Vermillion: Warm red-orange for missed alerts, warnings, and small brand moments
-  static const Color vermillion = Color(0xFFF54911);
-  static const Color vermillionBg = Color(0xFFFEF1EC);
-  static const Color vermillionBorder = Color(0xFFFFD4C4);
+  /// #00D8F6 — Cyan Laser: Optic vision highlights, reticle brackets & scan telemetry
+  static const Color cyanLaser = Color(0xFF00D8F6);
+  static const Color cyanLaserGlow = Color(0x3300D8F6);
 
-  /// #C42DF9 — Magenta Pop: Vivid pink for icons, decorative strokes, and tertiary tags
-  static const Color magentaPop = Color(0xFFC42DF9);
-  static const Color magentaBg = Color(0xFFFAF0FE);
+  /// #EF4444 — Crimson Alert: Missed dose alerts and warnings
+  static const Color crimsonAlert = Color(0xFFEF4444);
+  static const Color crimsonAlertBg = Color(0xFFFEF2F2);
+  static const Color crimsonAlertBorder = Color(0xFFFCA5A5);
+
+  /// #10B981 — Clinical Mint Success: Taken status and optimal adherence
+  static const Color mintSuccess = Color(0xFF10B981);
+  static const Color mintSuccessBg = Color(0xFFECFDF5);
+  static const Color mintSuccessBorder = Color(0xFFA7F3D0);
+
+  /// #F59E0B — Amber Gold: Pending and warning statuses
+  static const Color warningAmber = Color(0xFFF59E0B);
+  static const Color warningAmberBg = Color(0xFFFFFBEB);
+  static const Color warningAmberBorder = Color(0xFFFDE68A);
 
   // ── Neutrals & Grayscale ───────────────────────────────────────────────
-  /// #000000 — Ink Black: Primary text, heading strokes, and high-contrast UI
-  static const Color inkBlack = Color(0xFF000000);
+  /// #0B132B — Midnight Obsidian: Primary headlines, high-contrast labels
+  static const Color midnightObsidian = Color(0xFF0B132B);
+  static const Color slateInk = Color(0xFF0F172A);
+  static const Color inkBlack = midnightObsidian;
+  static const Color obsidian = Color(0xFF0F172A);
 
-  /// #0D0D0D — Obsidian: Dark surface fill for active states, dark pill buttons, and inverted sections
-  static const Color obsidian = Color(0xFF0D0D0D);
+  /// #64748B — Cool Slate: Secondary text, body copy, muted icons
+  static const Color coolSlate = Color(0xFF64748B);
+  static const Color graphite = coolSlate;
 
-  /// #1E1E1E — Charcoal: Secondary dark surface
-  static const Color charcoal = Color(0xFF1E1E1E);
-
-  /// #14151A — Slate Ink: Near-black for UI borders and crisp text
-  static const Color slateInk = Color(0xFF14151A);
-
-  /// #606060 — Graphite: Secondary text, muted icons, and body copy
-  static const Color graphite = Color(0xFF606060);
-
-  /// #999999 — Ash Gray: Tertiary text, placeholder copy, disabled states
-  static const Color ashGray = Color(0xFF999999);
-
-  /// #9EA0A8 — Mist: Cool-leaning gray for helper text and subtle borders
-  static const Color mist = Color(0xFF9EA0A8);
+  /// #94A3B8 — Muted Mist: Tertiary text, placeholders, inactive states
+  static const Color mutedMist = Color(0xFF94A3B8);
+  static const Color ashGray = mutedMist;
 
   // ── Surfaces & Canvas ──────────────────────────────────────────────────
-  /// #F9F9F9 — Paper: Page canvas background across the entire app
-  static const Color paper = Color(0xFFF9F9F9);
+  /// #F8FAFC — Ice Paper: Page canvas background
+  static const Color icePaper = Color(0xFFF8FAFC);
+  static const Color paper = icePaper;
 
-  /// #F2F2F2 — Fog: Secondary surface for inset panels, section dividers, soft washes
-  static const Color fog = Color(0xFFF2F2F2);
+  /// #F1F5F9 — Ice Slate / Fog: Secondary surface, segmented controls, table headers
+  static const Color iceSlate = Color(0xFFF1F5F9);
+  static const Color fog = iceSlate;
 
-  /// #FFFFFF — Snow: Pure white card surfaces, button text on dark fills
+  /// #FFFFFF — Snow: Pure white card surfaces
   static const Color snow = Color(0xFFFFFFFF);
 
-  /// #DEE0E3 — Hairline: Structural borders, dividers, input outlines
-  static const Color hairline = Color(0xFFDEE0E3);
+  /// #E2E8F0 — Cool Hairline: Structural borders and dividers
+  static const Color coolHairline = Color(0xFFE2E8F0);
+  static const Color hairline = coolHairline;
 
-  // ── Semantic Aliases ───────────────────────────────────────────────────
-  static const Color backgroundLight = paper;
-  static const Color backgroundSecondaryLight = fog;
+  // ── Semantic Aliases & Compatibility ───────────────────────────────────
+  static const Color backgroundLight = icePaper;
   static const Color surfaceLight = snow;
-  static const Color borderLight = hairline;
+  static const Color borderLight = coolHairline;
 
-  static const Color backgroundDark = obsidian;
-  static const Color backgroundSecondaryDark = charcoal;
-  static const Color surfaceDark = charcoal;
-  static const Color borderDark = Color(0xFF2E2E2E);
+  static const Color backgroundDark = Color(0xFF0B132B);
+  static const Color surfaceDark = Color(0xFF1E293B);
+  static const Color borderDark = Color(0xFF334155);
 
-  static const Color textPrimaryLight = inkBlack;
-  static const Color textSecondaryLight = graphite;
-  static const Color textMutedLight = ashGray;
+  static const Color textPrimaryLight = midnightObsidian;
+  static const Color textSecondaryLight = coolSlate;
+  static const Color textMutedLight = mutedMist;
 
-  static const Color textPrimaryDark = snow;
-  static const Color textSecondaryDark = mist;
-  static const Color textMutedDark = ashGray;
+  static const Color textPrimaryDark = Color(0xFFF8FAFC);
+  static const Color textSecondaryDark = Color(0xFF94A3B8);
+  static const Color textMutedDark = Color(0xFF64748B);
 
-  // Active CTA accents
-  static const Color primaryAction = acidGreen;
-  static const Color primaryTeal = acidGreen; // Alias for riverpod/services
-  static const Color primarySlate = obsidian;
-  static const Color electricBlue = acidGreen;
-  static const Color linkBlue = Color(0xFF0055D4);
+  // Active CTA aliases
+  static const Color primaryAction = electricCerulean;
+  static const Color primaryTeal = electricCerulean;
+  static const Color primarySlate = midnightObsidian;
+  static const Color acidGreen = electricCerulean;
+  static const Color electricBlue = electricCerulean;
+  static const Color linkBlue = electricCerulean;
+  static const Color vermillion = crimsonAlert;
+  static const Color vermillionBg = crimsonAlertBg;
+  static const Color vermillionBorder = crimsonAlertBorder;
+  static const Color alertCoral = crimsonAlert;
+  static const Color alertCoralBg = crimsonAlertBg;
+  static const Color alertCoralBorder = crimsonAlertBorder;
 
-  // Status & Adherence Mappings
-  static const Color mintSuccess = Color(0xFF15803D);
-  static const Color mintSuccessBg = Color(0xFFF0FDF4);
-  static const Color mintSuccessBorder = Color(0xFFDCFCE7);
-
-  static const Color alertCoral = vermillion;
-  static const Color alertCoralBg = vermillionBg;
-  static const Color alertCoralBorder = vermillionBorder;
-
-  static const Color warningAmber = Color(0xFFD97706);
-  static const Color warningAmberBg = Color(0xFFFFFBEB);
-  static const Color warningAmberBorder = Color(0xFFFEF3C7);
-
-  // Subtle Craftwork Paper Shadow
+  // Subtle Clinical Paper Shadow
   static const BoxShadow cardShadow = BoxShadow(
-    color: Color(0x082F2B43),
-    blurRadius: 4,
-    offset: Offset(0, 1),
+    color: Color(0x060F172A),
+    blurRadius: 6,
+    offset: Offset(0, 2),
   );
 }

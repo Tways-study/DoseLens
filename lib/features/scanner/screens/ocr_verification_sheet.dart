@@ -83,18 +83,18 @@ class _OcrVerificationSheetState extends ConsumerState<OcrVerificationSheet> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(children: [
-              const Icon(Icons.check_circle_rounded, color: ColorTokens.inkBlack, size: 18),
+              const Icon(Icons.check_circle_rounded, color: Colors.white, size: 18),
               const SizedBox(width: 8),
-              Text('${_nameCtrl.text} added to schedule!', style: const TextStyle(color: ColorTokens.inkBlack, fontWeight: FontWeight.w700)),
+              Text('${_nameCtrl.text} added to schedule!'),
             ]),
-            backgroundColor: ColorTokens.acidGreen,
+            backgroundColor: ColorTokens.mintSuccess,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusMedium)),
           ),
         );
       }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Save failed: $e'), backgroundColor: ColorTokens.vermillion));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Save failed: $e'), backgroundColor: ColorTokens.crimsonAlert));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -110,7 +110,7 @@ class _OcrVerificationSheetState extends ConsumerState<OcrVerificationSheet> {
       builder: (_, scrollCtrl) {
         return Container(
           decoration: const BoxDecoration(
-            color: ColorTokens.paper,
+            color: ColorTokens.icePaper,
             borderRadius: BorderRadius.vertical(top: Radius.circular(AppConstants.radiusCard)),
           ),
           padding: const EdgeInsets.fromLTRB(AppConstants.space24, AppConstants.space16, AppConstants.space24, 24),
@@ -125,7 +125,7 @@ class _OcrVerificationSheetState extends ConsumerState<OcrVerificationSheet> {
                     width: 36,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: ColorTokens.hairline,
+                      color: ColorTokens.coolHairline,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -147,9 +147,9 @@ class _OcrVerificationSheetState extends ConsumerState<OcrVerificationSheet> {
                     if (confidence != null)
                       PillChip(
                         label: '${(confidence * 100).round()}% match',
-                        backgroundColor: ColorTokens.acidGreen,
-                        textColor: ColorTokens.inkBlack,
-                        borderColor: ColorTokens.inkBlack,
+                        backgroundColor: ColorTokens.mintSuccessBg,
+                        textColor: ColorTokens.mintSuccess,
+                        borderColor: ColorTokens.mintSuccessBorder,
                       ),
                   ],
                 ),
@@ -161,7 +161,7 @@ class _OcrVerificationSheetState extends ConsumerState<OcrVerificationSheet> {
                   decoration: BoxDecoration(
                     color: ColorTokens.snow,
                     borderRadius: BorderRadius.circular(AppConstants.radiusCard),
-                    border: Border.all(color: ColorTokens.hairline, width: 1.0),
+                    border: Border.all(color: ColorTokens.coolHairline, width: 1.0),
                     boxShadow: const [ColorTokens.cardShadow],
                   ),
                   child: Column(
@@ -211,7 +211,7 @@ class _Label extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 6),
         child: Text(
           text,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: ColorTokens.inkBlack, letterSpacing: -0.1),
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: ColorTokens.midnightObsidian, letterSpacing: -0.1),
         ),
       );
 }
@@ -234,18 +234,18 @@ class _SheetField extends StatelessWidget {
         controller: controller,
         maxLines: maxLines,
         validator: validator,
-        style: const TextStyle(fontSize: 14, color: ColorTokens.inkBlack, fontWeight: FontWeight.w500),
+        style: const TextStyle(fontSize: 14, color: ColorTokens.midnightObsidian, fontWeight: FontWeight.w500),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: const TextStyle(color: ColorTokens.ashGray, fontSize: 13),
+          hintStyle: const TextStyle(color: ColorTokens.mutedMist, fontSize: 13),
           filled: true,
-          fillColor: ColorTokens.fog,
+          fillColor: ColorTokens.iceSlate,
           contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.radiusButton), borderSide: const BorderSide(color: ColorTokens.hairline)),
-          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.radiusButton), borderSide: const BorderSide(color: ColorTokens.hairline)),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.radiusButton), borderSide: const BorderSide(color: ColorTokens.coolHairline)),
+          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.radiusButton), borderSide: const BorderSide(color: ColorTokens.coolHairline)),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppConstants.radiusButton),
-            borderSide: const BorderSide(color: ColorTokens.inkBlack, width: 1.5),
+            borderSide: const BorderSide(color: ColorTokens.electricCerulean, width: 1.5),
           ),
         ),
       );
@@ -275,16 +275,16 @@ class _FrequencySelector extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
             decoration: BoxDecoration(
-              color: isSelected ? ColorTokens.obsidian : ColorTokens.fog,
+              color: isSelected ? ColorTokens.electricCerulean : ColorTokens.iceSlate,
               borderRadius: BorderRadius.circular(AppConstants.radiusButton),
-              border: Border.all(color: isSelected ? ColorTokens.obsidian : ColorTokens.hairline),
+              border: Border.all(color: isSelected ? ColorTokens.electricCerulean : ColorTokens.coolHairline),
             ),
             child: Text(
               opt.$2,
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
-                color: isSelected ? Colors.white : ColorTokens.inkBlack,
+                color: isSelected ? Colors.white : ColorTokens.midnightObsidian,
               ),
             ),
           ),

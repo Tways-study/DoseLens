@@ -5,7 +5,7 @@ import 'pill_chip.dart';
 
 export '../../features/medications/models/adherence_log.dart' show AdherenceStatus;
 
-/// Semantic status badge with Craftwork Acid Green, Vermillion & Fog palette
+/// Semantic status badge with Precision Digital Rx Mint & Crimson palette
 class StatusBadge extends StatelessWidget {
   final AdherenceStatus status;
 
@@ -20,18 +20,18 @@ class StatusBadge extends StatelessWidget {
       case AdherenceStatus.taken:
         return const PillChip(
           label: 'Taken',
-          backgroundColor: ColorTokens.acidGreen,
-          textColor: ColorTokens.inkBlack,
-          borderColor: ColorTokens.acidGreen,
-          icon: Icon(Icons.check_rounded, size: 13, color: ColorTokens.inkBlack),
+          backgroundColor: ColorTokens.mintSuccessBg,
+          textColor: ColorTokens.mintSuccess,
+          borderColor: ColorTokens.mintSuccessBorder,
+          icon: Icon(Icons.check_circle_rounded, size: 13, color: ColorTokens.mintSuccess),
         );
       case AdherenceStatus.missed:
         return const PillChip(
           label: 'Missed',
-          backgroundColor: ColorTokens.vermillionBg,
-          textColor: ColorTokens.vermillion,
-          borderColor: ColorTokens.vermillionBorder,
-          icon: Icon(Icons.close_rounded, size: 13, color: ColorTokens.vermillion),
+          backgroundColor: ColorTokens.crimsonAlertBg,
+          textColor: ColorTokens.crimsonAlert,
+          borderColor: ColorTokens.crimsonAlertBorder,
+          icon: Icon(Icons.cancel_rounded, size: 13, color: ColorTokens.crimsonAlert),
         );
       case AdherenceStatus.pending:
         return const PillChip(
@@ -44,10 +44,10 @@ class StatusBadge extends StatelessWidget {
       case AdherenceStatus.skipped:
         return const PillChip(
           label: 'Skipped',
-          backgroundColor: ColorTokens.fog,
-          textColor: ColorTokens.graphite,
-          borderColor: ColorTokens.hairline,
-          icon: Icon(Icons.remove_rounded, size: 13, color: ColorTokens.graphite),
+          backgroundColor: ColorTokens.iceSlate,
+          textColor: ColorTokens.coolSlate,
+          borderColor: ColorTokens.coolHairline,
+          icon: Icon(Icons.remove_rounded, size: 13, color: ColorTokens.coolSlate),
         );
     }
   }

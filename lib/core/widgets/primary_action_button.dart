@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../constants/app_constants.dart';
 import '../theme/color_tokens.dart';
 
-/// Craftwork Action Button: Acid Green (#CAFC00) with bold Ink Black text, or Obsidian (#0D0D0D) dark fill
+/// Precision Digital Rx Action Button: Electric Cerulean (#0284C7) with white text, or Obsidian (#0F172A) fill
 class PrimaryActionButton extends StatelessWidget {
   final String title;
   final VoidCallback? onPressed;
@@ -39,7 +39,7 @@ class PrimaryActionButton extends StatelessWidget {
         width: double.infinity,
         child: OutlinedButton(
           style: OutlinedButton.styleFrom(
-            side: const BorderSide(color: ColorTokens.hairline, width: 1.0),
+            side: const BorderSide(color: ColorTokens.coolHairline, width: 1.0),
             backgroundColor: ColorTokens.snow,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(radius),
@@ -47,13 +47,13 @@ class PrimaryActionButton extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: AppConstants.space20),
           ),
           onPressed: isLoading ? null : onPressed,
-          child: _buildContent(ColorTokens.inkBlack),
+          child: _buildContent(ColorTokens.midnightObsidian),
         ),
       );
     }
 
-    final bg = backgroundColor ?? (isObsidian ? ColorTokens.obsidian : ColorTokens.acidGreen);
-    final fg = textColor ?? (isObsidian ? Colors.white : ColorTokens.inkBlack);
+    final bg = backgroundColor ?? (isObsidian ? ColorTokens.midnightObsidian : ColorTokens.electricCerulean);
+    final fg = textColor ?? Colors.white;
 
     return SizedBox(
       height: height,
@@ -97,7 +97,7 @@ class PrimaryActionButton extends StatelessWidget {
           title,
           style: TextStyle(
             fontSize: 15,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
             color: contentColor,
             letterSpacing: -0.1,
           ),

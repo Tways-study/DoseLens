@@ -60,7 +60,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Scan failed: ${e.toString()}'), backgroundColor: ColorTokens.vermillion),
+          SnackBar(content: Text('Scan failed: ${e.toString()}'), backgroundColor: ColorTokens.crimsonAlert),
         );
       }
     } finally {
@@ -91,7 +91,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Processing failed: ${e.toString()}'), backgroundColor: ColorTokens.vermillion),
+          SnackBar(content: Text('Processing failed: ${e.toString()}'), backgroundColor: ColorTokens.crimsonAlert),
         );
       }
     } finally {
@@ -102,7 +102,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorTokens.obsidian,
+      backgroundColor: ColorTokens.midnightObsidian,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -111,19 +111,19 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Multimodal OCR Lens',
+          'Multimodal Optical OCR',
           style: TextStyles.headingMedium.copyWith(color: Colors.white),
         ),
       ),
       body: Stack(
         children: [
-          // Reticle Viewfinder
+          // Cyan Laser Reticle Viewfinder
           Center(
             child: ScaleTransition(
               scale: _pulse,
               child: CustomPaint(
                 size: const Size(270, 270),
-                painter: _CraftworkScannerFramePainter(),
+                painter: _PrecisionRxScannerFramePainter(),
                 child: SizedBox(
                   width: 270,
                   height: 270,
@@ -132,7 +132,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              CircularProgressIndicator(color: ColorTokens.acidGreen, strokeWidth: 3.0),
+                              CircularProgressIndicator(color: ColorTokens.cyanLaser, strokeWidth: 3.0),
                               SizedBox(height: 16),
                               Text(
                                 'Extracting packaging metadata...',
@@ -151,13 +151,13 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
                                 decoration: BoxDecoration(
                                   color: Colors.white.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
-                                  border: Border.all(color: ColorTokens.acidGreen.withValues(alpha: 0.5)),
+                                  border: Border.all(color: ColorTokens.cyanLaser.withValues(alpha: 0.5)),
                                 ),
-                                child: const Icon(Icons.qr_code_scanner_rounded, color: ColorTokens.acidGreen, size: 28),
+                                child: const Icon(Icons.qr_code_scanner_rounded, color: ColorTokens.cyanLaser, size: 28),
                               ),
                               const SizedBox(height: 12),
                               const Text(
-                                'Align drug label inside frame',
+                                'Align medication label inside frame',
                                 style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500),
                                 textAlign: TextAlign.center,
                               ),
@@ -179,7 +179,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
               decoration: const BoxDecoration(
                 color: ColorTokens.snow,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(AppConstants.radiusCard)),
-                border: Border(top: BorderSide(color: ColorTokens.hairline)),
+                border: Border(top: BorderSide(color: ColorTokens.coolHairline)),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -187,7 +187,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(width: 8, height: 8, decoration: const BoxDecoration(color: ColorTokens.acidGreen, shape: BoxShape.circle)),
+                      Container(width: 8, height: 8, decoration: const BoxDecoration(color: ColorTokens.cyanLaser, shape: BoxShape.circle)),
                       const SizedBox(width: 6),
                       Text('Gemini 2.0 Flash Vision', style: TextStyles.headingMedium.copyWith(fontSize: 16)),
                     ],
@@ -203,10 +203,10 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
                     children: [
                       Expanded(
                         child: OutlinedButton.icon(
-                          icon: const Icon(Icons.photo_library_outlined, size: 18, color: ColorTokens.inkBlack),
-                          label: const Text('Gallery', style: TextStyle(color: ColorTokens.inkBlack, fontWeight: FontWeight.w700)),
+                          icon: const Icon(Icons.photo_library_outlined, size: 18, color: ColorTokens.midnightObsidian),
+                          label: const Text('Gallery', style: TextStyle(color: ColorTokens.midnightObsidian, fontWeight: FontWeight.w700)),
                           style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: ColorTokens.hairline, width: 1.0),
+                            side: const BorderSide(color: ColorTokens.coolHairline, width: 1.0),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusButton)),
                             padding: const EdgeInsets.symmetric(vertical: 13),
                           ),
@@ -216,10 +216,10 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
                       const SizedBox(width: AppConstants.space12),
                       Expanded(
                         child: ElevatedButton.icon(
-                          icon: const Icon(Icons.camera_alt_rounded, size: 18, color: ColorTokens.inkBlack),
-                          label: const Text('Scan Label', style: TextStyle(color: ColorTokens.inkBlack, fontWeight: FontWeight.w800)),
+                          icon: const Icon(Icons.camera_alt_rounded, size: 18, color: Colors.white),
+                          label: const Text('Scan Packaging', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: ColorTokens.acidGreen,
+                            backgroundColor: ColorTokens.electricCerulean,
                             elevation: 0,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusButton)),
                             padding: const EdgeInsets.symmetric(vertical: 13),
@@ -239,11 +239,11 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
   }
 }
 
-class _CraftworkScannerFramePainter extends CustomPainter {
+class _PrecisionRxScannerFramePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = ColorTokens.acidGreen
+      ..color = ColorTokens.cyanLaser
       ..strokeWidth = 3.5
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
@@ -293,5 +293,5 @@ class _CraftworkScannerFramePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_CraftworkScannerFramePainter old) => false;
+  bool shouldRepaint(_PrecisionRxScannerFramePainter old) => false;
 }

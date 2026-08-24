@@ -51,9 +51,9 @@ class _AuthGate extends ConsumerWidget {
         return const MainAppShell();
       },
       loading: () => const Scaffold(
-        backgroundColor: ColorTokens.paper,
+        backgroundColor: ColorTokens.icePaper,
         body: Center(
-          child: CircularProgressIndicator(color: ColorTokens.inkBlack, strokeWidth: 2.5),
+          child: CircularProgressIndicator(color: ColorTokens.electricCerulean, strokeWidth: 2.5),
         ),
       ),
       error: (_, __) => const LoginScreen(),
@@ -61,7 +61,7 @@ class _AuthGate extends ConsumerWidget {
   }
 }
 
-/// Main bottom navigation shell with Craftwork Paper & Acid Green aesthetic
+/// Main bottom navigation shell with Precision Digital Rx aesthetic
 class MainAppShell extends StatefulWidget {
   const MainAppShell({super.key});
 
@@ -81,37 +81,36 @@ class _MainAppShellState extends State<MainAppShell> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorTokens.paper,
+      backgroundColor: ColorTokens.icePaper,
       body: IndexedStack(
         index: _currentIndex,
         children: _screens,
       ),
       floatingActionButton: FloatingActionButton(
-        elevation: 0,
-        highlightElevation: 0,
-        backgroundColor: ColorTokens.acidGreen,
-        foregroundColor: ColorTokens.inkBlack,
+        elevation: 2,
+        highlightElevation: 4,
+        backgroundColor: ColorTokens.electricCerulean,
+        foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusFull),
-          side: const BorderSide(color: ColorTokens.inkBlack, width: 1.0),
         ),
         onPressed: () => Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const ScannerScreen()),
         ),
-        child: const Icon(Icons.qr_code_scanner_rounded, size: 24),
+        child: const Icon(Icons.document_scanner_rounded, size: 22),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           color: ColorTokens.snow,
           border: Border(
-            top: BorderSide(color: ColorTokens.hairline, width: 1.0),
+            top: BorderSide(color: ColorTokens.coolHairline, width: 1.0),
           ),
         ),
         child: SafeArea(
           child: SizedBox(
-            height: 60,
+            height: 62,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -122,13 +121,13 @@ class _MainAppShellState extends State<MainAppShell> {
                   onTap: () => setState(() => _currentIndex = 0),
                 ),
                 _NavBarItem(
-                  icon: Icons.health_and_safety_outlined,
+                  icon: Icons.verified_user_outlined,
                   label: 'Passport',
                   isSelected: _currentIndex == 1,
                   onTap: () => setState(() => _currentIndex = 1),
                 ),
                 _NavBarItem(
-                  icon: Icons.people_outline_rounded,
+                  icon: Icons.favorite_border_rounded,
                   label: 'Caregiver',
                   isSelected: _currentIndex == 2,
                   onTap: () => setState(() => _currentIndex = 2),
@@ -168,7 +167,7 @@ class _NavBarItem extends StatelessWidget {
             Icon(
               icon,
               size: 20,
-              color: isSelected ? ColorTokens.inkBlack : ColorTokens.graphite,
+              color: isSelected ? ColorTokens.electricCerulean : ColorTokens.coolSlate,
             ),
             const SizedBox(height: 3),
             Text(
@@ -176,7 +175,7 @@ class _NavBarItem extends StatelessWidget {
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                color: isSelected ? ColorTokens.inkBlack : ColorTokens.graphite,
+                color: isSelected ? ColorTokens.electricCerulean : ColorTokens.coolSlate,
                 letterSpacing: -0.1,
               ),
             ),

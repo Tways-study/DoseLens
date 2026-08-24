@@ -47,7 +47,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.toString()),
-            backgroundColor: ColorTokens.vermillion,
+            backgroundColor: ColorTokens.crimsonAlert,
           ),
         );
       }
@@ -68,7 +68,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.toString()),
-            backgroundColor: ColorTokens.vermillion,
+            backgroundColor: ColorTokens.crimsonAlert,
           ),
         );
       }
@@ -80,7 +80,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final authState = ref.watch(authNotifierProvider);
 
     return Scaffold(
-      backgroundColor: ColorTokens.paper,
+      backgroundColor: ColorTokens.icePaper,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -99,12 +99,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           width: 36,
                           height: 36,
                           decoration: BoxDecoration(
-                            color: ColorTokens.acidGreen,
+                            color: ColorTokens.electricCerulean,
                             borderRadius: BorderRadius.circular(AppConstants.radiusButton),
-                            border: Border.all(color: ColorTokens.inkBlack, width: 1.0),
                           ),
                           child: const Center(
-                            child: Icon(Icons.lens_rounded, color: ColorTokens.inkBlack, size: 18),
+                            child: Icon(Icons.lens_rounded, color: Colors.white, size: 18),
                           ),
                         ),
                         const SizedBox(width: 10),
@@ -134,13 +133,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       decoration: BoxDecoration(
                         color: ColorTokens.snow,
                         borderRadius: BorderRadius.circular(AppConstants.radiusCard),
-                        border: Border.all(color: ColorTokens.hairline, width: 1.0),
+                        border: Border.all(color: ColorTokens.coolHairline, width: 1.0),
                         boxShadow: const [ColorTokens.cardShadow],
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Email Address', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: ColorTokens.inkBlack)),
+                          const Text('Email Address', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: ColorTokens.midnightObsidian)),
                           const SizedBox(height: 6),
                           TextFormField(
                             controller: _emailCtrl,
@@ -148,12 +147,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             validator: Validators.email,
                             decoration: const InputDecoration(
                               hintText: 'name@example.com',
-                              prefixIcon: Icon(Icons.mail_outline_rounded, size: 18, color: ColorTokens.graphite),
+                              prefixIcon: Icon(Icons.mail_outline_rounded, size: 18, color: ColorTokens.coolSlate),
                             ),
                           ),
                           const SizedBox(height: AppConstants.space16),
 
-                          const Text('Password', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: ColorTokens.inkBlack)),
+                          const Text('Password', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: ColorTokens.midnightObsidian)),
                           const SizedBox(height: 6),
                           TextFormField(
                             controller: _passCtrl,
@@ -161,12 +160,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             validator: (v) => Validators.minLength(v, 6, 'Password'),
                             decoration: InputDecoration(
                               hintText: '••••••••',
-                              prefixIcon: const Icon(Icons.lock_outline_rounded, size: 18, color: ColorTokens.graphite),
+                              prefixIcon: const Icon(Icons.lock_outline_rounded, size: 18, color: ColorTokens.coolSlate),
                               suffixIcon: IconButton(
                                 icon: Icon(
                                   _obscurePass ? Icons.visibility_outlined : Icons.visibility_off_outlined,
                                   size: 18,
-                                  color: ColorTokens.graphite,
+                                  color: ColorTokens.coolSlate,
                                 ),
                                 onPressed: () => setState(() => _obscurePass = !_obscurePass),
                               ),
@@ -174,7 +173,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                           const SizedBox(height: AppConstants.space24),
 
-                          // Primary Sign In Button (Acid Green)
+                          // Primary Sign In Button (Electric Cerulean)
                           PrimaryActionButton(
                             title: 'Sign In',
                             isLoading: authState.isLoading,
@@ -202,7 +201,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                         child: Text(
                           'Don\'t have an account? Create one',
-                          style: TextStyles.labelLarge.copyWith(color: ColorTokens.inkBlack),
+                          style: TextStyles.labelLarge.copyWith(color: ColorTokens.electricCerulean),
                         ),
                       ),
                     ),

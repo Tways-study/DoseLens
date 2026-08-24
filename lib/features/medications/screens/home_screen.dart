@@ -30,9 +30,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final rateAsync = ref.watch(adherenceRateProvider);
 
     return Scaffold(
-      backgroundColor: ColorTokens.paper,
+      backgroundColor: ColorTokens.icePaper,
       appBar: AppBar(
-        backgroundColor: ColorTokens.paper,
+        backgroundColor: ColorTokens.icePaper,
         scrolledUnderElevation: 0,
         elevation: 0,
         title: Row(
@@ -41,7 +41,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               width: 10,
               height: 10,
               decoration: const BoxDecoration(
-                color: ColorTokens.acidGreen,
+                color: ColorTokens.electricCerulean,
                 shape: BoxShape.circle,
               ),
             ),
@@ -54,7 +54,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add_circle, color: ColorTokens.inkBlack, size: 28),
+            icon: const Icon(Icons.add_circle, color: ColorTokens.electricCerulean, size: 28),
             tooltip: 'Add Medication',
             onPressed: () => Navigator.push(
               context,
@@ -66,7 +66,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       body: Stack(
         children: [
-          // Atmospheric Lime Glow Radial Wash
+          // Atmospheric Cerulean & Cyan Glow Wash
           Positioned(
             top: -60,
             left: 0,
@@ -78,7 +78,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   center: const Alignment(0.2, -0.4),
                   radius: 0.8,
                   colors: [
-                    const Color(0xFFCAFC00).withValues(alpha: 0.22),
+                    const Color(0xFF0284C7).withValues(alpha: 0.16),
                     Colors.transparent,
                   ],
                 ),
@@ -87,7 +87,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
 
           RefreshIndicator(
-            color: ColorTokens.inkBlack,
+            color: ColorTokens.electricCerulean,
             onRefresh: () async => ref.invalidate(medicationsStreamProvider),
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -110,7 +110,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   const SizedBox(height: AppConstants.space24),
 
-                  // Category Filter Tab Bar (Craftwork Segmented Control)
+                  // Category Filter Tab Bar (Segmented Control)
                   _buildCategoryTabs(),
                   const SizedBox(height: AppConstants.space20),
 
@@ -135,7 +135,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ],
                     ),
                     error: (e, _) => NeoCard(
-                      child: Text('Failed to load schedule: $e', style: const TextStyle(color: ColorTokens.vermillion)),
+                      child: Text('Failed to load schedule: $e', style: const TextStyle(color: ColorTokens.crimsonAlert)),
                     ),
                   ),
                 ],
@@ -161,10 +161,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                 decoration: BoxDecoration(
-                  color: isSelected ? ColorTokens.obsidian : ColorTokens.fog,
+                  color: isSelected ? ColorTokens.electricCerulean : ColorTokens.iceSlate,
                   borderRadius: BorderRadius.circular(AppConstants.radiusButton),
                   border: Border.all(
-                    color: isSelected ? ColorTokens.obsidian : ColorTokens.hairline,
+                    color: isSelected ? ColorTokens.electricCerulean : ColorTokens.coolHairline,
                     width: 1.0,
                   ),
                 ),
@@ -173,7 +173,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                    color: isSelected ? Colors.white : ColorTokens.inkBlack,
+                    color: isSelected ? Colors.white : ColorTokens.midnightObsidian,
                   ),
                 ),
               ),
@@ -221,7 +221,7 @@ class _HeroAdherenceCard extends StatelessWidget {
       padding: EdgeInsets.zero,
       child: Column(
         children: [
-          // 3D Hero Art Banner with subtle crop
+          // 3D Hero Art Banner with Precision Rx Image
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(AppConstants.radiusCard)),
             child: SizedBox(
@@ -231,7 +231,7 @@ class _HeroAdherenceCard extends StatelessWidget {
                 fit: StackFit.expand,
                 children: [
                   Image.asset(
-                    'assets/images/craftwork_hero_pills.jpg',
+                    'assets/images/precision_rx_hero_pills.jpg',
                     fit: BoxFit.cover,
                   ),
                   Container(
@@ -241,7 +241,7 @@ class _HeroAdherenceCard extends StatelessWidget {
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
-                          ColorTokens.snow.withValues(alpha: 0.6),
+                          ColorTokens.snow.withValues(alpha: 0.55),
                           ColorTokens.snow,
                         ],
                       ),
@@ -251,10 +251,10 @@ class _HeroAdherenceCard extends StatelessWidget {
                     top: 10,
                     right: 12,
                     child: PillChip(
-                      label: isGood ? 'Optimal Adherence' : 'Attention Needed',
-                      backgroundColor: isGood ? ColorTokens.acidGreen : ColorTokens.vermillionBg,
-                      textColor: isGood ? ColorTokens.inkBlack : ColorTokens.vermillion,
-                      borderColor: isGood ? ColorTokens.inkBlack : ColorTokens.vermillionBorder,
+                      label: isGood ? 'Optimal 30-Day Rate' : 'Review Prescriptions',
+                      backgroundColor: isGood ? ColorTokens.mintSuccessBg : ColorTokens.crimsonAlertBg,
+                      textColor: isGood ? ColorTokens.mintSuccess : ColorTokens.crimsonAlert,
+                      borderColor: isGood ? ColorTokens.mintSuccessBorder : ColorTokens.crimsonAlertBorder,
                     ),
                   ),
                 ],
@@ -272,7 +272,7 @@ class _HeroAdherenceCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '30-Day Adherence Rate',
+                      '30-Day Adherence Index',
                       style: TextStyles.caption.copyWith(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 2),
@@ -286,7 +286,7 @@ class _HeroAdherenceCard extends StatelessWidget {
                   width: 56,
                   height: 56,
                   child: CustomPaint(
-                    painter: _CraftworkDonutPainter(rate: rate),
+                    painter: _PrecisionRxDonutPainter(rate: rate),
                   ),
                 ),
               ],
@@ -298,9 +298,9 @@ class _HeroAdherenceCard extends StatelessWidget {
   }
 }
 
-class _CraftworkDonutPainter extends CustomPainter {
+class _PrecisionRxDonutPainter extends CustomPainter {
   final double rate;
-  const _CraftworkDonutPainter({required this.rate});
+  const _PrecisionRxDonutPainter({required this.rate});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -308,18 +308,18 @@ class _CraftworkDonutPainter extends CustomPainter {
     final radius = size.width / 2 - 5;
 
     final bgPaint = Paint()
-      ..color = ColorTokens.fog
+      ..color = ColorTokens.iceSlate
       ..strokeWidth = 7
       ..style = PaintingStyle.stroke;
 
     final fgPaint = Paint()
-      ..color = ColorTokens.acidGreen
+      ..color = ColorTokens.electricCerulean
       ..strokeWidth = 7
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
     final borderPaint = Paint()
-      ..color = ColorTokens.inkBlack
+      ..color = ColorTokens.coolHairline
       ..strokeWidth = 1.0
       ..style = PaintingStyle.stroke;
 
@@ -337,7 +337,7 @@ class _CraftworkDonutPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_CraftworkDonutPainter old) => old.rate != rate;
+  bool shouldRepaint(_PrecisionRxDonutPainter old) => old.rate != rate;
 }
 
 class _TimelineList extends ConsumerWidget {
@@ -357,7 +357,7 @@ class _TimelineList extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Scheduled Doses', style: TextStyles.headingMedium),
+            Text('Scheduled Prescriptions', style: TextStyles.headingMedium),
             Text('${medications.length} active', style: TextStyles.caption),
           ],
         ),
@@ -393,13 +393,15 @@ class _MedicationCard extends ConsumerWidget {
     return Dismissible(
       key: Key(medication.id),
       background: _buildSwipeAction(
-        color: ColorTokens.acidGreen,
+        color: ColorTokens.mintSuccessBg,
+        textColor: ColorTokens.mintSuccess,
         icon: Icons.check_circle_rounded,
         label: 'Take Dose',
         alignment: Alignment.centerLeft,
       ),
       secondaryBackground: _buildSwipeAction(
-        color: ColorTokens.vermillion,
+        color: ColorTokens.crimsonAlertBg,
+        textColor: ColorTokens.crimsonAlert,
         icon: Icons.cancel_rounded,
         label: 'Skip',
         alignment: Alignment.centerRight,
@@ -424,26 +426,27 @@ class _MedicationCard extends ConsumerWidget {
         ),
         child: Row(
           children: [
-            // Time Badge or Icon
             Container(
               width: 46,
               height: 46,
               decoration: BoxDecoration(
-                color: isTaken ? ColorTokens.acidGreen : ColorTokens.fog,
+                color: isTaken ? ColorTokens.mintSuccessBg : ColorTokens.ceruleanBg,
                 borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
-                border: Border.all(color: ColorTokens.hairline, width: 1.0),
+                border: Border.all(
+                  color: isTaken ? ColorTokens.mintSuccessBorder : ColorTokens.ceruleanBorder,
+                  width: 1.0,
+                ),
               ),
               child: Center(
                 child: Icon(
-                  isTaken ? Icons.check_rounded : Icons.medication_outlined,
-                  color: ColorTokens.inkBlack,
+                  isTaken ? Icons.check_rounded : Icons.medication_liquid_rounded,
+                  color: isTaken ? ColorTokens.mintSuccess : ColorTokens.electricCerulean,
                   size: 22,
                 ),
               ),
             ),
             const SizedBox(width: AppConstants.space16),
 
-            // Drug Metadata
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -463,8 +466,8 @@ class _MedicationCard extends ConsumerWidget {
                       else
                         const PillChip(
                           label: 'Pending',
-                          backgroundColor: ColorTokens.fog,
-                          textColor: ColorTokens.graphite,
+                          backgroundColor: ColorTokens.iceSlate,
+                          textColor: ColorTokens.coolSlate,
                         ),
                     ],
                   ),
@@ -484,6 +487,7 @@ class _MedicationCard extends ConsumerWidget {
 
   Widget _buildSwipeAction({
     required Color color,
+    required Color textColor,
     required IconData icon,
     required String label,
     required Alignment alignment,
@@ -498,11 +502,11 @@ class _MedicationCard extends ConsumerWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: ColorTokens.inkBlack, size: 20),
+          Icon(icon, color: textColor, size: 20),
           const SizedBox(width: 6),
           Text(
             label,
-            style: const TextStyle(color: ColorTokens.inkBlack, fontWeight: FontWeight.w700, fontSize: 13),
+            style: TextStyle(color: textColor, fontWeight: FontWeight.w700, fontSize: 13),
           ),
         ],
       ),
@@ -525,19 +529,19 @@ class _EmptyScheduleState extends StatelessWidget {
               width: 52,
               height: 52,
               decoration: BoxDecoration(
-                color: ColorTokens.fog,
+                color: ColorTokens.ceruleanBg,
                 borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
               ),
-              child: const Icon(Icons.inventory_2_outlined, color: ColorTokens.graphite, size: 26),
+              child: const Icon(Icons.medication_outlined, color: ColorTokens.electricCerulean, size: 26),
             ),
             const SizedBox(height: AppConstants.space12),
             Text(
-              filter == 'All' ? 'No Medications Scheduled' : 'No $filter Doses',
+              filter == 'All' ? 'No Prescriptions Scheduled' : 'No $filter Doses',
               style: TextStyles.headingMedium,
             ),
             const SizedBox(height: 4),
             Text(
-              'Scan your prescription bottle or tap + above to add a new medication.',
+              'Scan your medication packaging or tap + above to add a new prescription.',
               style: TextStyles.caption,
               textAlign: TextAlign.center,
             ),
@@ -557,9 +561,9 @@ class _LoadingCard extends StatelessWidget {
     return Container(
       height: height,
       decoration: BoxDecoration(
-        color: ColorTokens.fog,
+        color: ColorTokens.iceSlate,
         borderRadius: BorderRadius.circular(AppConstants.radiusCard),
-        border: Border.all(color: ColorTokens.hairline),
+        border: Border.all(color: ColorTokens.coolHairline),
       ),
     );
   }

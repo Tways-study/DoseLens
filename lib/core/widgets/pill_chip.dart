@@ -29,7 +29,7 @@ class PillChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final defaultBg = isDark ? ColorTokens.charcoal : ColorTokens.fog;
+    final defaultBg = isDark ? ColorTokens.surfaceDark : ColorTokens.fog;
     final defaultText = isDark ? ColorTokens.textPrimaryDark : ColorTokens.inkBlack;
 
     Widget chip = Container(
