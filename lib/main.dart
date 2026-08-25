@@ -51,9 +51,9 @@ class _AuthGate extends ConsumerWidget {
         return const MainAppShell();
       },
       loading: () => const Scaffold(
-        backgroundColor: ColorTokens.icePaper,
+        backgroundColor: ColorTokens.fog,
         body: Center(
-          child: CircularProgressIndicator(color: ColorTokens.electricCerulean, strokeWidth: 2.5),
+          child: CircularProgressIndicator(color: ColorTokens.cobaltSignal, strokeWidth: 2.5),
         ),
       ),
       error: (_, __) => const LoginScreen(),
@@ -81,7 +81,7 @@ class _MainAppShellState extends State<MainAppShell> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorTokens.icePaper,
+      backgroundColor: ColorTokens.fog,
       body: IndexedStack(
         index: _currentIndex,
         children: _screens,
@@ -90,26 +90,9 @@ class _MainAppShellState extends State<MainAppShell> {
       floatingActionButton: Container(
         margin: const EdgeInsets.only(bottom: 8),
         decoration: BoxDecoration(
+          color: ColorTokens.charcoal,
           borderRadius: BorderRadius.circular(AppConstants.radiusFull),
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              ColorTokens.electricCerulean,
-              ColorTokens.ceruleanDark,
-            ],
-          ),
-          border: Border.all(
-            color: ColorTokens.cyanLaser.withValues(alpha: 0.95),
-            width: 1.8,
-          ),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x4D0284C7),
-              blurRadius: 18,
-              offset: Offset(0, 6),
-            ),
-          ],
+          border: Border.all(color: ColorTokens.cobaltSignal, width: 1.5),
         ),
         child: Material(
           color: Colors.transparent,
@@ -156,7 +139,7 @@ class _MainAppShellState extends State<MainAppShell> {
                     child: const Text(
                       'AI',
                       style: TextStyle(
-                        color: ColorTokens.midnightObsidian,
+                        color: ColorTokens.ink,
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 0.2,
@@ -174,7 +157,7 @@ class _MainAppShellState extends State<MainAppShell> {
         decoration: const BoxDecoration(
           color: ColorTokens.snow,
           border: Border(
-            top: BorderSide(color: ColorTokens.coolHairline, width: 1.0),
+            top: BorderSide(color: ColorTokens.silver, width: 1.0),
           ),
         ),
         child: SafeArea(
@@ -236,7 +219,7 @@ class _NavBarItem extends StatelessWidget {
             Icon(
               icon,
               size: 20,
-              color: isSelected ? ColorTokens.electricCerulean : ColorTokens.coolSlate,
+              color: isSelected ? ColorTokens.cobaltSignal : ColorTokens.graphite,
             ),
             const SizedBox(height: 3),
             Text(
@@ -244,7 +227,7 @@ class _NavBarItem extends StatelessWidget {
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                color: isSelected ? ColorTokens.electricCerulean : ColorTokens.coolSlate,
+                color: isSelected ? ColorTokens.cobaltSignal : ColorTokens.graphite,
                 letterSpacing: -0.1,
               ),
             ),

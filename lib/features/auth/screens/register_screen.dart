@@ -4,6 +4,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/color_tokens.dart';
 import '../../../core/theme/text_styles.dart';
 import '../../../core/utils/validators.dart';
+import '../../../core/widgets/doselens_logo.dart';
 import '../../../core/widgets/primary_action_button.dart';
 import '../providers/auth_provider.dart';
 import 'role_selection_screen.dart';
@@ -46,7 +47,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString()), backgroundColor: ColorTokens.vermillion),
+          SnackBar(content: Text(e.toString()), backgroundColor: ColorTokens.error),
         );
       }
     }
@@ -57,12 +58,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final authState = ref.watch(authNotifierProvider);
 
     return Scaffold(
-      backgroundColor: ColorTokens.paper,
+      backgroundColor: ColorTokens.fog,
       appBar: AppBar(
-        backgroundColor: ColorTokens.paper,
+        backgroundColor: ColorTokens.snow,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: ColorTokens.inkBlack),
+          icon: const Icon(Icons.arrow_back_rounded, color: ColorTokens.ink),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -77,6 +78,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const DoseLensLogo(size: 32, showWordmark: true),
+                    const SizedBox(height: AppConstants.space24),
                     Text(
                       'Create\nAccount.',
                       style: TextStyles.displayLarge,
@@ -93,13 +96,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       decoration: BoxDecoration(
                         color: ColorTokens.snow,
                         borderRadius: BorderRadius.circular(AppConstants.radiusCard),
-                        border: Border.all(color: ColorTokens.hairline, width: 1.0),
-                        boxShadow: const [ColorTokens.cardShadow],
+                        border: Border.all(color: ColorTokens.silver, width: 1.0),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Email Address', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: ColorTokens.inkBlack)),
+                          const Text('Email Address', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: ColorTokens.ink)),
                           const SizedBox(height: 6),
                           TextFormField(
                             controller: _emailCtrl,
@@ -107,12 +109,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             validator: Validators.email,
                             decoration: const InputDecoration(
                               hintText: 'name@example.com',
-                              prefixIcon: Icon(Icons.mail_outline_rounded, size: 18, color: ColorTokens.graphite),
+                              prefixIcon: Icon(Icons.mail_outline_rounded, size: 18, color: ColorTokens.ash),
                             ),
                           ),
                           const SizedBox(height: AppConstants.space16),
 
-                          const Text('Password', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: ColorTokens.inkBlack)),
+                          const Text('Password', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: ColorTokens.ink)),
                           const SizedBox(height: 6),
                           TextFormField(
                             controller: _passCtrl,
@@ -120,16 +122,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             validator: (v) => Validators.minLength(v, 6, 'Password'),
                             decoration: InputDecoration(
                               hintText: '••••••••',
-                              prefixIcon: const Icon(Icons.lock_outline_rounded, size: 18, color: ColorTokens.graphite),
+                              prefixIcon: const Icon(Icons.lock_outline_rounded, size: 18, color: ColorTokens.ash),
                               suffixIcon: IconButton(
-                                icon: Icon(_obscurePass ? Icons.visibility_outlined : Icons.visibility_off_outlined, size: 18, color: ColorTokens.graphite),
+                                icon: Icon(_obscurePass ? Icons.visibility_outlined : Icons.visibility_off_outlined, size: 18, color: ColorTokens.ash),
                                 onPressed: () => setState(() => _obscurePass = !_obscurePass),
                               ),
                             ),
                           ),
                           const SizedBox(height: AppConstants.space16),
 
-                          const Text('Confirm Password', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: ColorTokens.inkBlack)),
+                          const Text('Confirm Password', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: ColorTokens.ink)),
                           const SizedBox(height: 6),
                           TextFormField(
                             controller: _confirmPassCtrl,

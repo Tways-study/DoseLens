@@ -4,6 +4,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/color_tokens.dart';
 import '../../../core/theme/text_styles.dart';
 import '../../../core/utils/validators.dart';
+import '../../../core/widgets/doselens_logo.dart';
 import '../../../core/widgets/primary_action_button.dart';
 import '../providers/auth_provider.dart';
 import 'register_screen.dart';
@@ -80,7 +81,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final authState = ref.watch(authNotifierProvider);
 
     return Scaffold(
-      backgroundColor: ColorTokens.icePaper,
+      backgroundColor: ColorTokens.fog,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -92,27 +93,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Brand mark
-                    Row(
-                      children: [
-                        Container(
-                          width: 36,
-                          height: 36,
-                          decoration: BoxDecoration(
-                            color: ColorTokens.electricCerulean,
-                            borderRadius: BorderRadius.circular(AppConstants.radiusButton),
-                          ),
-                          child: const Center(
-                            child: Icon(Icons.lens_rounded, color: Colors.white, size: 18),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          'DoseLens',
-                          style: TextStyles.displayMedium.copyWith(fontSize: 22),
-                        ),
-                      ],
-                    ),
+                    // Brand mark: The Optical Capsule
+                    const DoseLensLogo(size: 34, showWordmark: true),
                     const SizedBox(height: AppConstants.space32),
 
                     // Display Headline
@@ -133,13 +115,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       decoration: BoxDecoration(
                         color: ColorTokens.snow,
                         borderRadius: BorderRadius.circular(AppConstants.radiusCard),
-                        border: Border.all(color: ColorTokens.coolHairline, width: 1.0),
-                        boxShadow: const [ColorTokens.cardShadow],
+                        border: Border.all(color: ColorTokens.silver, width: 1.0),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Email Address', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: ColorTokens.midnightObsidian)),
+                          const Text('Email Address', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: ColorTokens.ink)),
                           const SizedBox(height: 6),
                           TextFormField(
                             controller: _emailCtrl,
@@ -147,12 +128,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             validator: Validators.email,
                             decoration: const InputDecoration(
                               hintText: 'name@example.com',
-                              prefixIcon: Icon(Icons.mail_outline_rounded, size: 18, color: ColorTokens.coolSlate),
+                              prefixIcon: Icon(Icons.mail_outline_rounded, size: 18, color: ColorTokens.ash),
                             ),
                           ),
                           const SizedBox(height: AppConstants.space16),
 
-                          const Text('Password', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: ColorTokens.midnightObsidian)),
+                          const Text('Password', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: ColorTokens.ink)),
                           const SizedBox(height: 6),
                           TextFormField(
                             controller: _passCtrl,
@@ -160,12 +141,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             validator: (v) => Validators.minLength(v, 6, 'Password'),
                             decoration: InputDecoration(
                               hintText: '••••••••',
-                              prefixIcon: const Icon(Icons.lock_outline_rounded, size: 18, color: ColorTokens.coolSlate),
+                              prefixIcon: const Icon(Icons.lock_outline_rounded, size: 18, color: ColorTokens.ash),
                               suffixIcon: IconButton(
                                 icon: Icon(
                                   _obscurePass ? Icons.visibility_outlined : Icons.visibility_off_outlined,
                                   size: 18,
-                                  color: ColorTokens.coolSlate,
+                                  color: ColorTokens.ash,
                                 ),
                                 onPressed: () => setState(() => _obscurePass = !_obscurePass),
                               ),
@@ -201,7 +182,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                         child: Text(
                           'Don\'t have an account? Create one',
-                          style: TextStyles.labelLarge.copyWith(color: ColorTokens.electricCerulean),
+                          style: TextStyles.labelLarge.copyWith(color: ColorTokens.cobaltSignal),
                         ),
                       ),
                     ),

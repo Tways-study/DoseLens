@@ -1,5 +1,6 @@
 import '../constants/api_constants.dart';
 import '../network/dio_client.dart';
+import '../utils/rate_limiter.dart';
 
 /// OpenFDA Public Drug Label Lookup Service
 class OpenFdaService {
@@ -7,8 +8,16 @@ class OpenFdaService {
 
   OpenFdaService({DioClient? dioClient}) : _dioClient = dioClient ?? DioClient();
 
-  /// Search drug information by generic or brand name
+  /// Search drug information by generic or brand name.
+  /// Returns null if the drug is not found, the request fails, or the rate limit is reached.
   Future<Map<String, dynamic>?> searchDrug(String drugName) async {
+    try {
+      RateLimiter.instance.consume('openFda');
+    } on RateLimitException {
+      // OpenFDA lookup is best-effort; suppress rate-limit errors silently.
+      return null;
+    }
+
     try {
       final sanitizedName = drugName.trim().replaceAll(' ', '+');
       final query = 'openfda.brand_name:"$sanitizedName"+openfda.generic_name:"$sanitizedName"';
@@ -31,3 +40,4 @@ class OpenFdaService {
     }
   }
 }
+

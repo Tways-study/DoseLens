@@ -110,7 +110,7 @@ class _OcrVerificationSheetState extends ConsumerState<OcrVerificationSheet> {
       builder: (_, scrollCtrl) {
         return Container(
           decoration: const BoxDecoration(
-            color: ColorTokens.icePaper,
+            color: ColorTokens.fog,
             borderRadius: BorderRadius.vertical(top: Radius.circular(AppConstants.radiusCard)),
           ),
           padding: const EdgeInsets.fromLTRB(AppConstants.space24, AppConstants.space16, AppConstants.space24, 24),
@@ -125,7 +125,7 @@ class _OcrVerificationSheetState extends ConsumerState<OcrVerificationSheet> {
                     width: 36,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: ColorTokens.coolHairline,
+                      color: ColorTokens.silver,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -147,9 +147,9 @@ class _OcrVerificationSheetState extends ConsumerState<OcrVerificationSheet> {
                     if (confidence != null)
                       PillChip(
                         label: '${(confidence * 100).round()}% match',
-                        backgroundColor: ColorTokens.mintSuccessBg,
+                        backgroundColor: ColorTokens.emeraldPulseBg,
                         textColor: ColorTokens.mintSuccess,
-                        borderColor: ColorTokens.mintSuccessBorder,
+                        borderColor: ColorTokens.emeraldPulseBorder,
                       ),
                   ],
                 ),
@@ -161,7 +161,7 @@ class _OcrVerificationSheetState extends ConsumerState<OcrVerificationSheet> {
                   decoration: BoxDecoration(
                     color: ColorTokens.snow,
                     borderRadius: BorderRadius.circular(AppConstants.radiusCard),
-                    border: Border.all(color: ColorTokens.coolHairline, width: 1.0),
+                    border: Border.all(color: ColorTokens.silver, width: 1.0),
                     boxShadow: const [ColorTokens.cardShadow],
                   ),
                   child: Column(
@@ -211,7 +211,7 @@ class _Label extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 6),
         child: Text(
           text,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: ColorTokens.midnightObsidian, letterSpacing: -0.1),
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: ColorTokens.ink, letterSpacing: -0.1),
         ),
       );
 }
@@ -234,18 +234,18 @@ class _SheetField extends StatelessWidget {
         controller: controller,
         maxLines: maxLines,
         validator: validator,
-        style: const TextStyle(fontSize: 14, color: ColorTokens.midnightObsidian, fontWeight: FontWeight.w500),
+        style: const TextStyle(fontSize: 14, color: ColorTokens.ink, fontWeight: FontWeight.w500),
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: const TextStyle(color: ColorTokens.mutedMist, fontSize: 13),
           filled: true,
-          fillColor: ColorTokens.iceSlate,
+          fillColor: ColorTokens.mist,
           contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.radiusButton), borderSide: const BorderSide(color: ColorTokens.coolHairline)),
-          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.radiusButton), borderSide: const BorderSide(color: ColorTokens.coolHairline)),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.radiusButton), borderSide: const BorderSide(color: ColorTokens.silver)),
+          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppConstants.radiusButton), borderSide: const BorderSide(color: ColorTokens.silver)),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppConstants.radiusButton),
-            borderSide: const BorderSide(color: ColorTokens.electricCerulean, width: 1.5),
+            borderSide: const BorderSide(color: ColorTokens.cobaltSignal, width: 1.5),
           ),
         ),
       );
@@ -275,16 +275,16 @@ class _FrequencySelector extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
             decoration: BoxDecoration(
-              color: isSelected ? ColorTokens.electricCerulean : ColorTokens.iceSlate,
+              color: isSelected ? ColorTokens.cobaltSignal : ColorTokens.mist,
               borderRadius: BorderRadius.circular(AppConstants.radiusButton),
-              border: Border.all(color: isSelected ? ColorTokens.electricCerulean : ColorTokens.coolHairline),
+              border: Border.all(color: isSelected ? ColorTokens.cobaltSignal : ColorTokens.silver),
             ),
             child: Text(
               opt.$2,
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
-                color: isSelected ? Colors.white : ColorTokens.midnightObsidian,
+                color: isSelected ? Colors.white : ColorTokens.ink,
               ),
             ),
           ),

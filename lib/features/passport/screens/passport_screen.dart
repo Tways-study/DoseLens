@@ -9,6 +9,7 @@ import '../../../core/widgets/neo_card.dart';
 import '../../../core/widgets/pill_chip.dart';
 import '../../../core/widgets/primary_action_button.dart';
 import '../../../core/widgets/section_header.dart';
+import '../../../core/widgets/skeleton_widgets.dart';
 import '../../../core/widgets/status_badge.dart';
 import '../../medications/providers/medications_provider.dart';
 import '../providers/passport_provider.dart';
@@ -24,9 +25,9 @@ class PassportScreen extends ConsumerWidget {
     final passportState = ref.watch(passportProvider);
 
     return Scaffold(
-      backgroundColor: ColorTokens.icePaper,
+      backgroundColor: ColorTokens.fog,
       appBar: AppBar(
-        backgroundColor: ColorTokens.icePaper,
+        backgroundColor: ColorTokens.fog,
         scrolledUnderElevation: 0,
         elevation: 0,
         title: Row(
@@ -35,7 +36,7 @@ class PassportScreen extends ConsumerWidget {
               width: 10,
               height: 10,
               decoration: const BoxDecoration(
-                color: ColorTokens.electricCerulean,
+                color: ColorTokens.cobaltSignal,
                 shape: BoxShape.circle,
               ),
             ),
@@ -75,9 +76,9 @@ class PassportScreen extends ConsumerWidget {
                       children: [
                         const PillChip(
                           label: '30-Day Clinical Summary',
-                          backgroundColor: ColorTokens.ceruleanBg,
-                          textColor: ColorTokens.electricCerulean,
-                          borderColor: ColorTokens.ceruleanBorder,
+                          backgroundColor: ColorTokens.cobaltSignalBg,
+                          textColor: ColorTokens.cobaltSignal,
+                          borderColor: ColorTokens.cobaltSignalBorder,
                         ),
                         const SizedBox(height: 6),
                         Text(
@@ -111,9 +112,9 @@ class PassportScreen extends ConsumerWidget {
                           Text('Overall Adherence', style: TextStyles.caption.copyWith(fontWeight: FontWeight.w600)),
                           PillChip(
                             label: pct >= 80 ? 'Optimal' : 'Needs Review',
-                            backgroundColor: pct >= 80 ? ColorTokens.mintSuccessBg : ColorTokens.crimsonAlertBg,
+                            backgroundColor: pct >= 80 ? ColorTokens.emeraldPulseBg : ColorTokens.errorBg,
                             textColor: pct >= 80 ? ColorTokens.mintSuccess : ColorTokens.crimsonAlert,
-                            borderColor: pct >= 80 ? ColorTokens.mintSuccessBorder : ColorTokens.crimsonAlertBorder,
+                            borderColor: pct >= 80 ? ColorTokens.emeraldPulseBorder : ColorTokens.errorBorder,
                           ),
                         ],
                       ),
@@ -138,8 +139,8 @@ class PassportScreen extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(AppConstants.radiusFull),
                         child: LinearProgressIndicator(
                           value: rate.clamp(0.0, 1.0),
-                          backgroundColor: ColorTokens.iceSlate,
-                          valueColor: const AlwaysStoppedAnimation<Color>(ColorTokens.electricCerulean),
+                          backgroundColor: ColorTokens.mist,
+                          valueColor: const AlwaysStoppedAnimation<Color>(ColorTokens.cobaltSignal),
                           minHeight: 8,
                         ),
                       ),
@@ -147,7 +148,7 @@ class PassportScreen extends ConsumerWidget {
                   ),
                 );
               },
-              loading: () => const SizedBox(height: 100),
+              loading: () => const SkeletonCard(height: 110),
               error: (_, __) => const SizedBox.shrink(),
             ),
             const SizedBox(height: AppConstants.space24),
@@ -162,7 +163,7 @@ class PassportScreen extends ConsumerWidget {
                 if (meds.isEmpty) {
                   return const NeoCard(
                     child: Center(
-                      child: Text('No active prescriptions', style: TextStyle(color: ColorTokens.coolSlate)),
+                      child: Text('No active prescriptions', style: TextStyle(color: ColorTokens.graphite)),
                     ),
                   );
                 }
@@ -185,13 +186,13 @@ class PassportScreen extends ConsumerWidget {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(
-                                color: ColorTokens.iceSlate,
+                                color: ColorTokens.mist,
                                 borderRadius: BorderRadius.circular(AppConstants.radiusButton),
-                                border: Border.all(color: ColorTokens.coolHairline),
+                                border: Border.all(color: ColorTokens.silver),
                               ),
                               child: Text(
                                 m.times.join(', '),
-                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: ColorTokens.midnightObsidian),
+                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: ColorTokens.ink),
                               ),
                             ),
                           ],
@@ -201,7 +202,13 @@ class PassportScreen extends ConsumerWidget {
                   }).toList(),
                 );
               },
-              loading: () => const SizedBox(height: 80),
+              loading: () => const Column(
+                children: [
+                  SkeletonPassportMedRow(),
+                  SizedBox(height: 8),
+                  SkeletonPassportMedRow(),
+                ],
+              ),
               error: (e, _) => Text('Error: $e'),
             ),
             const SizedBox(height: AppConstants.space24),
@@ -215,7 +222,7 @@ class PassportScreen extends ConsumerWidget {
               data: (logs) {
                 if (logs.isEmpty) {
                   return const NeoCard(
-                    child: Center(child: Text('No logs recorded yet', style: TextStyle(color: ColorTokens.coolSlate))),
+                    child: Center(child: Text('No logs recorded yet', style: TextStyle(color: ColorTokens.graphite))),
                   );
                 }
                 return Column(
@@ -244,7 +251,15 @@ class PassportScreen extends ConsumerWidget {
                   }).toList(),
                 );
               },
-              loading: () => const SizedBox(height: 80),
+              loading: () => const Column(
+                children: [
+                  SkeletonLogRow(),
+                  SizedBox(height: 6),
+                  SkeletonLogRow(),
+                  SizedBox(height: 6),
+                  SkeletonLogRow(),
+                ],
+              ),
               error: (e, _) => Text('Error: $e'),
             ),
             const SizedBox(height: AppConstants.space28),

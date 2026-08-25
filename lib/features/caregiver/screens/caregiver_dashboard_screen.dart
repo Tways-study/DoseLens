@@ -8,6 +8,7 @@ import '../../../core/utils/validators.dart';
 import '../../../core/widgets/neo_card.dart';
 import '../../../core/widgets/pill_chip.dart';
 import '../../../core/widgets/section_header.dart';
+import '../../../core/widgets/skeleton_widgets.dart';
 import '../../../features/auth/providers/auth_provider.dart';
 import '../models/caregiver_link.dart';
 import '../providers/caregiver_provider.dart';
@@ -22,9 +23,9 @@ class CaregiverDashboardScreen extends ConsumerWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: ColorTokens.icePaper,
+        backgroundColor: ColorTokens.fog,
         appBar: AppBar(
-          backgroundColor: ColorTokens.icePaper,
+          backgroundColor: ColorTokens.fog,
           scrolledUnderElevation: 0,
           elevation: 0,
           title: Row(
@@ -33,7 +34,7 @@ class CaregiverDashboardScreen extends ConsumerWidget {
                 width: 10,
                 height: 10,
                 decoration: const BoxDecoration(
-                  color: ColorTokens.electricCerulean,
+                  color: ColorTokens.cobaltSignal,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -49,18 +50,18 @@ class CaregiverDashboardScreen extends ConsumerWidget {
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: AppConstants.space20, vertical: 6),
               decoration: BoxDecoration(
-                color: ColorTokens.iceSlate,
+                color: ColorTokens.mist,
                 borderRadius: BorderRadius.circular(AppConstants.radiusButton),
-                border: Border.all(color: ColorTokens.coolHairline),
+                border: Border.all(color: ColorTokens.silver),
               ),
               child: TabBar(
                 indicator: BoxDecoration(
-                  color: ColorTokens.midnightObsidian,
+                  color: ColorTokens.ink,
                   borderRadius: BorderRadius.circular(AppConstants.radiusButton),
                 ),
                 indicatorSize: TabBarIndicatorSize.tab,
                 labelColor: Colors.white,
-                unselectedLabelColor: ColorTokens.midnightObsidian,
+                unselectedLabelColor: ColorTokens.ink,
                 labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
                 dividerColor: Colors.transparent,
                 tabs: const [
@@ -130,7 +131,17 @@ class _MonitoredPatientsTab extends ConsumerWidget {
           },
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator(color: ColorTokens.electricCerulean)),
+      loading: () => const Padding(
+        padding: EdgeInsets.fromLTRB(
+            AppConstants.space20, AppConstants.space16, AppConstants.space20, 0),
+        child: Column(
+          children: [
+            SkeletonPatientCard(),
+            SizedBox(height: AppConstants.space16),
+            SkeletonPatientCard(),
+          ],
+        ),
+      ),
       error: (e, _) => Center(child: Text('Error: $e')),
     );
   }
@@ -159,12 +170,12 @@ class _PatientMonitorCard extends ConsumerWidget {
                       width: 38,
                       height: 38,
                       decoration: BoxDecoration(
-                        color: ColorTokens.ceruleanBg,
+                        color: ColorTokens.cobaltSignalBg,
                         borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
-                        border: Border.all(color: ColorTokens.ceruleanBorder),
+                        border: Border.all(color: ColorTokens.cobaltSignalBorder),
                       ),
                       child: const Center(
-                        child: Icon(Icons.person_rounded, color: ColorTokens.electricCerulean, size: 20),
+                        child: Icon(Icons.person_rounded, color: ColorTokens.cobaltSignal, size: 20),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -182,9 +193,9 @@ class _PatientMonitorCard extends ConsumerWidget {
                 ),
                 const PillChip(
                   label: 'Live Telemetry',
-                  backgroundColor: ColorTokens.ceruleanBg,
-                  textColor: ColorTokens.electricCerulean,
-                  borderColor: ColorTokens.ceruleanBorder,
+                  backgroundColor: ColorTokens.cobaltSignalBg,
+                  textColor: ColorTokens.cobaltSignal,
+                  borderColor: ColorTokens.cobaltSignalBorder,
                 ),
               ],
             ),
@@ -197,9 +208,9 @@ class _PatientMonitorCard extends ConsumerWidget {
                   return Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                     decoration: BoxDecoration(
-                      color: ColorTokens.mintSuccessBg,
+                      color: ColorTokens.emeraldPulseBg,
                       borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
-                      border: Border.all(color: ColorTokens.mintSuccessBorder),
+                      border: Border.all(color: ColorTokens.emeraldPulseBorder),
                     ),
                     child: const Row(
                       children: [
@@ -227,14 +238,14 @@ class _PatientMonitorCard extends ConsumerWidget {
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                             decoration: BoxDecoration(
-                              color: ColorTokens.crimsonAlertBg,
+                              color: ColorTokens.errorBg,
                               borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
-                              border: Border.all(color: ColorTokens.crimsonAlertBorder),
+                              border: Border.all(color: ColorTokens.errorBorder),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(log.medicationName, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: ColorTokens.midnightObsidian)),
+                                Text(log.medicationName, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: ColorTokens.ink)),
                                 Text(DateFormatters.formatTime(log.scheduledTime), style: const TextStyle(color: ColorTokens.crimsonAlert, fontWeight: FontWeight.w600, fontSize: 12)),
                               ],
                             ),
@@ -243,7 +254,7 @@ class _PatientMonitorCard extends ConsumerWidget {
                   ],
                 );
               },
-              loading: () => const SizedBox(height: 24),
+              loading: () => const SkeletonCard(height: 40),
               error: (e, _) => Text('Failed to load telemetry: $e'),
             ),
           ],
@@ -287,7 +298,7 @@ class _MyCaregiversTab extends ConsumerWidget {
                     SizedBox(height: 2),
                     Text(
                       'Your caregivers will be alerted automatically if any critical dose is missed.',
-                      style: TextStyle(fontSize: 12, color: ColorTokens.coolSlate),
+                      style: TextStyle(fontSize: 12, color: ColorTokens.graphite),
                     ),
                   ],
                 ),
@@ -307,7 +318,7 @@ class _MyCaregiversTab extends ConsumerWidget {
               icon: const Icon(Icons.add_rounded, size: 16, color: Colors.white),
               label: const Text('Invite', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 12)),
               style: ElevatedButton.styleFrom(
-                backgroundColor: ColorTokens.electricCerulean,
+                backgroundColor: ColorTokens.cobaltSignal,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusFull)),
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               ),
@@ -322,7 +333,7 @@ class _MyCaregiversTab extends ConsumerWidget {
             if (caregivers.isEmpty) {
               return const NeoCard(
                 child: Center(
-                  child: Text('No caregivers linked yet. Tap Invite above to share access.', style: TextStyle(color: ColorTokens.coolSlate, fontSize: 13)),
+                  child: Text('No caregivers linked yet. Tap Invite above to share access.', style: TextStyle(color: ColorTokens.graphite, fontSize: 13)),
                 ),
               );
             }
@@ -344,8 +355,8 @@ class _MyCaregiversTab extends ConsumerWidget {
                         ),
                         PillChip(
                           label: link.status.name.toUpperCase(),
-                          backgroundColor: link.status == CaregiverLinkStatus.active ? ColorTokens.mintSuccessBg : ColorTokens.iceSlate,
-                          textColor: link.status == CaregiverLinkStatus.active ? ColorTokens.mintSuccess : ColorTokens.coolSlate,
+                          backgroundColor: link.status == CaregiverLinkStatus.active ? ColorTokens.emeraldPulseBg : ColorTokens.mist,
+                          textColor: link.status == CaregiverLinkStatus.active ? ColorTokens.mintSuccess : ColorTokens.graphite,
                         ),
                       ],
                     ),
@@ -354,7 +365,13 @@ class _MyCaregiversTab extends ConsumerWidget {
               }).toList(),
             );
           },
-          loading: () => const SizedBox(height: 60),
+          loading: () => const Column(
+            children: [
+              SkeletonPassportMedRow(),
+              SizedBox(height: 8),
+              SkeletonPassportMedRow(),
+            ],
+          ),
           error: (e, _) => Text('Error: $e'),
         ),
       ],
@@ -371,15 +388,15 @@ class _MyCaregiversTab extends ConsumerWidget {
         backgroundColor: ColorTokens.snow,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusCard),
-          side: const BorderSide(color: ColorTokens.coolHairline),
+          side: const BorderSide(color: ColorTokens.silver),
         ),
-        title: const Text('Invite Caregiver', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: ColorTokens.midnightObsidian)),
+        title: const Text('Invite Caregiver', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: ColorTokens.ink)),
         content: Form(
           key: formKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Enter your caregiver\'s email to send them a monitoring link.', style: TextStyle(fontSize: 13, color: ColorTokens.coolSlate)),
+              const Text('Enter your caregiver\'s email to send them a monitoring link.', style: TextStyle(fontSize: 13, color: ColorTokens.graphite)),
               const SizedBox(height: AppConstants.space16),
               TextFormField(
                 controller: emailCtrl,
@@ -395,11 +412,11 @@ class _MyCaregiversTab extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: ColorTokens.coolSlate)),
+            child: const Text('Cancel', style: TextStyle(color: ColorTokens.graphite)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: ColorTokens.electricCerulean,
+              backgroundColor: ColorTokens.cobaltSignal,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusButton)),
             ),

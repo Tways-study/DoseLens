@@ -32,7 +32,7 @@ class _RoleSelectionScreenState extends ConsumerState<RoleSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorTokens.icePaper,
+      backgroundColor: ColorTokens.fog,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppConstants.space24, vertical: AppConstants.space32),
@@ -41,9 +41,9 @@ class _RoleSelectionScreenState extends ConsumerState<RoleSelectionScreen> {
             children: [
               const PillChip(
                 label: 'Onboarding · Step 1 of 1',
-                backgroundColor: ColorTokens.ceruleanBg,
-                textColor: ColorTokens.electricCerulean,
-                borderColor: ColorTokens.ceruleanBorder,
+                backgroundColor: ColorTokens.cobaltSignalBg,
+                textColor: ColorTokens.cobaltSignal,
+                borderColor: ColorTokens.cobaltSignalBorder,
               ),
               const SizedBox(height: AppConstants.space16),
 
@@ -116,7 +116,7 @@ class _RoleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return NeoCard(
       onTap: onTap,
-      borderColor: isSelected ? ColorTokens.electricCerulean : ColorTokens.coolHairline,
+      borderColor: isSelected ? ColorTokens.charcoal : ColorTokens.silver,
       backgroundColor: isSelected ? ColorTokens.snow : ColorTokens.snow,
       padding: const EdgeInsets.all(AppConstants.space20),
       child: Row(
@@ -126,11 +126,11 @@ class _RoleCard extends StatelessWidget {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: isSelected ? ColorTokens.ceruleanBg : ColorTokens.iceSlate,
+              color: isSelected ? ColorTokens.mist : ColorTokens.fog,
               borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
-              border: Border.all(color: isSelected ? ColorTokens.electricCerulean : ColorTokens.coolHairline, width: isSelected ? 1.5 : 0.8),
+              border: Border.all(color: isSelected ? ColorTokens.charcoal : ColorTokens.silver, width: isSelected ? 1.5 : 1.0),
             ),
-            child: Icon(icon, color: isSelected ? ColorTokens.electricCerulean : ColorTokens.coolSlate, size: 22),
+            child: Icon(icon, color: isSelected ? ColorTokens.charcoal : ColorTokens.ash, size: 22),
           ),
           const SizedBox(width: AppConstants.space16),
           Expanded(
@@ -146,8 +146,9 @@ class _RoleCard extends StatelessWidget {
                     ),
                     PillChip(
                       label: badge,
-                      backgroundColor: isSelected ? ColorTokens.ceruleanBg : ColorTokens.iceSlate,
-                      textColor: isSelected ? ColorTokens.electricCerulean : ColorTokens.coolSlate,
+                      backgroundColor: isSelected ? ColorTokens.mist : ColorTokens.fog,
+                      textColor: isSelected ? ColorTokens.charcoal : ColorTokens.ash,
+                      borderColor: ColorTokens.silver,
                     ),
                   ],
                 ),

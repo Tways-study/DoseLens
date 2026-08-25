@@ -67,7 +67,7 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
       await ref.read(medicationsNotifierProvider.notifier).addMedication(med);
       if (mounted) Navigator.pop(context);
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}'), backgroundColor: ColorTokens.vermillion));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}'), backgroundColor: ColorTokens.error));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -85,14 +85,14 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorTokens.paper,
+      backgroundColor: ColorTokens.fog,
       appBar: AppBar(
-        backgroundColor: ColorTokens.paper,
+        backgroundColor: ColorTokens.snow,
         scrolledUnderElevation: 0,
         elevation: 0,
         title: Text('New Medication', style: TextStyles.displayMedium.copyWith(fontSize: 22)),
         leading: IconButton(
-          icon: const Icon(Icons.close_rounded, size: 20, color: ColorTokens.inkBlack),
+          icon: const Icon(Icons.close_rounded, size: 20, color: ColorTokens.ink),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -183,14 +183,14 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(Icons.access_time_rounded, size: 18, color: ColorTokens.inkBlack),
+                                  const Icon(Icons.access_time_rounded, size: 18, color: ColorTokens.ash),
                                   const SizedBox(width: 12),
                                   Text(
                                     _times[i].format(context),
-                                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: ColorTokens.inkBlack),
+                                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: ColorTokens.ink),
                                   ),
                                   const Spacer(),
-                                  const Icon(Icons.chevron_right_rounded, size: 18, color: ColorTokens.graphite),
+                                  const Icon(Icons.chevron_right_rounded, size: 18, color: ColorTokens.ash),
                                 ],
                               ),
                             ),
@@ -199,8 +199,8 @@ class _AddMedicationScreenState extends ConsumerState<AddMedicationScreen> {
                       ),
                       TextButton.icon(
                         onPressed: _addTime,
-                        icon: const Icon(Icons.add_rounded, size: 18, color: ColorTokens.inkBlack),
-                        label: const Text('Add another time', style: TextStyle(color: ColorTokens.inkBlack, fontWeight: FontWeight.w700, fontSize: 13)),
+                        icon: const Icon(Icons.add_rounded, size: 18, color: ColorTokens.cobaltSignal),
+                        label: const Text('Add another time', style: TextStyle(color: ColorTokens.cobaltSignal, fontWeight: FontWeight.w600, fontSize: 13)),
                       ),
                     ],
                   ),
@@ -244,7 +244,7 @@ class _Label extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 6),
         child: Text(
           text,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: ColorTokens.inkBlack, letterSpacing: -0.1),
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: ColorTokens.ink, letterSpacing: -0.1),
         ),
       );
 }
@@ -262,7 +262,7 @@ class _Field extends StatelessWidget {
         controller: controller,
         maxLines: maxLines,
         validator: validator,
-        style: const TextStyle(fontSize: 14, color: ColorTokens.inkBlack, fontWeight: FontWeight.w500),
+        style: const TextStyle(fontSize: 14, color: ColorTokens.ink, fontWeight: FontWeight.w500),
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: const TextStyle(color: ColorTokens.ashGray, fontSize: 13),
@@ -304,9 +304,9 @@ class _FrequencyPicker extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
             decoration: BoxDecoration(
-              color: isSelected ? ColorTokens.obsidian : ColorTokens.fog,
+              color: isSelected ? ColorTokens.charcoal : ColorTokens.fog,
               borderRadius: BorderRadius.circular(AppConstants.radiusButton),
-              border: Border.all(color: isSelected ? ColorTokens.obsidian : ColorTokens.hairline),
+              border: Border.all(color: isSelected ? ColorTokens.charcoal : ColorTokens.silver),
             ),
             child: Text(
               opt.$2,

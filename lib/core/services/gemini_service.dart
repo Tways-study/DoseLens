@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../constants/api_constants.dart';
 import '../network/dio_client.dart';
+import '../utils/rate_limiter.dart';
 
 /// Gemini Vision AI Service for Multimodal OCR and Medication Label Extraction
 class GeminiService {
@@ -12,8 +13,15 @@ class GeminiService {
 
   String get _apiKey => dotenv.env['GEMINI_API_KEY'] ?? '';
 
-  /// Scans medication package image bytes and returns structured medication details
+  /// Scans medication package image bytes and returns structured medication details.
+  /// Enforces a 5-calls/60s rate limit. Throws a user-readable message if exhausted.
   Future<Map<String, dynamic>> scanMedicationLabel(Uint8List imageBytes) async {
+    try {
+      RateLimiter.instance.consume('gemini');
+    } on RateLimitException catch (e) {
+      throw Exception(
+          'Scan limit reached — please wait ${e.secondsUntilRefill} second(s) before scanning again.');
+    }
     final base64Image = base64Encode(imageBytes);
 
     const promptText = '''

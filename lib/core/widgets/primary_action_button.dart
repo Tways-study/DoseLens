@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_constants.dart';
 import '../theme/color_tokens.dart';
 
-/// Precision Digital Rx Action Button: Electric Cerulean (#0284C7) with white text, or Obsidian (#0F172A) fill
+/// 21n Action Button
+/// Primary (filled): Charcoal (#333333) fill, white text — the single dark anchor.
+/// Ghost (outlined): Silver border, Ink text, Fog background.
 class PrimaryActionButton extends StatelessWidget {
   final String title;
   final VoidCallback? onPressed;
@@ -12,6 +15,7 @@ class PrimaryActionButton extends StatelessWidget {
   final Color? textColor;
   final double height;
   final bool isGhost;
+  /// Legacy parameter — maps to ghost in 21n (no separate Obsidian variant).
   final bool isObsidian;
   final bool isPill;
 
@@ -39,20 +43,21 @@ class PrimaryActionButton extends StatelessWidget {
         width: double.infinity,
         child: OutlinedButton(
           style: OutlinedButton.styleFrom(
-            side: const BorderSide(color: ColorTokens.coolHairline, width: 1.0),
-            backgroundColor: ColorTokens.snow,
+            side: const BorderSide(color: ColorTokens.silver, width: 1.0),
+            backgroundColor: ColorTokens.fog,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(radius),
             ),
             padding: const EdgeInsets.symmetric(horizontal: AppConstants.space20),
           ),
           onPressed: isLoading ? null : onPressed,
-          child: _buildContent(ColorTokens.midnightObsidian),
+          child: _buildContent(ColorTokens.ink),
         ),
       );
     }
 
-    final bg = backgroundColor ?? (isObsidian ? ColorTokens.midnightObsidian : ColorTokens.electricCerulean);
+    // isObsidian previously = Cerulean; in 21n both map to the single Charcoal CTA
+    final bg = backgroundColor ?? ColorTokens.charcoal;
     final fg = textColor ?? Colors.white;
 
     return SizedBox(
@@ -63,6 +68,7 @@ class PrimaryActionButton extends StatelessWidget {
           backgroundColor: bg,
           foregroundColor: fg,
           elevation: 0,
+          shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radius),
           ),
@@ -80,12 +86,11 @@ class PrimaryActionButton extends StatelessWidget {
         width: 18,
         height: 18,
         child: CircularProgressIndicator(
-          strokeWidth: 2.2,
+          strokeWidth: 2.0,
           valueColor: AlwaysStoppedAnimation<Color>(contentColor),
         ),
       );
     }
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -95,11 +100,10 @@ class PrimaryActionButton extends StatelessWidget {
         ],
         Text(
           title,
-          style: TextStyle(
+          style: GoogleFonts.sen(
             fontSize: 15,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             color: contentColor,
-            letterSpacing: -0.1,
           ),
         ),
       ],

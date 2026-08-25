@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/color_tokens.dart';
 import '../../../core/theme/text_styles.dart';
+import '../../../core/utils/rate_limiter.dart';
 import '../providers/scanner_provider.dart';
 import 'ocr_verification_sheet.dart';
 
@@ -57,6 +58,15 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
           ref.read(scannerProvider.notifier).reset();
         }
       }
+    } on RateLimitException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Scan quota reached — try again in ${e.secondsUntilRefill}s'),
+            backgroundColor: ColorTokens.warningAmber,
+          ),
+        );
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -88,6 +98,15 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
           ref.read(scannerProvider.notifier).reset();
         }
       }
+    } on RateLimitException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Scan quota reached — try again in ${e.secondsUntilRefill}s'),
+            backgroundColor: ColorTokens.warningAmber,
+          ),
+        );
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -102,7 +121,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorTokens.midnightObsidian,
+      backgroundColor: ColorTokens.ink,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -179,7 +198,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
               decoration: const BoxDecoration(
                 color: ColorTokens.snow,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(AppConstants.radiusCard)),
-                border: Border(top: BorderSide(color: ColorTokens.coolHairline)),
+                border: Border(top: BorderSide(color: ColorTokens.silver)),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -203,10 +222,10 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
                     children: [
                       Expanded(
                         child: OutlinedButton.icon(
-                          icon: const Icon(Icons.photo_library_outlined, size: 18, color: ColorTokens.midnightObsidian),
-                          label: const Text('Gallery', style: TextStyle(color: ColorTokens.midnightObsidian, fontWeight: FontWeight.w700)),
+                          icon: const Icon(Icons.photo_library_outlined, size: 18, color: ColorTokens.ink),
+                          label: const Text('Gallery', style: TextStyle(color: ColorTokens.ink, fontWeight: FontWeight.w700)),
                           style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: ColorTokens.coolHairline, width: 1.0),
+                            side: const BorderSide(color: ColorTokens.silver, width: 1.0),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusButton)),
                             padding: const EdgeInsets.symmetric(vertical: 13),
                           ),
@@ -219,7 +238,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
                           icon: const Icon(Icons.camera_alt_rounded, size: 18, color: Colors.white),
                           label: const Text('Scan Packaging', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: ColorTokens.electricCerulean,
+                            backgroundColor: ColorTokens.cobaltSignal,
                             elevation: 0,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusButton)),
                             padding: const EdgeInsets.symmetric(vertical: 13),

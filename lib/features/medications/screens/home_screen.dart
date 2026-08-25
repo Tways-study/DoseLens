@@ -6,6 +6,7 @@ import '../../../core/theme/text_styles.dart';
 import '../../../core/utils/date_formatters.dart';
 import '../../../core/widgets/neo_card.dart';
 import '../../../core/widgets/pill_chip.dart';
+import '../../../core/widgets/skeleton_widgets.dart';
 import '../../../core/widgets/status_badge.dart';
 import '../models/adherence_log.dart';
 import '../models/medication.dart';
@@ -30,9 +31,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final rateAsync = ref.watch(adherenceRateProvider);
 
     return Scaffold(
-      backgroundColor: ColorTokens.icePaper,
+      backgroundColor: ColorTokens.fog,
       appBar: AppBar(
-        backgroundColor: ColorTokens.icePaper,
+        backgroundColor: ColorTokens.fog,
         scrolledUnderElevation: 0,
         elevation: 0,
         title: Row(
@@ -41,7 +42,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               width: 10,
               height: 10,
               decoration: const BoxDecoration(
-                color: ColorTokens.electricCerulean,
+                color: ColorTokens.cobaltSignal,
                 shape: BoxShape.circle,
               ),
             ),
@@ -54,7 +55,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add_circle, color: ColorTokens.electricCerulean, size: 28),
+            icon: const Icon(Icons.add_circle, color: ColorTokens.cobaltSignal, size: 28),
             tooltip: 'Add Medication',
             onPressed: () => Navigator.push(
               context,
@@ -87,7 +88,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
 
           RefreshIndicator(
-            color: ColorTokens.electricCerulean,
+            color: ColorTokens.cobaltSignal,
             onRefresh: () async => ref.invalidate(medicationsStreamProvider),
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -105,7 +106,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   // Hero Art + Adherence Metric Card
                   rateAsync.when(
                     data: (rate) => _HeroAdherenceCard(rate: rate),
-                    loading: () => const _LoadingCard(height: 120),
+                    loading: () => const SkeletonAdherenceCard(),
                     error: (_, __) => const _HeroAdherenceCard(rate: 1.0),
                   ),
                   const SizedBox(height: AppConstants.space24),
@@ -129,9 +130,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     },
                     loading: () => const Column(
                       children: [
-                        _LoadingCard(height: 80),
-                        SizedBox(height: 12),
-                        _LoadingCard(height: 80),
+                        SkeletonMedCard(),
+                        SizedBox(height: AppConstants.space12),
+                        SkeletonMedCard(),
+                        SizedBox(height: AppConstants.space12),
+                        SkeletonMedCard(),
                       ],
                     ),
                     error: (e, _) => NeoCard(
@@ -161,10 +164,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                 decoration: BoxDecoration(
-                  color: isSelected ? ColorTokens.electricCerulean : ColorTokens.iceSlate,
+                  color: isSelected ? ColorTokens.cobaltSignal : ColorTokens.mist,
                   borderRadius: BorderRadius.circular(AppConstants.radiusButton),
                   border: Border.all(
-                    color: isSelected ? ColorTokens.electricCerulean : ColorTokens.coolHairline,
+                    color: isSelected ? ColorTokens.cobaltSignal : ColorTokens.silver,
                     width: 1.0,
                   ),
                 ),
@@ -173,7 +176,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                    color: isSelected ? Colors.white : ColorTokens.midnightObsidian,
+                    color: isSelected ? Colors.white : ColorTokens.ink,
                   ),
                 ),
               ),
@@ -252,9 +255,9 @@ class _HeroAdherenceCard extends StatelessWidget {
                     right: 12,
                     child: PillChip(
                       label: isGood ? 'Optimal 30-Day Rate' : 'Review Prescriptions',
-                      backgroundColor: isGood ? ColorTokens.mintSuccessBg : ColorTokens.crimsonAlertBg,
+                      backgroundColor: isGood ? ColorTokens.emeraldPulseBg : ColorTokens.errorBg,
                       textColor: isGood ? ColorTokens.mintSuccess : ColorTokens.crimsonAlert,
-                      borderColor: isGood ? ColorTokens.mintSuccessBorder : ColorTokens.crimsonAlertBorder,
+                      borderColor: isGood ? ColorTokens.emeraldPulseBorder : ColorTokens.errorBorder,
                     ),
                   ),
                 ],
@@ -308,18 +311,18 @@ class _PrecisionRxDonutPainter extends CustomPainter {
     final radius = size.width / 2 - 5;
 
     final bgPaint = Paint()
-      ..color = ColorTokens.iceSlate
+      ..color = ColorTokens.mist
       ..strokeWidth = 7
       ..style = PaintingStyle.stroke;
 
     final fgPaint = Paint()
-      ..color = ColorTokens.electricCerulean
+      ..color = ColorTokens.cobaltSignal
       ..strokeWidth = 7
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
     final borderPaint = Paint()
-      ..color = ColorTokens.coolHairline
+      ..color = ColorTokens.silver
       ..strokeWidth = 1.0
       ..style = PaintingStyle.stroke;
 
@@ -393,14 +396,14 @@ class _MedicationCard extends ConsumerWidget {
     return Dismissible(
       key: Key(medication.id),
       background: _buildSwipeAction(
-        color: ColorTokens.mintSuccessBg,
+        color: ColorTokens.emeraldPulseBg,
         textColor: ColorTokens.mintSuccess,
         icon: Icons.check_circle_rounded,
         label: 'Take Dose',
         alignment: Alignment.centerLeft,
       ),
       secondaryBackground: _buildSwipeAction(
-        color: ColorTokens.crimsonAlertBg,
+        color: ColorTokens.errorBg,
         textColor: ColorTokens.crimsonAlert,
         icon: Icons.cancel_rounded,
         label: 'Skip',
@@ -430,17 +433,17 @@ class _MedicationCard extends ConsumerWidget {
               width: 46,
               height: 46,
               decoration: BoxDecoration(
-                color: isTaken ? ColorTokens.mintSuccessBg : ColorTokens.ceruleanBg,
+                color: isTaken ? ColorTokens.emeraldPulseBg : ColorTokens.cobaltSignalBg,
                 borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
                 border: Border.all(
-                  color: isTaken ? ColorTokens.mintSuccessBorder : ColorTokens.ceruleanBorder,
+                  color: isTaken ? ColorTokens.emeraldPulseBorder : ColorTokens.cobaltSignalBorder,
                   width: 1.0,
                 ),
               ),
               child: Center(
                 child: Icon(
                   isTaken ? Icons.check_rounded : Icons.medication_liquid_rounded,
-                  color: isTaken ? ColorTokens.mintSuccess : ColorTokens.electricCerulean,
+                  color: isTaken ? ColorTokens.mintSuccess : ColorTokens.cobaltSignal,
                   size: 22,
                 ),
               ),
@@ -466,8 +469,8 @@ class _MedicationCard extends ConsumerWidget {
                       else
                         const PillChip(
                           label: 'Pending',
-                          backgroundColor: ColorTokens.iceSlate,
-                          textColor: ColorTokens.coolSlate,
+                          backgroundColor: ColorTokens.mist,
+                          textColor: ColorTokens.graphite,
                         ),
                     ],
                   ),
@@ -529,10 +532,10 @@ class _EmptyScheduleState extends StatelessWidget {
               width: 52,
               height: 52,
               decoration: BoxDecoration(
-                color: ColorTokens.ceruleanBg,
+                color: ColorTokens.cobaltSignalBg,
                 borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
               ),
-              child: const Icon(Icons.medication_outlined, color: ColorTokens.electricCerulean, size: 26),
+              child: const Icon(Icons.medication_outlined, color: ColorTokens.cobaltSignal, size: 26),
             ),
             const SizedBox(height: AppConstants.space12),
             Text(
@@ -552,19 +555,3 @@ class _EmptyScheduleState extends StatelessWidget {
   }
 }
 
-class _LoadingCard extends StatelessWidget {
-  final double height;
-  const _LoadingCard({required this.height});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: height,
-      decoration: BoxDecoration(
-        color: ColorTokens.iceSlate,
-        borderRadius: BorderRadius.circular(AppConstants.radiusCard),
-        border: Border.all(color: ColorTokens.coolHairline),
-      ),
-    );
-  }
-}

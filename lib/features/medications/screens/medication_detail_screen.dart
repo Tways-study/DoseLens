@@ -16,19 +16,19 @@ class MedicationDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      backgroundColor: ColorTokens.paper,
+      backgroundColor: ColorTokens.fog,
       appBar: AppBar(
-        backgroundColor: ColorTokens.paper,
+        backgroundColor: ColorTokens.snow,
         scrolledUnderElevation: 0,
         elevation: 0,
         title: Text('Prescription Details', style: TextStyles.displayMedium.copyWith(fontSize: 20)),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, size: 20, color: ColorTokens.inkBlack),
+          icon: const Icon(Icons.arrow_back_rounded, size: 20, color: ColorTokens.ink),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.delete_outline_rounded, color: ColorTokens.vermillion, size: 22),
+            icon: const Icon(Icons.delete_outline_rounded, color: ColorTokens.error, size: 22),
             onPressed: () => _confirmDelete(context, ref),
           ),
           const SizedBox(width: 8),
@@ -48,11 +48,11 @@ class MedicationDetailScreen extends ConsumerWidget {
                     width: 56,
                     height: 56,
                     decoration: BoxDecoration(
-                      color: ColorTokens.acidGreen,
+                      color: ColorTokens.mist,
                       borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
-                      border: Border.all(color: ColorTokens.inkBlack, width: 1.0),
+                      border: Border.all(color: ColorTokens.silver, width: 1.0),
                     ),
-                    child: const Icon(Icons.medication_rounded, color: ColorTokens.inkBlack, size: 28),
+                    child: const Icon(Icons.medication_rounded, color: ColorTokens.graphite, size: 28),
                   ),
                   const SizedBox(width: AppConstants.space16),
                   Expanded(
@@ -94,14 +94,14 @@ class MedicationDetailScreen extends ConsumerWidget {
                     value: medication.frequencyLabel,
                     icon: Icons.repeat_rounded,
                   ),
-                  const Divider(color: ColorTokens.hairline),
+                  const Divider(color: ColorTokens.silver),
                   _DetailRow(
                     label: 'Dosing Times',
                     value: medication.times.join(' · '),
                     icon: Icons.access_time_rounded,
                   ),
                   if (medication.instructions != null) ...[
-                    const Divider(color: ColorTokens.hairline),
+                    const Divider(color: ColorTokens.silver),
                     _DetailRow(
                       label: 'Instructions',
                       value: medication.instructions!,
@@ -115,11 +115,11 @@ class MedicationDetailScreen extends ConsumerWidget {
 
             // Delete prescription button
             OutlinedButton.icon(
-              icon: const Icon(Icons.delete_outline_rounded, color: ColorTokens.vermillion, size: 18),
-              label: const Text('Remove from Active Regimen', style: TextStyle(color: ColorTokens.vermillion, fontWeight: FontWeight.w700)),
+              icon: const Icon(Icons.delete_outline_rounded, color: ColorTokens.error, size: 18),
+              label: const Text('Remove from Active Regimen', style: TextStyle(color: ColorTokens.error, fontWeight: FontWeight.w600)),
               style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: ColorTokens.vermillionBorder),
-                backgroundColor: ColorTokens.vermillionBg,
+                side: const BorderSide(color: ColorTokens.errorBorder),
+                backgroundColor: ColorTokens.errorBg,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusButton)),
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 minimumSize: const Size(double.infinity, 48),
@@ -141,7 +141,7 @@ class MedicationDetailScreen extends ConsumerWidget {
           borderRadius: BorderRadius.circular(AppConstants.radiusCard),
           side: const BorderSide(color: ColorTokens.hairline),
         ),
-        title: const Text('Delete Medication', style: TextStyle(fontWeight: FontWeight.w800, color: ColorTokens.inkBlack)),
+        title: const Text('Delete Medication', style: TextStyle(fontWeight: FontWeight.w700, color: ColorTokens.ink)),
         content: Text('Are you sure you want to remove ${medication.name} from your active schedule?'),
         actions: [
           TextButton(
@@ -150,7 +150,7 @@ class MedicationDetailScreen extends ConsumerWidget {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: ColorTokens.vermillion,
+              backgroundColor: ColorTokens.error,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppConstants.radiusButton)),
             ),
@@ -183,7 +183,7 @@ class _DetailRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 18, color: ColorTokens.graphite),
+          Icon(icon, size: 18, color: ColorTokens.ash),
           const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,

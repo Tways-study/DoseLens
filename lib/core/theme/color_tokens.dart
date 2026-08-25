@@ -1,102 +1,120 @@
 import 'package:flutter/material.dart';
 
-/// Semantic color tokens strictly following Palette 2: "Precision Digital Rx"
-/// (Electric Cerulean, Cyan Laser, Midnight Obsidian, Ice Slate Canvas)
+/// 21n Design System — Refero Style 68d18deb-bb09-4258-8024-001af9c844c0
+/// Flat, border-driven, near-monochrome light-mode workspace.
+/// Zero shadows. Zero gradients. Structure from 1px Silver hairlines only.
 class ColorTokens {
   ColorTokens._();
 
-  // ── Precision Digital Rx Accents ───────────────────────────────────────
-  /// #0284C7 — Electric Cerulean: The signature digital pharmacy CTA & active state
-  static const Color electricCerulean = Color(0xFF0284C7);
-  static const Color ceruleanDark = Color(0xFF0369A1);
-  static const Color ceruleanBg = Color(0xFFEFF6FF);
-  static const Color ceruleanBorder = Color(0xFFBFDBFE);
-
-  /// #00D8F6 — Cyan Laser: Optic vision highlights, reticle brackets & scan telemetry
-  static const Color cyanLaser = Color(0xFF00D8F6);
-  static const Color cyanLaserGlow = Color(0x3300D8F6);
-
-  /// #EF4444 — Crimson Alert: Missed dose alerts and warnings
-  static const Color crimsonAlert = Color(0xFFEF4444);
-  static const Color crimsonAlertBg = Color(0xFFFEF2F2);
-  static const Color crimsonAlertBorder = Color(0xFFFCA5A5);
-
-  /// #10B981 — Clinical Mint Success: Taken status and optimal adherence
-  static const Color mintSuccess = Color(0xFF10B981);
-  static const Color mintSuccessBg = Color(0xFFECFDF5);
-  static const Color mintSuccessBorder = Color(0xFFA7F3D0);
-
-  /// #F59E0B — Amber Gold: Pending and warning statuses
-  static const Color warningAmber = Color(0xFFF59E0B);
-  static const Color warningAmberBg = Color(0xFFFFFBEB);
-  static const Color warningAmberBorder = Color(0xFFFDE68A);
-
-  // ── Neutrals & Grayscale ───────────────────────────────────────────────
-  /// #0B132B — Midnight Obsidian: Primary headlines, high-contrast labels
-  static const Color midnightObsidian = Color(0xFF0B132B);
-  static const Color slateInk = Color(0xFF0F172A);
-  static const Color inkBlack = midnightObsidian;
-  static const Color obsidian = Color(0xFF0F172A);
-
-  /// #64748B — Cool Slate: Secondary text, body copy, muted icons
-  static const Color coolSlate = Color(0xFF64748B);
-  static const Color graphite = coolSlate;
-
-  /// #94A3B8 — Muted Mist: Tertiary text, placeholders, inactive states
-  static const Color mutedMist = Color(0xFF94A3B8);
-  static const Color ashGray = mutedMist;
-
-  // ── Surfaces & Canvas ──────────────────────────────────────────────────
-  /// #F8FAFC — Ice Paper: Page canvas background
-  static const Color icePaper = Color(0xFFF8FAFC);
-  static const Color paper = icePaper;
-
-  /// #F1F5F9 — Ice Slate / Fog: Secondary surface, segmented controls, table headers
-  static const Color iceSlate = Color(0xFFF1F5F9);
-  static const Color fog = iceSlate;
-
-  /// #FFFFFF — Snow: Pure white card surfaces
+  // ── Neutral Canvas Stack ──────────────────────────────────────────────────
+  /// #FFFFFF — Snow: Primary canvas — page backgrounds, card surfaces, button text
   static const Color snow = Color(0xFFFFFFFF);
 
-  /// #E2E8F0 — Cool Hairline: Structural borders and dividers
-  static const Color coolHairline = Color(0xFFE2E8F0);
-  static const Color hairline = coolHairline;
+  /// #F9F9FB — Fog: First surface layer above canvas — alternating sections, cards
+  static const Color fog = Color(0xFFF9F9FB);
 
-  // ── Semantic Aliases & Compatibility ───────────────────────────────────
-  static const Color backgroundLight = icePaper;
-  static const Color surfaceLight = snow;
-  static const Color borderLight = coolHairline;
+  /// #EFF0F6 — Mist: Cool inset panels, secondary cards, field fill
+  static const Color mist = Color(0xFFEFF0F6);
 
-  static const Color backgroundDark = Color(0xFF0B132B);
-  static const Color surfaceDark = Color(0xFF1E293B);
-  static const Color borderDark = Color(0xFF334155);
+  /// #E5E7EB — Silver: ALL hairline borders, dividers, 1px structural lines
+  static const Color silver = Color(0xFFE5E7EB);
 
-  static const Color textPrimaryLight = midnightObsidian;
-  static const Color textSecondaryLight = coolSlate;
-  static const Color textMutedLight = mutedMist;
+  // ── Text Stack ───────────────────────────────────────────────────────────
+  /// #1A1A1A — Ink: Primary headings and high-contrast labels (slightly softer than pure black)
+  static const Color ink = Color(0xFF1A1A1A);
 
-  static const Color textPrimaryDark = Color(0xFFF8FAFC);
-  static const Color textSecondaryDark = Color(0xFF94A3B8);
-  static const Color textMutedDark = Color(0xFF64748B);
+  /// #333333 — Charcoal: Primary CTA filled button — the single dark anchor
+  static const Color charcoal = Color(0xFF333333);
 
-  // Active CTA aliases
-  static const Color primaryAction = electricCerulean;
-  static const Color primaryTeal = electricCerulean;
-  static const Color primarySlate = midnightObsidian;
-  static const Color acidGreen = electricCerulean;
-  static const Color electricBlue = electricCerulean;
-  static const Color linkBlue = electricCerulean;
-  static const Color vermillion = crimsonAlert;
-  static const Color vermillionBg = crimsonAlertBg;
-  static const Color vermillionBorder = crimsonAlertBorder;
-  static const Color alertCoral = crimsonAlert;
-  static const Color alertCoralBg = crimsonAlertBg;
-  static const Color alertCoralBorder = crimsonAlertBorder;
+  /// #545454 — Graphite: Secondary text, metadata, subdued button labels
+  static const Color graphite = Color(0xFF545454);
 
-  // Subtle Clinical Paper Shadow
+  /// #767676 — Smoke: Supporting neutral — dividers, muted labels
+  static const Color smoke = Color(0xFF767676);
+
+  /// #808080 — Ash: Disabled / inactive states, de-emphasized text and icons
+  static const Color ash = Color(0xFF808080);
+
+  // ── Functional Accent Colors ─────────────────────────────────────────────
+  /// #24B26D — Emerald Pulse: Success / "Taken" state — icons and text ONLY, never fill
+  static const Color emeraldPulse = Color(0xFF24B26D);
+  static const Color emeraldPulseBg = Color(0xFFF0FDF7);
+  static const Color emeraldPulseBorder = Color(0xFFBBF7D0);
+
+  /// #2C70DD — Cobalt Signal: Links, active nav, AI scan badge, focused inputs — never CTA bg
+  static const Color cobaltSignal = Color(0xFF2C70DD);
+  static const Color cobaltSignalBg = Color(0xFFEFF4FF);
+  static const Color cobaltSignalBorder = Color(0xFFBFD4FE);
+
+  /// Error / destructive — kept functional, not promoted to branding
+  static const Color error = Color(0xFFDC2626);
+  static const Color errorBg = Color(0xFFFEF2F2);
+  static const Color errorBorder = Color(0xFFFCA5A5);
+
+  /// Warning — kept functional only
+  static const Color warning = Color(0xFFD97706);
+  static const Color warningBg = Color(0xFFFFFBEB);
+  static const Color warningBorder = Color(0xFFFDE68A);
+
+  // ── Semantic Aliases (used by existing code) ─────────────────────────────
+  // Surface / canvas
+  static const Color icePaper = fog;
+  static const Color paper = fog;
+  static const Color iceSlate = mist;
+  static const Color backgroundCanvas = fog;
+  static const Color cardSurface = snow;
+
+  // Borders
+  static const Color coolHairline = silver;
+  static const Color hairline = silver;
+  static const Color border = silver;
+
+  // Text
+  static const Color inkBlack = ink;
+  static const Color midnightObsidian = ink;
+  static const Color coolSlate = graphite;
+  static const Color mutedMist = ash;
+  static const Color ashGray = ash;
+
+  // CTA / action
+  static const Color electricCerulean = cobaltSignal;
+  static const Color primaryAction = charcoal;
+  static const Color obsidian = charcoal;
+
+  // Status aliases (kept for StatusBadge compatibility)
+  static const Color mintSuccess = emeraldPulse;
+  static const Color mintSuccessBg = emeraldPulseBg;
+  static const Color mintSuccessBorder = emeraldPulseBorder;
+  static const Color crimsonAlert = error;
+  static const Color crimsonAlertBg = errorBg;
+  static const Color crimsonAlertBorder = errorBorder;
+  static const Color warningAmber = warning;
+  static const Color warningAmberBg = warningBg;
+  static const Color warningAmberBorder = warningBorder;
+
+  // Misc aliases
+  static const Color vermillion = error;
+  static const Color vermillionBg = errorBg;
+  static const Color vermillionBorder = errorBorder;
+  static const Color acidGreen = emeraldPulse;
+  static const Color ceruleanBg = cobaltSignalBg;
+  static const Color ceruleanBorder = cobaltSignalBorder;
+  static const Color cyanLaser = cobaltSignal;
+  static const Color cyanLaserGlow = Color(0x332C70DD);
+  static const Color linkBlue = cobaltSignal;
+
+  // Dark mode surfaces (legacy — 21n is light-mode only, kept to avoid compile errors)
+  static const Color backgroundDark = Color(0xFF111111);
+  static const Color surfaceDark = Color(0xFF1C1C1C);
+  static const Color borderDark = Color(0xFF2E2E2E);
+  static const Color textPrimaryDark = Color(0xFFF5F5F5);
+  static const Color textSecondaryDark = Color(0xFF9E9E9E);
+  static const Color textMutedDark = Color(0xFF6E6E6E);
+
+  /// 21n: No shadows. This stub exists for zero-effort migration of old cardShadow refs.
   static const BoxShadow cardShadow = BoxShadow(
-    color: Color(0x060F172A),
-    blurRadius: 6,
-    offset: Offset(0, 2),
+    color: Color(0x00000000),
+    blurRadius: 0,
+    offset: Offset(0, 0),
   );
 }
